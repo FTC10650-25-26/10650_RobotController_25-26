@@ -1,24 +1,14 @@
 package org.firstinspires.ftc.teamcode.autos;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.util.Constants;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.FConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing.LConstants;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
-import static com.pedropathing.follower.FollowerConstants.leftFrontMotorDirection;
-import static com.pedropathing.follower.FollowerConstants.leftFrontMotorName;
-import static com.pedropathing.follower.FollowerConstants.leftRearMotorDirection;
-import static com.pedropathing.follower.FollowerConstants.leftRearMotorName;
-import static com.pedropathing.follower.FollowerConstants.rightFrontMotorDirection;
-import static com.pedropathing.follower.FollowerConstants.rightFrontMotorName;
-import static com.pedropathing.follower.FollowerConstants.rightRearMotorDirection;
-import static com.pedropathing.follower.FollowerConstants.rightRearMotorName;
 @Autonomous(name = "Test Auto")
 public class TestAuto extends LinearOpMode {
 
@@ -58,22 +48,25 @@ public class TestAuto extends LinearOpMode {
 
 
 
-
-        while(((Math.abs(leftFront.getCurrentPosition())+Math.abs(rightFront.getCurrentPosition())+Math.abs(leftRear.getCurrentPosition())+Math.abs(rightRear.getCurrentPosition()))/4)<800&& opModeIsActive()){
-            leftFront.setPower(.25);
-            leftRear.setPower(-.25);
-            rightFront.setPower(-.25);
-            rightRear.setPower(.25);
-        }
+//
+//        while(((Math.abs(leftFront.getCurrentPosition())+Math.abs(rightFront.getCurrentPosition())+Math.abs(leftRear.getCurrentPosition())+Math.abs(rightRear.getCurrentPosition()))/4)<800&& opModeIsActive()){
+//            leftFront.setPower(.25);
+//            leftRear.setPower(-.25);
+//            rightFront.setPower(-.25);
+//            rightRear.setPower(.25);
+//        }
         leftFront.setPower(0);
         leftRear.setPower(0);
         rightFront.setPower(0);
         rightRear.setPower(0);
 
 
-        telemetry.addData("leftFrontPos", leftFront.getCurrentPosition());
-        telemetry.addData("avg pos", ((Math.abs(leftFront.getCurrentPosition())+Math.abs(rightFront.getCurrentPosition())+Math.abs(leftRear.getCurrentPosition())+Math.abs(rightRear.getCurrentPosition()))/4));
+        telemetry.addData("viewID", hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
+       // telemetry.addData("Webcam Name",hardwareMap.get(WebcamName.class, "NAME_OF_CAMERA_IN_CONFIG_FILE"));
 
+        telemetry.update();
+
+        //telemetry.addData("avg pos", ((Math.abs(leftFront.getCurrentPosition())+Math.abs(rightFront.getCurrentPosition())+Math.abs(leftRear.getCurrentPosition())+Math.abs(rightRear.getCurrentPosition()))/4));
 
 
 
