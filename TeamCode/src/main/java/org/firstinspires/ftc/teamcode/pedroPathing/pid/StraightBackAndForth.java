@@ -36,7 +36,7 @@ import com.pedropathing.pathgen.Point;
 public class StraightBackAndForth extends OpMode {
     private Telemetry telemetryA;
 
-    public static double DISTANCE = 1.5;
+    public static double DISTANCE = 48;
 
     private boolean forward = true;
 

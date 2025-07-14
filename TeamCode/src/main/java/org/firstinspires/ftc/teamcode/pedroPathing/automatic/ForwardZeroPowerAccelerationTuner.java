@@ -61,7 +61,7 @@ public class ForwardZeroPowerAccelerationTuner extends OpMode {
 
     private PoseUpdater poseUpdater;
 
-    public static double VELOCITY = 15;
+    public static double VELOCITY = 60;
 
     private double previousVelocity;
 
