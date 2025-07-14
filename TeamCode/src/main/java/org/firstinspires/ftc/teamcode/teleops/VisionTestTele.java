@@ -34,4 +34,9 @@ public class VisionTestTele extends ToxicTele {
 
     }
 
+    @Override
+    public void teleLoop() {
+
+    }
+
 }

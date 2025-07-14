@@ -35,7 +35,13 @@ public abstract class ToxicTele extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         robot.initHardware();
+
+        while(opModeIsActive()) {
+            teleLoop();
+        }
     }
+
+    abstract public void teleLoop();
 
     public double calcXPow(){
         x = Math.pow(-gamepad1.left_stick_y, 3)*speed;  // Note: pushing stick forward gives negative value
