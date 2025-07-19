@@ -28,39 +28,40 @@ public class MyChemicalRobot {
     int cameraMonitorViewId = 2131230820;
 
 
-    public void initHardware(){
+    public void initHardware(boolean useMotors){
 
+        if(useMotors) {
+            leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+            leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+            rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+            rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
 
-//        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+            leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+            leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
+            rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+            leftFront.setPower(0);
+            leftRear.setPower(0);
+            rightFront.setPower(0);
+            rightRear.setPower(0);
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
+            leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        leftFront.setPower(0);
-        leftRear.setPower(0);
-        rightFront.setPower(0);
-        rightRear.setPower(0);
+            leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+            rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        }
 
-        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-
-        leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         //camera block
         {
-            webcamName = hardwareMap.get(WebcamName.class, "camera");
-            camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+//            webcamName = hardwareMap.get(WebcamName.class, "camera");
+//            camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
 
         }
 

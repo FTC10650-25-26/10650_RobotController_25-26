@@ -34,7 +34,7 @@ public abstract class ToxicTele extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.initHardware();
+        robot.initHardware(true);
 
         while(opModeIsActive()) {
             teleLoop();
