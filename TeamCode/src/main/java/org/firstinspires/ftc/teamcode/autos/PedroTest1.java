@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.autos;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.localization.Pose;
 import com.pedropathing.pathgen.BezierCurve;
+import com.pedropathing.pathgen.BezierLine;
 import com.pedropathing.pathgen.Path;
 import com.pedropathing.pathgen.Point;
 import com.pedropathing.util.Constants;
@@ -25,8 +26,8 @@ public class PedroTest1 extends RadioactivePedroAuto {
         startingPose = new Pose(0, 0, 0);
 
         Pose pose1 = new Pose(28,-7,0);
-
-        path1 = new Path ( new BezierCurve(new Point(startingPose), new Point(pose1)));
+        
+        path1 = new Path(new BezierLine(startingPose, pose1));
         path1.setConstantHeadingInterpolation(pose1.getHeading());
 
     }
