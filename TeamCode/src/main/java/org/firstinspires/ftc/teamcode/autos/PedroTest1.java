@@ -17,18 +17,22 @@ import org.firstinspires.ftc.teamcode.pedroPathing.LConstants;
 @Autonomous (name = "pedro auto 1")
 public class PedroTest1 extends RadioactivePedroAuto {
 
-    private Path path1;
+    private Path path1,path2;
 
     @Override
     public void buildPaths(){
 
         // First, set the starting pose
-        startingPose = new Pose(0, 0, 0);
+        startingPose = new Pose(7.5, 54.5, 0);
 
-        Pose pose1 = new Pose(28,-7,0);
-        
+        Pose pose1 = new Pose(35.5,47,0);
+        Pose pose2 = new Pose(42,32,Math.PI/3.6);
+
         path1 = new Path(new BezierLine(startingPose, pose1));
         path1.setConstantHeadingInterpolation(pose1.getHeading());
+
+        path2 = new Path(new BezierLine(pose1, pose2));
+        path2.setLinearHeadingInterpolation(pose1.getHeading(), pose2.getHeading());
 
     }
 
@@ -41,7 +45,13 @@ public class PedroTest1 extends RadioactivePedroAuto {
                 break;
             case 1:
                 if (!follower.isBusy()){
-                   stop();
+                    follower.followPath(path2);
+                   setPathState(2);
+                }
+                break;
+            case 2:
+                if (!follower.isBusy()){
+                    stop();
                 }
                 break;
         }
