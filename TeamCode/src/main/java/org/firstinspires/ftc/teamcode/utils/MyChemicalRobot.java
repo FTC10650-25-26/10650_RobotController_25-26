@@ -31,7 +31,7 @@ public class MyChemicalRobot {
     public void initHardware(){
 
 
-        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+//        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
 
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
         rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");

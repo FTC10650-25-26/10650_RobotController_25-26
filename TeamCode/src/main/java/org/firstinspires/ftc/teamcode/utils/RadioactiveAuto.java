@@ -8,6 +8,15 @@ public abstract class RadioactiveAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.initHardware();
+//        robot.initHardware();
+        initialize();
+        waitForStart();
+        begin();
+
     }
+
+    abstract public void initialize();
+
+    abstract public void begin();
+
 }

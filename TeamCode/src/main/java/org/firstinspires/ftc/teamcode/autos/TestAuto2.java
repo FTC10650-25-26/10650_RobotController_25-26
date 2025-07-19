@@ -10,5 +10,18 @@ public class TestAuto2 extends RadioactiveAuto {
     @Override
     public void runOpMode() throws InterruptedException {
         waitForStart();
+
     }
+
+    @Override
+    public void initialize() {
+
+    }
+
+    @Override
+    public void begin() {
+
+    }
+
+
 }
