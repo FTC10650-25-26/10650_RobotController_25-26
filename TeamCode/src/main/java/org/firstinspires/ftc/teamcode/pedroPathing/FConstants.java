@@ -28,11 +28,11 @@ public class FConstants {
         FollowerConstants.forwardZeroPowerAcceleration = -33.41775;
         FollowerConstants.lateralZeroPowerAcceleration = -52.0491666; // This is an estimated value; the LZPATuner was broken :(
 
-        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.001,0,0.01,0);
+        FollowerConstants.translationalPIDFCoefficients.setCoefficients(0.06,0,0.01,0);
         FollowerConstants.useSecondaryTranslationalPID = false;
         FollowerConstants.secondaryTranslationalPIDFCoefficients.setCoefficients(0.1,0,0.01,0); // Not being used, @see useSecondaryTranslationalPID
 
-        FollowerConstants.headingPIDFCoefficients.setCoefficients(.05//.8,0,0.09,0.001);
+        FollowerConstants.headingPIDFCoefficients.setCoefficients(.8,0,0.09,0.001);
         FollowerConstants.useSecondaryHeadingPID = false;
         FollowerConstants.secondaryHeadingPIDFCoefficients.setCoefficients(5,0,0.08,0.01); // Not being used, @see useSecondaryHeadingPID
 
