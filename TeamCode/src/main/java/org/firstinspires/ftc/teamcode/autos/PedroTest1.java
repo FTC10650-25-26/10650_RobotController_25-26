@@ -25,7 +25,7 @@ public class PedroTest1 extends RadioactivePedroAuto {
         // First, set the starting pose
         startingPose = new Pose(7.5, 54.5, 0);
 
-        Pose pose1 = new Pose(35.5,47,0);
+        Pose pose1 = new Pose(35.125,46.375,0);
         Pose pose2 = new Pose(42,32,Math.PI/3.6);
 
         path1 = new Path(new BezierLine(startingPose, pose1));
@@ -43,17 +43,20 @@ public class PedroTest1 extends RadioactivePedroAuto {
                 follower.followPath(path1);
                 setPathState(1);
                 break;
+
             case 1:
                 if (!follower.isBusy()){
-                    follower.followPath(path2);
-                   setPathState(2);
-                }
-                break;
-            case 2:
-                if (!follower.isBusy()){
+//                    follower.followPath(path2);
+//                   setPathState(2);
                     stop();
+
                 }
                 break;
+//            case 2:
+//                if (!follower.isBusy()){
+//                    stop();
+//                }
+//                break;
         }
     }
 
