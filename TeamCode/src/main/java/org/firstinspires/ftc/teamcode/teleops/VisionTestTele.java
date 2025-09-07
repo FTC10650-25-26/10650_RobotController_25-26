@@ -14,7 +14,11 @@ public class VisionTestTele extends ToxicTele {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        robot.initHardware(false);
+        //robot.initCamera();
+
         robot.camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+
         {
             @Override
             public void onOpened() {
@@ -22,9 +26,10 @@ public class VisionTestTele extends ToxicTele {
             }
             @Override
             public void onError(int errorCode) {
-
+                telemetry.addData("Camera Error", errorCode);
+                telemetry.update();
             }
-        });
+        }
 
         while (opModeIsActive()){
             telemetry.addData("viewID", 4);
