@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -26,6 +29,8 @@ public class MyChemicalRobot {
     public OpenCvCamera camera;
     WebcamName webcamName;
     int cameraMonitorViewId = 2131230820;
+
+    public Limelight3A limelight;
 
 
     public void initHardware(boolean useMotors){
@@ -55,6 +60,11 @@ public class MyChemicalRobot {
             leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            limelight = hardwareMap.get(Limelight3A.class, "limelight");
+            limelight.setPollRateHz(100);
+
+            telemetry.setMsTransmissionInterval(11);
         }
 
 
