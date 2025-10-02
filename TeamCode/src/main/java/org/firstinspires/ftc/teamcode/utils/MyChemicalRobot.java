@@ -23,14 +23,25 @@ public class MyChemicalRobot {
     DcMotor leftRear;
     DcMotor rightFront;
     DcMotor rightRear;
+
+    DcMotor shooter1;
+    DcMotor shooter2;
+
+    DcMotor belt;
+
+    DcMotor intake;
+
+
+
+
+
+
     public OpenCvCamera camera;
     WebcamName webcamName;
     int cameraMonitorViewId = 2131230820;
 
 
     public void initHardware(){
-
-
         leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
 
         leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
@@ -56,6 +67,11 @@ public class MyChemicalRobot {
         leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+
+
+
+
 
         //camera block
         {
