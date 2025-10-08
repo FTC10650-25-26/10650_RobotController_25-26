@@ -75,18 +75,27 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
         }
     }
 
+    public void startPath(Path startPath){
+        follower.followPath(startPath);
+        setPathState(1);
+    }
+
+    public void goNextPath(Path currentPath, int nextCaseNum){
+       follower.followPath(currentPath);
+       setPathState(nextCaseNum);
+    }
+
     public void endPath(Follower follower){
         if (!follower.isBusy()){
             stop();
         }
     }
-
-    public void goNextPath(int nextPath, Path path){
-        if (!follower.isBusy()){
-            follower.followPath(path);
-            setPathState(nextPath);
-        }
+    public double inRads(double deg){
+        double radians = deg * (Math.PI/180);
+        return radians;
     }
+
+
 
 
 
