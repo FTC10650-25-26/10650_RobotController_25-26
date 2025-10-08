@@ -39,10 +39,10 @@ public class GrantWheels extends LinearOpMode {
            if (gamepad1.dpad_up){
                telemetry.addData("it pressed", "-");
 
-               speed = speed+ 10;
+               speed = speed+ 2;
            }
            if (gamepad1.dpad_down){
-               speed = speed- 10;
+               speed = speed- 2;
            }
            if(gamepad1.dpad_right){
                savedSpeed = speed;
