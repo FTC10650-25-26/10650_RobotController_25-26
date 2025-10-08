@@ -18,4 +18,8 @@ public abstract class RadioactiveAuto extends LinearOpMode {
 
     abstract public void begin();
 
+    //abstract public void end(int pose);
+
+
+
 }
