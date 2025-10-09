@@ -18,28 +18,33 @@ public class ScrimTele extends ToxicTele {
     double rightRearPower;
     double speed = 0;
 
-    int wheelVel=0;
-    double beltVel = 20;
-    double intakeVel = 30;
+    int wheelVel=0; //dont change this
+    double beltVel = 20; //this can be changed
+    double intakeVel = 30; //this can be changed
 
     Boolean beltOn = false;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        robot.belt.setVelocity(0);
+
         waitForStart();
     }
 
     @Override
     public void teleLoop() {
 
-        if (gamepad1.dpad_up){//fast
-            speed = .9;
-        } else if (gamepad1.dpad_down){ //slow
-            speed = .15;
-        } else { //normal
-            speed = .5;
+        //below must be <=1
+
+        if (gamepad1.dpad_up){//fast speed
+            speed = .9;//this can be changed
+        } else if (gamepad1.dpad_down){ //slow speed
+            speed = .15;//this can be changed
+        } else { //normal speed
+            speed = .5;//this can be changed
         }
 
+        //ignore all of whats below
         x = Math.pow(-gamepad1.left_stick_y, 3)*speed;  // Note: pushing stick forward gives negative value
         y = Math.pow(-gamepad1.left_stick_x, 3)*speed;  // Note: pushing stick forward gives negative value
         z = Math.pow(-gamepad1.right_stick_x, 3)*speed;  // Note: pushing stick forward gives negative value
@@ -66,6 +71,8 @@ public class ScrimTele extends ToxicTele {
         robot.rightRear.setPower(rightRearPower);
         robot.rightFront.setPower(rightFrontPower);
 
+
+        //this button powers off drivetrain
         if (gamepad1.right_bumper) {//force stop
             robot.leftFront.setPower(0);
             robot.leftRear.setPower(0);
@@ -73,9 +80,6 @@ public class ScrimTele extends ToxicTele {
             robot.rightFront.setPower(0);
         }
 
-        if (gamepad1.circle) {//to shoot pos
-
-        }
 
 
 
@@ -85,9 +89,9 @@ public class ScrimTele extends ToxicTele {
             //robot.intake1.setVelocity(0);
         }
 
-        if(gamepad2.square){//shoot
-
-            if (wheelVel<1900) {
+        //this button will shoot
+        if(gamepad2.square){
+            if (wheelVel<1900) {  /// <- this number is the max shooting speed
                 wheelVel = wheelVel + 2;
             } else {
                 wheelVel = 1900;
@@ -97,11 +101,12 @@ public class ScrimTele extends ToxicTele {
 
             wheelVel = 0;
         }
+
         robot.wheel1.setVelocity(wheelVel);
         robot.wheel2.setVelocity(wheelVel);
 
-        if (gamepad2.x) {
-            if (!beltOn) {//belt
+        if (gamepad2.x) { //belt speed set at very top, only change it there
+            if (!beltOn) {
                 beltOn = true;
                 robot.belt.setVelocity(beltVel);
             } else if (beltOn) {
@@ -109,6 +114,7 @@ public class ScrimTele extends ToxicTele {
                 beltOn = false;
             }
         }
+
     }
 
 

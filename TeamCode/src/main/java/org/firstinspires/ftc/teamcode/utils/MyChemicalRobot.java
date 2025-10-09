@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -25,9 +26,8 @@ public class MyChemicalRobot {
 
     public DcMotorEx wheel1;
     public DcMotorEx wheel2;
-
-    public Servo intake1;
-    public Servo intake2;
+    public CRServo intake;
+    //public Servo intake2;
     public DcMotorEx belt;
 
 
@@ -90,11 +90,12 @@ public class MyChemicalRobot {
 //                intake1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 //                intake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-                intake1 = hardwareMap.get(Servo.class, "intake1");
-                intake1.setDirection(Servo.Direction.FORWARD);
+                intake = hardwareMap.get(CRServo.class, "intake");
+                intake.setDirection(CRServo.Direction.FORWARD);
+                
                 //intake1.setPosition(0);
-                intake2 = hardwareMap.get(Servo.class, "intake2");
-                intake2.setDirection(Servo.Direction.FORWARD);
+//                intake2 = hardwareMap.get(Servo.class, "intake2");
+//                intake2.setDirection(Servo.Direction.FORWARD);
                 //intake2.setPosition(0);
 
 
