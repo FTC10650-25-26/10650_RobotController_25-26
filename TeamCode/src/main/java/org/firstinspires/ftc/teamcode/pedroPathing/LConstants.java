@@ -21,7 +21,6 @@ public class LConstants {
         ThreeWheelIMUConstants.strafeEncoderDirection = Encoder.REVERSE;
         ThreeWheelIMUConstants.IMU_HardwareMapName = "imu";
         ThreeWheelIMUConstants.IMU_Orientation = new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.RIGHT, RevHubOrientationOnRobot.UsbFacingDirection.UP);
-
 //
 //        ThreeWheelConstants.forwardTicksToInches = 0.006431607007;
 //        ThreeWheelConstants.strafeTicksToInches = 0.006431607007;

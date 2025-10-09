@@ -14,23 +14,28 @@ public class VisionTestTele extends ToxicTele {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
-        {
-            @Override
-            public void onOpened() {
-                robot.camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
-            }
-            @Override
-            public void onError(int errorCode) {
-
-            }
-        });
-
-        while (opModeIsActive()){
-            telemetry.addData("viewID", 4);
-            telemetry.update();
-
-        }
+//        robot.initHardware(false);
+//        //robot.initCamera();
+//
+//        robot.camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener()
+//
+//        {
+//            @Override
+//            public void onOpened() {
+//                robot.camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+//            }
+//            @Override
+//            public void onError(int errorCode) {
+//                telemetry.addData("Camera Error", errorCode);
+//                telemetry.update();
+//            }
+//        }
+//
+//        while (opModeIsActive()){
+//            telemetry.addData("viewID", 4);
+//            telemetry.update();
+//
+//        }
 
     }
 

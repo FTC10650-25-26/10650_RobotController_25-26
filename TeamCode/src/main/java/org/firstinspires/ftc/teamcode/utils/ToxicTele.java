@@ -3,8 +3,11 @@ package org.firstinspires.ftc.teamcode.utils;
 import android.widget.Button;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import java.lang.Math;
 
@@ -27,6 +30,7 @@ public abstract class ToxicTele extends LinearOpMode {
     double rightFrontPower;
     double leftRearPower;
     double rightRearPower;
+
 
 
     // Normalize the values so no wheel power exceeds 100%
@@ -120,6 +124,33 @@ public abstract class ToxicTele extends LinearOpMode {
             servo.setPosition(servo.getPosition() - incrementValue);
         }
     }
+
+    public void shootALl(){
+
+    }
+
+//    public void velIncrease(DcMotorEx motor, double finalVel, int secs){
+//        time.reset();
+//        while(opModeIsActive()){
+//            if (time.seconds()<=secs) {
+//                motor.setVelocity((finalVel /secs)*time.seconds());
+//                motor.setVelocity((finalVel /secs)*time.seconds());
+//
+//            }else{
+//                motor.setVelocity(805);
+//                motor.setVelocity(805);
+//                telemetry.addData("vel status", "reached");
+//
+//            }
+//            telemetry.update();
+//
+//        }
+//    }
+
+
+
+
+
 
     public void pauseCamera(){
        // camera.pauseViewport();

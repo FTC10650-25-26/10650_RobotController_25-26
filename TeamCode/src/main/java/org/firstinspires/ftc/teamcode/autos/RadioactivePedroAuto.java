@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.autos;
 
 
+import static com.sun.tools.doclint.HtmlTag.B;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
@@ -72,6 +74,30 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
             pathingLoop();
         }
     }
+
+    public void startPath(Path startPath){
+        follower.followPath(startPath);
+        setPathState(1);
+    }
+
+    public void goNextPath(Path currentPath, int nextCaseNum){
+       follower.followPath(currentPath);
+       setPathState(nextCaseNum);
+    }
+
+    public void endPath(Follower follower){
+        if (!follower.isBusy()){
+            stop();
+        }
+    }
+    public double inRads(double deg){
+        double radians = deg * (Math.PI/180);
+        return radians;
+    }
+
+
+
+
 
 }
 
