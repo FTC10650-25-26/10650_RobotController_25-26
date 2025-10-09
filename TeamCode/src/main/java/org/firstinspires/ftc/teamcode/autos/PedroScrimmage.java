@@ -1,15 +1,20 @@
 package org.firstinspires.ftc.teamcode.autos;
 
-import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierCurve;
-import com.pedropathing.pathgen.BezierLine;
-import com.pedropathing.pathgen.Path;
+//import com.pedropathing.localization.Pose;
+//import com.pedropathing.pathgen.BezierCurve;
+//import com.pedropathing.pathgen.BezierLine;
+//import com.pedropathing.pathgen.Path;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.pedropathing.geometry.*;
 
 @Autonomous (name = "scrimmage auto")
 public class PedroScrimmage extends RadioactivePedroAuto{
 
     private Path path1,path2, path3, path4, path5, path6, path7, path8, path9;
+    //private PathChain
 
 
     @Override
@@ -77,6 +82,7 @@ public class PedroScrimmage extends RadioactivePedroAuto{
             case 1:
                 if (!follower.isBusy()){
                     //start intaking?
+                    endPath(follower);
                     goNextPath(path2, 2);
                 }
                 break;

@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.teleops;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
@@ -81,9 +80,9 @@ public class ScrimTele extends ToxicTele {
 
 
         if (gamepad2.left_trigger>0){//intake
-            robot.intake.setVelocity(intakeVel);
+            //robot.intake1.setVelocity(intakeVel);
         } else{
-            robot.intake.setVelocity(0);
+            //robot.intake1.setVelocity(0);
         }
 
         if(gamepad2.square){//shoot

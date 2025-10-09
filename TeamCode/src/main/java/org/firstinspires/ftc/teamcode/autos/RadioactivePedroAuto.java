@@ -1,26 +1,48 @@
 package org.firstinspires.ftc.teamcode.autos;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.changes;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawOnlyCurrent;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.draw;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.stopRobot;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.telemetryM;
 
+import com.bylazar.configurables.PanelsConfigurables;
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.configurables.annotations.IgnoreConfigurable;
+import com.bylazar.field.FieldManager;
+import com.bylazar.field.PanelsField;
+import com.bylazar.field.Style;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.follower.Follower;
+import com.pedropathing.geometry.*;
+import com.pedropathing.math.*;
+import com.pedropathing.paths.*;
+import com.pedropathing.telemetry.SelectableOpMode;
+import com.pedropathing.util.*;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import java.util.ArrayList;
+import java.util.List;
 import static com.sun.tools.doclint.HtmlTag.B;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierCurve;
-import com.pedropathing.pathgen.Path;
-import com.pedropathing.pathgen.Point;
-import com.pedropathing.util.Constants;
+import com.pedropathing.geometry.Pose;
+import com.pedropathing.geometry.BezierCurve;
+import com.pedropathing.paths.Path;
 import com.pedropathing.util.Timer;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.pedroPathing.FConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing.LConstants;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
+//import org.firstinspires.ftc.teamcode.pedroPathing.FConstants;
+//import org.firstinspires.ftc.teamcode.pedroPathing.LConstants;
 import org.firstinspires.ftc.teamcode.utils.RadioactiveAuto;
 
 abstract public class RadioactivePedroAuto extends RadioactiveAuto {
     Follower follower;
-    private Timer pathTimer, opModeTimer;
+    private Timer pathTimer, actionTimer, opModeTimer;
 
     private Telemetry telemetryA;
 
@@ -48,7 +70,8 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
         follower.update();
         autonomousPathUpdate();
 
-        follower.telemetryDebug(telemetryA);
+        //follower.telemetryDebug(telemetryA);
+        //try telemetry.addata instead
     }
 
     @Override
@@ -56,13 +79,20 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
         pathTimer = new Timer();
         opModeTimer = new Timer();
         opModeTimer.resetTimer();
+        follower.setStartingPose(startingPose);
 
-        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 
-        Constants.setConstants(FConstants.class, LConstants.class);
-        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+        follower = org.firstinspires.ftc.teamcode.pedroPathing.Constants.createFollower(hardwareMap);
         buildPaths();
         follower.setStartingPose(startingPose);
+
+
+//        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+//
+//        Constants.setConstants(FConstants.class, LConstants.class);
+//        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+//        buildPaths();
+//        follower.setStartingPose(startingPose);
     }
 
     @Override

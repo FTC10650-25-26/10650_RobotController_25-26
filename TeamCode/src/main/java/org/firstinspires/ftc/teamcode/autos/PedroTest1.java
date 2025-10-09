@@ -1,18 +1,35 @@
 package org.firstinspires.ftc.teamcode.autos;
 
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.changes;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.drawOnlyCurrent;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.draw;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.follower;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.stopRobot;
+import static org.firstinspires.ftc.teamcode.pedroPathing.Tuning.telemetryM;
 
+import com.bylazar.configurables.PanelsConfigurables;
+import com.bylazar.configurables.annotations.Configurable;
+import com.bylazar.configurables.annotations.IgnoreConfigurable;
+import com.bylazar.field.FieldManager;
+import com.bylazar.field.PanelsField;
+import com.bylazar.field.Style;
+import com.bylazar.telemetry.PanelsTelemetry;
+import com.bylazar.telemetry.TelemetryManager;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.localization.Pose;
-import com.pedropathing.pathgen.BezierCurve;
-import com.pedropathing.pathgen.BezierLine;
-import com.pedropathing.pathgen.Path;
-import com.pedropathing.pathgen.Point;
-import com.pedropathing.util.Constants;
-import com.pedropathing.util.Timer;
+import com.pedropathing.geometry.*;
+import com.pedropathing.math.*;
+import com.pedropathing.paths.*;
+import com.pedropathing.telemetry.SelectableOpMode;
+import com.pedropathing.util.*;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import java.util.ArrayList;
+import java.util.List;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
-import org.firstinspires.ftc.teamcode.pedroPathing.FConstants;
-import org.firstinspires.ftc.teamcode.pedroPathing.LConstants;
+//import org.firstinspires.ftc.teamcode.pedroPathing.FConstants;
+//import org.firstinspires.ftc.teamcode.pedroPathing.LConstants;
 
 @Autonomous (name = "pedro auto 1")
 public class PedroTest1 extends RadioactivePedroAuto {

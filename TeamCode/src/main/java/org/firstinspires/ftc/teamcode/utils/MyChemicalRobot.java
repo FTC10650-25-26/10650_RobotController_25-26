@@ -4,12 +4,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvInternalCamera;
-import org.openftc.easyopencv.OpenCvInternalCamera2;
 
 public class MyChemicalRobot {
 
@@ -27,7 +26,8 @@ public class MyChemicalRobot {
     public DcMotorEx wheel1;
     public DcMotorEx wheel2;
 
-    public DcMotorEx intake;
+    public Servo intake1;
+    public Servo intake2;
     public DcMotorEx belt;
 
 
@@ -84,11 +84,19 @@ public class MyChemicalRobot {
 
             //intake
             {
-                intake = hardwareMap.get(DcMotorEx.class, "intake");
-                intake.setDirection(DcMotorSimple.Direction.FORWARD);
-                intake.setVelocity(0);
-                intake.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                intake.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+//                intake1 = hardwareMap.get(DcMotorEx.class, "intake");
+//                intake1.setDirection(DcMotorSimple.Direction.FORWARD);
+//                intake1.setVelocity(0);
+//                intake1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+//                intake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+
+                intake1 = hardwareMap.get(Servo.class, "intake1");
+                intake1.setDirection(Servo.Direction.FORWARD);
+                //intake1.setPosition(0);
+                intake2 = hardwareMap.get(Servo.class, "intake2");
+                intake2.setDirection(Servo.Direction.FORWARD);
+                //intake2.setPosition(0);
+
 
 
                 belt = hardwareMap.get(DcMotorEx.class, "belt");
@@ -98,6 +106,8 @@ public class MyChemicalRobot {
                 belt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             }
+
+
 
 
         }
