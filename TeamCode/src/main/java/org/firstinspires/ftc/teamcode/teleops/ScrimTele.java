@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
@@ -18,21 +19,25 @@ public class ScrimTele extends ToxicTele {
     double rightRearPower;
     double speed = 0;
 
-    int wheelVel=0; //dont change this
-    double beltVel = 20; //this can be changed
-    double intakeVel = 30; //this can be changed
+    double wheelVel=0; //dont change this
+    final int MAXWHEELVEL = 1900;
+    final double BELTVEL = 600; //this can be changed
+    final double INTAKEVEL = 30; //this can be changed
+    public ElapsedTime time = new ElapsedTime();
 
     Boolean beltOn = false;
+    Boolean wasMax = false;
+
+    Boolean shootOn = false;
 
     @Override
-    public void runOpMode() throws InterruptedException {
+    public void initialize() {
         robot.belt.setVelocity(0);
-
-        waitForStart();
     }
 
     @Override
     public void teleLoop() {
+
 
         //below must be <=1
 
@@ -47,7 +52,7 @@ public class ScrimTele extends ToxicTele {
         //ignore all of whats below
         x = Math.pow(-gamepad1.left_stick_y, 3)*speed;  // Note: pushing stick forward gives negative value
         y = Math.pow(-gamepad1.left_stick_x, 3)*speed;  // Note: pushing stick forward gives negative value
-        z = Math.pow(-gamepad1.right_stick_x, 3)*speed;  // Note: pushing stick forward gives negative value
+        z = -Math.pow(-gamepad1.right_stick_x, 3)*speed;  // Note: pushing stick forward gives negative value
 
         leftFrontPower = x+y+z;
         rightFrontPower = x-y-z;
@@ -84,38 +89,77 @@ public class ScrimTele extends ToxicTele {
 
 
         if (gamepad2.left_trigger>0){//intake
-            //robot.intake1.setVelocity(intakeVel);
+            robot.intake.setPower(1.0);
         } else{
-            //robot.intake1.setVelocity(0);
+            robot.intake.setPower(0.0);
         }
 
-        //this button will shoot
-        if(gamepad2.square){
-            if (wheelVel<1900) {  /// <- this number is the max shooting speed
-                wheelVel = wheelVel + 2;
+        //finalVel = x (current time)
+        //final Vel/curent time = x
+
+
+        if(gamepad2.x){//shoot
+            if (wheelVel < 1900) {/// <- this number is the max shooting speed
+                wheelVel = wheelVel + 20;
             } else {
+                if (!wasMax) {
+                    gamepad2.rumble(400);
+                    //gamepad2.rumbleBlips(15);
+                    wasMax=true;
+                }
+
                 wheelVel = 1900;
             }
 
-        } else{
+            //time.reset();
 
+//            if (!shootOn) {
+//                shootOn = true;
+//                if (wheelVel<1900) {
+//                    wheelVel = wheelVel+2;
+//                } else {
+//                    wheelVel = 1900;
+//                }
+//
+//            } else{
+//                shootOn = false;
+//                wheelVel = 0;
+//            }
+        } else{
             wheelVel = 0;
+            wasMax=false;
         }
 
         robot.wheel1.setVelocity(wheelVel);
         robot.wheel2.setVelocity(wheelVel);
 
-        if (gamepad2.x) { //belt speed set at very top, only change it there
+
+
+        telemetry.addData("Vel 1",wheelVel);
+        telemetry.addData("actualVel 1", robot.wheel1.getVelocity());
+        telemetry.addData("actualVel 2", robot.wheel2.getVelocity());
+        telemetry.update();
+
+        if (gamepad2.crossWasPressed()) { //belt speed set at very top, only change it there
             if (!beltOn) {
                 beltOn = true;
-                robot.belt.setVelocity(beltVel);
+                robot.belt.setVelocity(BELTVEL);
             } else if (beltOn) {
                 robot.belt.setVelocity(0);
                 beltOn = false;
             }
         }
 
+        if (gamepad2.triangle){
+            robot.intakePush.setPower(.5);
+        }else{
+            robot.intakePush.setPower(0.0);
+        }
+
     }
+
+
+
 
 
 }

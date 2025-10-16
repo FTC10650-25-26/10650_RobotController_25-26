@@ -6,11 +6,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 
 @Autonomous(name = "Test Auto")
 public class TestAuto extends LinearOpMode {
+    public ElapsedTime time = new ElapsedTime();
 
     Follower follower;
 
@@ -19,10 +21,10 @@ public class TestAuto extends LinearOpMode {
 //        Constants.setConstants(FConstants.class, LConstants.class);
 //        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
 
-        DcMotor leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
-        DcMotor leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
-        DcMotor rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
-        DcMotor rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        DcMotorEx leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        DcMotorEx leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+        DcMotorEx rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+        DcMotorEx rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
 
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -45,8 +47,17 @@ public class TestAuto extends LinearOpMode {
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         waitForStart();
-
-
+        time.reset();
+        while (time.seconds()<7){
+            leftFront.setPower(0.6);
+            leftRear.setPower(0.6);
+            rightFront.setPower(0.6);
+            rightRear.setPower(0.6);
+        }
+        leftFront.setPower(0);
+        leftRear.setPower(0);
+        rightFront.setPower(0);
+        rightRear.setPower(0);
 
 //
 //        while(((Math.abs(leftFront.getCurrentPosition())+Math.abs(rightFront.getCurrentPosition())+Math.abs(leftRear.getCurrentPosition())+Math.abs(rightRear.getCurrentPosition()))/4)<800&& opModeIsActive()){
@@ -55,13 +66,10 @@ public class TestAuto extends LinearOpMode {
 //            rightFront.setPower(-.25);
 //            rightRear.setPower(.25);
 //        }
-        leftFront.setPower(0);
-        leftRear.setPower(0);
-        rightFront.setPower(0);
-        rightRear.setPower(0);
 
 
-        telemetry.addData("viewID", hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
+
+        //telemetry.addData("viewID", hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()));
        // telemetry.addData("Webcam Name",hardwareMap.get(WebcamName.class, "NAME_OF_CAMERA_IN_CONFIG_FILE"));
 
         telemetry.update();

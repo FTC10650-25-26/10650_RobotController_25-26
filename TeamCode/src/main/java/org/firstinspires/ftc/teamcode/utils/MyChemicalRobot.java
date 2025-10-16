@@ -30,6 +30,7 @@ public class MyChemicalRobot {
     //public Servo intake2;
     public DcMotorEx belt;
 
+    public CRServo intakePush;
 
     public OpenCvCamera camera;
     WebcamName webcamName;
@@ -69,13 +70,13 @@ public class MyChemicalRobot {
 
             //outtake
             {
-                wheel1 = hardwareMap.get(DcMotorEx.class, "wheel1");
+                wheel1 = hardwareMap.get(DcMotorEx.class, "wheelL");
                 wheel1.setDirection(DcMotorSimple.Direction.FORWARD);
                 wheel1.setVelocity(0);
                 wheel1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 wheel1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
-                wheel2 = hardwareMap.get(DcMotorEx.class, "wheel2");
+                wheel2 = hardwareMap.get(DcMotorEx.class, "wheelR");
                 wheel2.setDirection(DcMotorSimple.Direction.REVERSE);
                 wheel2.setVelocity(0);
                 wheel2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -91,8 +92,11 @@ public class MyChemicalRobot {
 //                intake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
                 intake = hardwareMap.get(CRServo.class, "intake");
-                intake.setDirection(CRServo.Direction.FORWARD);
-                
+                intake.setDirection(CRServo.Direction.REVERSE);
+
+                intakePush = hardwareMap.get(CRServo.class, "intakePush");
+                intakePush.setDirection(DcMotorSimple.Direction.FORWARD);
+
                 //intake1.setPosition(0);
 //                intake2 = hardwareMap.get(Servo.class, "intake2");
 //                intake2.setDirection(Servo.Direction.FORWARD);
@@ -101,7 +105,7 @@ public class MyChemicalRobot {
 
 
                 belt = hardwareMap.get(DcMotorEx.class, "belt");
-                belt.setDirection(DcMotorSimple.Direction.FORWARD);
+                belt.setDirection(DcMotorSimple.Direction.REVERSE);
                 belt.setVelocity(0);
                 belt.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 belt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -115,8 +119,8 @@ public class MyChemicalRobot {
 
         //camera block
         {
-            webcamName = hardwareMap.get(WebcamName.class, "camera");
-            camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
+//            webcamName = hardwareMap.get(WebcamName.class, "camera");
+//            camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
 
         }
 

@@ -12,7 +12,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import java.lang.Math;
 
 public abstract class ToxicTele extends LinearOpMode {
-   public MyChemicalRobot robot = new MyChemicalRobot(hardwareMap);
+   public MyChemicalRobot robot;
 
 
     double max;
@@ -38,12 +38,16 @@ public abstract class ToxicTele extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        robot = new MyChemicalRobot(hardwareMap);
         robot.initHardware(true);
-
+        initialize();
+        waitForStart();
         while(opModeIsActive()) {
             teleLoop();
         }
     }
+    abstract public void initialize();
+
 
     abstract public void teleLoop();
 
