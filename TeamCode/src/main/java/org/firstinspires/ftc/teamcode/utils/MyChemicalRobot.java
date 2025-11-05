@@ -1,13 +1,23 @@
 package org.firstinspires.ftc.teamcode.utils;
 
+import static com.sun.tools.javac.jvm.ByteCodes.ret;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
+import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.hardware.limelightvision.Limelight3A;
+import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
@@ -15,20 +25,25 @@ public class MyChemicalRobot {
 
     HardwareMap hardwareMap;
 
-    public MyChemicalRobot(HardwareMap hardwareMap){
+    Telemetry telemetry;
 
+    public MyChemicalRobot(HardwareMap hardwareMap, Telemetry telemetry){
         this.hardwareMap = hardwareMap;
+        this.telemetry = telemetry;
     }
     public DcMotor leftFront;
     public DcMotor leftRear;
     public DcMotor rightFront;
     public DcMotor rightRear;
 
+    public Limelight3A limelight;
     public DcMotorEx wheel1;
     public DcMotorEx wheel2;
     public CRServo intake;
     //public Servo intake2;
     public DcMotorEx belt;
+
+    public IMU imu;
 
     public CRServo intakePush;
 
@@ -114,8 +129,21 @@ public class MyChemicalRobot {
 
 
 
-
         }
+
+
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
+        limelight.start(); // This tells Limelight to start looking!
+
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+
+        // Now initialize the IMU with this mounting orientation
+        // This sample expects the IMU to be in a REV Hub and named "imu".
+        imu = hardwareMap.get(IMU.class, "imu");
+        imu.initialize(new IMU.Parameters(orientationOnRobot));
 
         //camera block
         {
@@ -128,5 +156,52 @@ public class MyChemicalRobot {
 
 
     }
+
+    public Pose getLLPos(boolean useLLTelem){
+
+            double x = 0 ,y = 0;
+            LLResult result = limelight.getLatestResult();
+            if (result != null && result.isValid()) {
+
+                double tx = result.getTx(); // How far left or right the target is (degrees)
+                double ty = result.getTy(); // How far up or down the target is (degrees)
+                double ta = result.getTa(); // How big the target looks (0%-100% of the image)
+
+                if (useLLTelem) {
+                    telemetry.addData("Target X", tx);
+                    telemetry.addData("Target Y", ty);
+                    telemetry.addData("Target Area", ta);
+
+                }
+            } else if (useLLTelem){
+                telemetry.addData("Limelight", "No Targets");
+
+            }
+
+
+            // First, tell Limelight which way your robot is facing
+            double robotYaw = imu.getRobotYawPitchRollAngles().getYaw();
+            limelight.updateRobotOrientation(robotYaw);
+            if (result != null && result.isValid()) {
+                Pose3D botpose_mt2 = result.getBotpose_MT2();
+                if (botpose_mt2 != null) {
+                    x = botpose_mt2.getPosition().x;
+                    y = botpose_mt2.getPosition().y;
+
+
+                    if (useLLTelem) {
+                        telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
+                    }
+                }
+            }
+
+        if (useLLTelem){
+            telemetry.update();
+        }
+
+
+        return new Pose(x, y);
+    }
+
 
 }

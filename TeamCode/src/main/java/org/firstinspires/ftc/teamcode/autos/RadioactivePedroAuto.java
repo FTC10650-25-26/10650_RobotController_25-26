@@ -48,6 +48,8 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
 
     int pathState;
 
+    int LLPoseCorrectionFreq= Integer.MAX_VALUE;
+    int lastLLPoseCorrectionRefreshTime = (int) System.currentTimeMillis();
     Pose startingPose;
 
     abstract public void buildPaths();
@@ -67,8 +69,22 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
     }
 
     public void pathingLoop(){
+
+
+
+        
+        if (System.currentTimeMillis()-lastLLPoseCorrectionRefreshTime>=LLPoseCorrectionFreq) {
+            follower.setPose(robot.getLLPos(true));
+            lastLLPoseCorrectionRefreshTime = (int) System.currentTimeMillis();
+        }
         follower.update();
         autonomousPathUpdate();
+
+        //add get limleight data metatag2
+
+
+
+
 
         //follower.telemetryDebug(telemetryA);
         //try telemetry.addata instead

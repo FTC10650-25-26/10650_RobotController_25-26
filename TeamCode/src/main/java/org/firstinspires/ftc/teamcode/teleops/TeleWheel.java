@@ -15,6 +15,8 @@ public class TeleWheel extends LinearOpMode {
 
 
 
+
+
     @Override
     public void runOpMode() throws InterruptedException {
         init();
@@ -23,7 +25,6 @@ public class TeleWheel extends LinearOpMode {
         wheel.setVelocity(0);
         wheel.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wheel.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
 //1125
         //875
         waitForStart();

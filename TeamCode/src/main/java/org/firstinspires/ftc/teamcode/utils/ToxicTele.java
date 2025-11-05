@@ -38,8 +38,8 @@ public abstract class ToxicTele extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot = new MyChemicalRobot(hardwareMap);
-        robot.initHardware(true);
+        robot = new MyChemicalRobot(hardwareMap, telemetry);
+        robot.initHardware(false);
         initialize();
         waitForStart();
         while(opModeIsActive()) {

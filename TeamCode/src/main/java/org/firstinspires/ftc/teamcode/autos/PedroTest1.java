@@ -33,7 +33,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 @Autonomous (name = "pedro auto 1")
 public class PedroTest1 extends RadioactivePedroAuto {
-
     private Path path1,path2, path3;
 
     @Override
