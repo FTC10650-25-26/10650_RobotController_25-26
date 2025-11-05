@@ -7,11 +7,15 @@ import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.Encoder;
+import com.pedropathing.ftc.localization.constants.PinpointConstants;
 import com.pedropathing.ftc.localization.constants.ThreeWheelIMUConstants;
 import com.pedropathing.paths.PathConstraints;
+import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Constants {
 
@@ -43,28 +47,36 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
             .xVelocity(80.87332)
             .yVelocity(74.11616);
-
-    public static ThreeWheelIMUConstants localizerConstants =
-            new ThreeWheelIMUConstants()
-                    .forwardTicksToInches(.001989436789)
-                    .strafeTicksToInches(.001989436789)
-                    .turnTicksToInches(.001989436789)
-                    .leftPodY(3.5)
-                    .rightPodY(-3.5)
-                    .strafePodX(-4.5)
-                    .leftEncoder_HardwareMapName("leftEncoder")
-                    .rightEncoder_HardwareMapName("rightEncoder")
-                    .strafeEncoder_HardwareMapName("strafeEncoder")
-                    .leftEncoderDirection(Encoder.REVERSE)
-                    .rightEncoderDirection(Encoder.REVERSE)
-                    .strafeEncoderDirection(Encoder.REVERSE)
-                    .IMU_HardwareMapName("imu")
-                    .IMU_Orientation(
-                            new RevHubOrientationOnRobot(
-                                    RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
-                                    RevHubOrientationOnRobot.UsbFacingDirection.UP
-                            )
-                    );
+    public static PinpointConstants localizerConstants =
+            new PinpointConstants()
+                .forwardPodY(-5)
+                .strafePodX(0.5)
+                .distanceUnit(DistanceUnit.INCH)
+                .hardwareMapName("pinpoint")
+                .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
+                .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+                .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+//    public static ThreeWheelIMUConstants localizerConstants =
+//            new ThreeWheelIMUConstants()
+//                    .forwardTicksToInches(.001989436789)
+//                    .strafeTicksToInches(.001989436789)
+//                    .turnTicksToInches(.001989436789)
+//                    .leftPodY(3.5)
+//                    .rightPodY(-3.5)
+//                    .strafePodX(-4.5)
+//                    .leftEncoder_HardwareMapName("leftEncoder")
+//                    .rightEncoder_HardwareMapName("rightEncoder")
+//                    .strafeEncoder_HardwareMapName("strafeEncoder")
+//                    .leftEncoderDirection(Encoder.REVERSE)
+//                    .rightEncoderDirection(Encoder.REVERSE)
+//                    .strafeEncoderDirection(Encoder.REVERSE)
+//                    .IMU_HardwareMapName("imu")
+//                    .IMU_Orientation(
+//                            new RevHubOrientationOnRobot(
+//                                    RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+//                                    RevHubOrientationOnRobot.UsbFacingDirection.UP
+//                            )
+//                    );
 
     public static PathConstraints pathConstraints = new PathConstraints(
             0.995,
@@ -76,7 +88,7 @@ public class Constants {
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
                 .mecanumDrivetrain(driveConstants)
-                .threeWheelIMULocalizer(localizerConstants)
+                .pinpointLocalizer(localizerConstants)
                 .pathConstraints(pathConstraints)
                 .build();
     }
