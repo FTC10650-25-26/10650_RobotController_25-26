@@ -23,7 +23,7 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 
 public class MyChemicalRobot {
 
-    HardwareMap hardwareMap;
+    public HardwareMap hardwareMap;
 
     Telemetry telemetry;
 
@@ -130,7 +130,6 @@ public class MyChemicalRobot {
                 belt.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
             }
-
 
 
         }

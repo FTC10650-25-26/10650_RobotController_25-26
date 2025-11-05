@@ -33,6 +33,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.paths.Path;
 import com.pedropathing.util.Timer;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -57,6 +58,7 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
 
     @Override
     public void runOpMode() throws InterruptedException {
+        robot.hardwareMap = hardwareMap;
         robot.initHardware(false); // do NOT double declare the motors!
         initialize();
         waitForStart();
