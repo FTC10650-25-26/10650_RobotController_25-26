@@ -51,6 +51,10 @@ public class MyChemicalRobot {
     WebcamName webcamName;
     int cameraMonitorViewId = 2131230820;
 
+    double currentLLPoseX = 0;
+    double currentLLPoseY = 0;
+
+
 
     public void initHardware(boolean useMotors){
         if (useMotors) {
@@ -157,7 +161,7 @@ public class MyChemicalRobot {
 
     }
 
-    public Pose getLLPos(boolean useLLTelem){
+    public void loopLimelightPoseData(boolean useLLTelem){
 
             double x = 0 ,y = 0;
             LLResult result = limelight.getLatestResult();
@@ -199,8 +203,12 @@ public class MyChemicalRobot {
             telemetry.update();
         }
 
+        currentLLPoseX = x;
+        currentLLPoseY = y;
+    }
 
-        return new Pose(x, y);
+    public Pose getLLPose(){
+        return new Pose (currentLLPoseX, currentLLPoseY);
     }
 
 
