@@ -17,7 +17,10 @@ apply from: '../build.dependencies.gradle'
 
 android {
     namespace = 'org.firstinspires.ftc.teamcode'
-
+    compileSdk 35
+    defaultConfig {
+        minSdk 24
+    }
     packagingOptions {
         jniLibs {
             pickFirsts += ['**/*.so']
@@ -30,4 +33,7 @@ dependencies {
     implementation project(':FtcRobotController')
     implementation 'com.android.identity:identity-credential:20231002'
     implementation 'androidx.xr.runtime:runtime:1.0.0-alpha07'
+    implementation "com.bylazar:docs:1.0.5"
+    implementation "com.bylazar:fullpanels:1.0.9"
+
 }
