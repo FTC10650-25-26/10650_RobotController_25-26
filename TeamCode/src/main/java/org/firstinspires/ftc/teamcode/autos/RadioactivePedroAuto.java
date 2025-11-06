@@ -39,6 +39,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 //import org.firstinspires.ftc.teamcode.pedroPathing.FConstants;
 //import org.firstinspires.ftc.teamcode.pedroPathing.LConstants;
+import org.firstinspires.ftc.teamcode.utils.MyChemicalRobot;
 import org.firstinspires.ftc.teamcode.utils.RadioactiveAuto;
 
 abstract public class RadioactivePedroAuto extends RadioactiveAuto {
@@ -53,16 +54,37 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
     int lastLLPoseCorrectionRefreshTime = (int) System.currentTimeMillis();
     Pose startingPose;
 
-    abstract public void buildPaths();
-    abstract public void autonomousPathUpdate();
+
 
     @Override
     public void runOpMode() throws InterruptedException {
-        robot.hardwareMap = hardwareMap;
+        robot = new MyChemicalRobot(hardwareMap, telemetry);
         robot.initHardware(false); // do NOT double declare the motors!
         initialize();
         waitForStart();
         begin();
+    }
+
+    @Override
+    public void initialize() {
+        pathTimer = new Timer();
+        opModeTimer = new Timer();
+        opModeTimer.resetTimer();
+
+        follower = Constants.createFollower(hardwareMap);
+        follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
+
+        //follower = org.firstinspires.ftc.teamcode.pedroPathing.Constants.createFollower(hardwareMap);
+        follower.setStartingPose(startingPose);
+
+        buildPaths();
+
+//        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
+//
+//        Constants.setConstants(FConstants.class, LConstants.class);
+//        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
+//        buildPaths();
+//        follower.setStartingPose(startingPose);
     }
 
     public void setPathState(int pState){
@@ -93,27 +115,10 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
         //try telemetry.addata instead
     }
 
-    @Override
-    public void initialize() {
-        pathTimer = new Timer();
-        opModeTimer = new Timer();
-        opModeTimer.resetTimer();
-        follower.setStartingPose(startingPose);
 
 
-        follower = org.firstinspires.ftc.teamcode.pedroPathing.Constants.createFollower(hardwareMap);
-        buildPaths();
-        follower.setStartingPose(startingPose);
-
-
-//        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
-//
-//        Constants.setConstants(FConstants.class, LConstants.class);
-//        follower = new Follower(hardwareMap, FConstants.class, LConstants.class);
-//        buildPaths();
-//        follower.setStartingPose(startingPose);
-    }
-
+    abstract public void buildPaths();
+    abstract public void autonomousPathUpdate();
     @Override
     public void begin(){
         opModeTimer.resetTimer();
@@ -133,6 +138,8 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
        follower.followPath(currentPath);
        setPathState(nextCaseNum);
     }
+
+
 
     public void endPath(Follower follower){
         if (!follower.isBusy()){

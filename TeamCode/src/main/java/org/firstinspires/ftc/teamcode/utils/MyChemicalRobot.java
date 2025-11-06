@@ -3,6 +3,8 @@ package org.firstinspires.ftc.teamcode.utils;
 import static com.sun.tools.javac.jvm.ByteCodes.ret;
 import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
 
+import androidx.xr.runtime.math.Vector3;
+
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -21,16 +23,19 @@ import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
+import java.util.ArrayDeque;
+
 public class MyChemicalRobot {
 
     public HardwareMap hardwareMap;
 
     Telemetry telemetry;
 
-    public MyChemicalRobot(HardwareMap hardwareMap, Telemetry telemetry){
+    public MyChemicalRobot(HardwareMap hardwareMap, Telemetry telemetry) {
         this.hardwareMap = hardwareMap;
         this.telemetry = telemetry;
     }
+
     public DcMotor leftFront;
     public DcMotor leftRear;
     public DcMotor rightFront;
@@ -54,9 +59,20 @@ public class MyChemicalRobot {
     double currentLLPoseX = 0;
     double currentLLPoseY = 0;
 
+    double currentImuPose = 0;
 
+    public ArrayDeque<Vector3> LLPosDeque =  new ArrayDeque<>(6);
 
-    public void initHardware(boolean useMotors){
+    public double sumLLPosX, getSumLLPosY, sumImuPos;
+
+    public Vector3 LLPosVector;
+
+    public int maxCapacity = 7;
+    public double[] xVals, yVals, thetaVals;
+
+    public int head = 0;
+
+    public void initHardware(boolean useMotors) {
         if (useMotors) {
 
             //drivetrain
@@ -122,7 +138,6 @@ public class MyChemicalRobot {
                 //intake2.setPosition(0);
 
 
-
                 belt = hardwareMap.get(DcMotorEx.class, "belt");
                 belt.setDirection(DcMotorSimple.Direction.REVERSE);
                 belt.setVelocity(0);
@@ -140,7 +155,7 @@ public class MyChemicalRobot {
         limelight.start(); // This tells Limelight to start looking!
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
         RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
 
         // Now initialize the IMU with this mounting orientation
@@ -156,59 +171,70 @@ public class MyChemicalRobot {
         }
 
 
-
-
     }
 
-    public void loopLimelightPoseData(boolean useLLTelem){
+    public void loopLimelightPoseData(boolean useLLTelem) {
 
-            double x = 0 ,y = 0;
-            LLResult result = limelight.getLatestResult();
-            if (result != null && result.isValid()) {
+        double x = 0, y = 0, z=0;
+        LLResult result = limelight.getLatestResult();
+        if (result != null && result.isValid()) {
 
-                double tx = result.getTx(); // How far left or right the target is (degrees)
-                double ty = result.getTy(); // How far up or down the target is (degrees)
-                double ta = result.getTa(); // How big the target looks (0%-100% of the image)
+            double tx = result.getTx(); // How far left or right the target is (degrees)
+            double ty = result.getTy(); // How far up or down the target is (degrees)
+            double ta = result.getTa(); // How big the target looks (0%-100% of the image)
+
+            if (useLLTelem) {
+                telemetry.addData("Target X", tx);
+                telemetry.addData("Target Y", ty);
+                telemetry.addData("Target Area", ta);
+
+            }
+        } else if (useLLTelem) {
+            telemetry.addData("Limelight", "No Targets");
+
+        }
+
+
+        // First, tell Limelight which way your robot is facing
+        double robotYaw = imu.getRobotYawPitchRollAngles().getYaw();
+        limelight.updateRobotOrientation(robotYaw);
+        if (result != null && result.isValid()) {
+            Pose3D botpose_mt2 = result.getBotpose_MT2();
+            if (botpose_mt2 != null) {
+                x = botpose_mt2.getPosition().x;
+                y = botpose_mt2.getPosition().y;
+
 
                 if (useLLTelem) {
-                    telemetry.addData("Target X", tx);
-                    telemetry.addData("Target Y", ty);
-                    telemetry.addData("Target Area", ta);
-
-                }
-            } else if (useLLTelem){
-                telemetry.addData("Limelight", "No Targets");
-
-            }
-
-
-            // First, tell Limelight which way your robot is facing
-            double robotYaw = imu.getRobotYawPitchRollAngles().getYaw();
-            limelight.updateRobotOrientation(robotYaw);
-            if (result != null && result.isValid()) {
-                Pose3D botpose_mt2 = result.getBotpose_MT2();
-                if (botpose_mt2 != null) {
-                    x = botpose_mt2.getPosition().x;
-                    y = botpose_mt2.getPosition().y;
-
-
-                    if (useLLTelem) {
-                        telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
-                    }
+                    telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
                 }
             }
+        }
+        z = imu.getRobotYawPitchRollAngles().getYaw();
 
-        if (useLLTelem){
+
+        if (useLLTelem) {
             telemetry.update();
         }
 
         currentLLPoseX = x;
         currentLLPoseY = y;
+        currentImuPose = z;
+
+        //LLPosVector = new Vector3((float) , (float) y, (float) z);
+
+
     }
 
     public Pose getLLPose(){
-        return new Pose (currentLLPoseX, currentLLPoseY);
+        return new Pose(currentLLPoseX, currentLLPoseY);
     }
 
+//    public void chooseName(double x, double y,double theta){
+//        if (LLPosDeque.size() == maxCapacity){
+//            sumLLPosX-= LLPosDeque.
+//        }
+//
+//    }
 
 }

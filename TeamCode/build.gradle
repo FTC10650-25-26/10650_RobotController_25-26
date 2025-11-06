@@ -29,4 +29,5 @@ android {
 dependencies {
     implementation project(':FtcRobotController')
     implementation 'com.android.identity:identity-credential:20231002'
+    implementation 'androidx.xr.runtime:runtime:1.0.0-alpha07'
 }
