@@ -19,6 +19,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.GoBildaPinpointDriver;
@@ -57,6 +58,8 @@ public class MyChemicalRobot {
 
     public CRServo intakePush;
 
+    public Servo shooterServo;
+
     public OpenCvCamera camera;
     WebcamName webcamName;
     int cameraMonitorViewId = 2131230820;
@@ -71,16 +74,7 @@ public class MyChemicalRobot {
     public ArrayDeque<Pose> LLPosDeque =  new ArrayDeque<>(weightedAvgLLPoseCapacity);
 
 
-
-
-    public double sumLLPosX, getSumLLPosY, sumImuPos;
-
-    public Vector3 LLPosVector;
-
-    public int maxCapacity = 7;
-    public double[] xVals, yVals, thetaVals;
-
-    public int head = 0;
+    //double re
 
     public void initHardware(boolean useMotors) {
         if (useMotors) {
@@ -130,23 +124,18 @@ public class MyChemicalRobot {
 
             //intake
             {
-//                intake1 = hardwareMap.get(DcMotorEx.class, "intake");
-//                intake1.setDirection(DcMotorSimple.Direction.FORWARD);
-//                intake1.setVelocity(0);
-//                intake1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//                intake1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
-
                 intake = hardwareMap.get(CRServo.class, "intake");
                 intake.setDirection(CRServo.Direction.REVERSE);
 
                 intakePush = hardwareMap.get(CRServo.class, "intakePush");
                 intakePush.setDirection(DcMotorSimple.Direction.FORWARD);
 
-                //intake1.setPosition(0);
-//                intake2 = hardwareMap.get(Servo.class, "intake2");
-//                intake2.setDirection(Servo.Direction.FORWARD);
-                //intake2.setPosition(0);
 
+//
+//                shooterServo = hardwareMap.get(Servo.class, "shooterServo");
+//                shooterServo.setDirection();
+//                shooterServo.setPosition();
+//
 
                 belt = hardwareMap.get(DcMotorEx.class, "belt");
                 belt.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -173,11 +162,12 @@ public class MyChemicalRobot {
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-
-        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);//camera block
-        pinpoint.setOffsets(4, 0.5, DistanceUnit.INCH);
+//
+//        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+//        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+//        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);//camera block
+//        pinpoint.setOffsets(4, 0.5, DistanceUnit.INCH);
+//        pinpoint.recalibrateIMU();
         {
 //            webcamName = hardwareMap.get(WebcamName.class, "camera");
 //            camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
@@ -211,6 +201,9 @@ public class MyChemicalRobot {
 
         // First, tell Limelight which way your robot is facing
         double robotYaw = imu.getRobotYawPitchRollAngles().getYaw();
+
+
+        //double robotYaw = pinpoint.getHeading(AngleUnit.RADIANS);
         limelight.updateRobotOrientation(robotYaw);
         if (result != null && result.isValid()) {
             Pose3D botpose_mt2 = result.getBotpose_MT2();
