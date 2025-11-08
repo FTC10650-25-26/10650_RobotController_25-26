@@ -14,8 +14,11 @@ import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.teamcode.utils.MyChemicalRobot;
+
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.utils.MyChemicalRobot;
 
 public class Constants {
 
@@ -49,7 +52,7 @@ public class Constants {
             .yVelocity(74.11616);
     public static PinpointConstants localizerConstants =
             new PinpointConstants()
-                .forwardPodY(-5)
+                .forwardPodY(-4)
                 .strafePodX(0.5)
                 .distanceUnit(DistanceUnit.INCH)
                 .hardwareMapName("pinpoint")

@@ -19,7 +19,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
+import org.firstinspires.ftc.teamcode.GoBildaPinpointDriver;
+import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
@@ -50,7 +53,7 @@ public class MyChemicalRobot {
 
     public IMU imu;
 
-    //public Pin
+    public GoBildaPinpointDriver pinpoint;
 
     public CRServo intakePush;
 
@@ -170,7 +173,11 @@ public class MyChemicalRobot {
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-        //camera block
+
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);//camera block
+        pinpoint.setOffsets(4, 0.5, DistanceUnit.INCH);
         {
 //            webcamName = hardwareMap.get(WebcamName.class, "camera");
 //            camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
