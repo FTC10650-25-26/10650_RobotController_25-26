@@ -61,7 +61,12 @@ public class MyChemicalRobot {
 
     double currentImuPose = 0;
 
-    public ArrayDeque<Vector3> LLPosDeque =  new ArrayDeque<>(6);
+    public int weightedAvgLLPoseCapacity = 6;
+
+    public ArrayDeque<Pose> LLPosDeque =  new ArrayDeque<>(weightedAvgLLPoseCapacity);
+
+
+
 
     public double sumLLPosX, getSumLLPosY, sumImuPos;
 
@@ -221,15 +226,62 @@ public class MyChemicalRobot {
         currentLLPoseY = y;
         currentImuPose = z;
 
+        LLPosDeque.addLast(getLLPose());
+        if (LLPosDeque.size()>=weightedAvgLLPoseCapacity){
+            LLPosDeque.removeFirst();
+        }
 
-        
 
+    }
 
+    //non-weighted average
+    public Pose getLLPoseSimpleAvg(int avgCount){
+
+        if (avgCount > weightedAvgLLPoseCapacity){
+            avgCount = weightedAvgLLPoseCapacity;
+        } else if (avgCount == 0 || avgCount < 0){
+            return new Pose(currentLLPoseX, currentLLPoseY, currentImuPose);
+        }
+
+        Pose sum = new Pose(0,0,0);
+        for (Pose pose : LLPosDeque){
+            sum = sum.plus(pose);
+        }
+        Pose avgdPose = sum.div(avgCount);
+
+        return  avgdPose;
+
+    }
+
+    public Pose getLLPoseWeightedAvg(int weightSteps){
+        int currentIndex = 0;
+
+        if (weightSteps > weightedAvgLLPoseCapacity){
+            weightSteps = weightedAvgLLPoseCapacity;
+        } else if (weightSteps == 0 || weightSteps < 0){
+            return new Pose(currentLLPoseX, currentLLPoseY, currentImuPose);
+        }
+
+        Pose sum = new Pose(0,0,0);
+        for (Pose pose : LLPosDeque){
+            double mult = Math.pow(.5, currentIndex+1);
+            if (currentIndex == 0){
+                mult += Math.pow(.5, LLPosDeque.size());
+            }
+            Pose multedPose = pose.times(mult);
+            sum = sum.plus(multedPose);
+
+            currentIndex++;
+        }
+
+        return sum;
     }
 
     public Pose getLLPose(){
-        return new Pose(currentLLPoseX, currentLLPoseY);
+        return getLLPoseSimpleAvg(0);
     }
+
+
 
 //    public void chooseName(double x, double y,double theta){
 //        if (LLPosDeque.size() == maxCapacity){
