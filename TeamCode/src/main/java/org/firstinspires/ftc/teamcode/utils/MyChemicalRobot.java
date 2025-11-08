@@ -50,6 +50,8 @@ public class MyChemicalRobot {
 
     public IMU imu;
 
+    //public Pin
+
     public CRServo intakePush;
 
     public OpenCvCamera camera;
@@ -61,7 +63,7 @@ public class MyChemicalRobot {
 
     double currentImuPose = 0;
 
-    public int weightedAvgLLPoseCapacity = 6;
+    public int weightedAvgLLPoseCapacity = 200;
 
     public ArrayDeque<Pose> LLPosDeque =  new ArrayDeque<>(weightedAvgLLPoseCapacity);
 
@@ -216,6 +218,8 @@ public class MyChemicalRobot {
             }
         }
         z = imu.getRobotYawPitchRollAngles().getYaw();
+
+
 
 
         if (useLLTelem) {
