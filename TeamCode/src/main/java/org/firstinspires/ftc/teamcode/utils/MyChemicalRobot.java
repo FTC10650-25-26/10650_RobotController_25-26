@@ -72,6 +72,7 @@ public class MyChemicalRobot {
     public int weightedAvgLLPoseCapacity = 200;
 
     public ArrayDeque<Pose> LLPosDeque =  new ArrayDeque<>(weightedAvgLLPoseCapacity);
+    //public ArrayDeque<Double> imuPoses = new ArrayDeque<>()
 
 
     //double re
@@ -110,14 +111,18 @@ public class MyChemicalRobot {
             //outtake
             {
                 wheel1 = hardwareMap.get(DcMotorEx.class, "wheelL");
-                wheel1.setDirection(DcMotorSimple.Direction.FORWARD);
-                wheel1.setVelocity(0);
+                wheel1.setDirection(DcMotorSimple.Direction.REVERSE);
+                //wheel1.setVelocity(0);
+                wheel1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
                 wheel1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 wheel1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
                 wheel2 = hardwareMap.get(DcMotorEx.class, "wheelR");
-                wheel2.setDirection(DcMotorSimple.Direction.REVERSE);
-                wheel2.setVelocity(0);
+                wheel2.setDirection(DcMotorSimple.Direction.FORWARD);
+                //wheel2.setVelocity(0);
+                wheel2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
                 wheel2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 wheel2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
             }
@@ -127,15 +132,11 @@ public class MyChemicalRobot {
                 intake = hardwareMap.get(CRServo.class, "intake");
                 intake.setDirection(CRServo.Direction.REVERSE);
 
-                intakePush = hardwareMap.get(CRServo.class, "intakePush");
-                intakePush.setDirection(DcMotorSimple.Direction.FORWARD);
 
 
-//
-//                shooterServo = hardwareMap.get(Servo.class, "shooterServo");
-//                shooterServo.setDirection();
-//                shooterServo.setPosition();
-//
+                shooterServo = hardwareMap.get(Servo.class, "shooterServo");
+                shooterServo.setDirection(Servo.Direction.REVERSE);
+                shooterServo.scaleRange(0.2211, 0.8);
 
                 belt = hardwareMap.get(DcMotorEx.class, "belt");
                 belt.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -162,12 +163,12 @@ public class MyChemicalRobot {
         imu = hardwareMap.get(IMU.class, "imu");
         imu.initialize(new IMU.Parameters(orientationOnRobot));
 
-//
-//        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
-//        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-//        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);//camera block
-//        pinpoint.setOffsets(4, 0.5, DistanceUnit.INCH);
-//        pinpoint.recalibrateIMU();
+
+        pinpoint = hardwareMap.get(GoBildaPinpointDriver.class, "pinpoint");
+        pinpoint.setEncoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
+        pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);//camera block
+        pinpoint.setOffsets(4, 0.5, DistanceUnit.INCH);
+        pinpoint.recalibrateIMU();
         {
 //            webcamName = hardwareMap.get(WebcamName.class, "camera");
 //            camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);
@@ -200,10 +201,11 @@ public class MyChemicalRobot {
 
 
         // First, tell Limelight which way your robot is facing
-        double robotYaw = imu.getRobotYawPitchRollAngles().getYaw();
+        double hubYaw = imu.getRobotYawPitchRollAngles().getYaw();
+        double pinpointYaw = pinpoint.getHeading(AngleUnit.DEGREES);
 
 
-        //double robotYaw = pinpoint.getHeading(AngleUnit.RADIANS);
+        double robotYaw =imu.getRobotYawPitchRollAngles().getYaw();//in rads
         limelight.updateRobotOrientation(robotYaw);
         if (result != null && result.isValid()) {
             Pose3D botpose_mt2 = result.getBotpose_MT2();
@@ -217,7 +219,7 @@ public class MyChemicalRobot {
                 }
             }
         }
-        z = imu.getRobotYawPitchRollAngles().getYaw();
+        z =(pinpointYaw*.75)+(hubYaw*.25);
 
 
 

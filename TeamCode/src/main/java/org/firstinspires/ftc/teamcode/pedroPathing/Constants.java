@@ -23,7 +23,7 @@ import org.firstinspires.ftc.teamcode.utils.MyChemicalRobot;
 public class Constants {
 
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(5.85)
+            .mass(10.48)
             .forwardZeroPowerAcceleration(-33.41775)
             .lateralZeroPowerAcceleration(-52.0491666)
             .useSecondaryTranslationalPIDF(false)
@@ -52,8 +52,8 @@ public class Constants {
             .yVelocity(74.11616);
     public static PinpointConstants localizerConstants =
             new PinpointConstants()
-                .forwardPodY(-4)
-                .strafePodX(0.5)
+                .forwardPodY(-3.625)
+                .strafePodX(0.0)
                 .distanceUnit(DistanceUnit.INCH)
                 .hardwareMapName("pinpoint")
                 .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)

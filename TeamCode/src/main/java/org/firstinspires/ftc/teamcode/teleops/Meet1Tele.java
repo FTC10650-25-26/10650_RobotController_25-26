@@ -48,7 +48,7 @@ public class Meet1Tele extends ToxicTele {
 
     @Override
     public void initialize() {
-        robot.belt.setVelocity(0);
+        //Frobot.belt.setVelocity(0);
     }
 
     @Override
@@ -195,11 +195,7 @@ public class Meet1Tele extends ToxicTele {
             }
         }
 
-        if (gamepad2.triangle){
-            robot.intakePush.setPower(.5);
-        }else{
-            robot.intakePush.setPower(0.0);
-        }
+
 
         telemetry.addData("pinpoint status", robot.pinpoint.getDeviceStatus());
         telemetry.addData("x", xPos);
