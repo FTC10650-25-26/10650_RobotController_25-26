@@ -136,7 +136,8 @@ public class MyChemicalRobot {
 
                 shooterServo = hardwareMap.get(Servo.class, "shooterServo");
                 shooterServo.setDirection(Servo.Direction.REVERSE);
-                shooterServo.scaleRange(0.2211, 0.8);
+                shooterServo.scaleRange(0.2678, 0.8);
+
 
                 belt = hardwareMap.get(DcMotorEx.class, "belt");
                 belt.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -150,9 +151,9 @@ public class MyChemicalRobot {
         }
 
 
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
-        limelight.start(); // This tells Limelight to start looking!
+//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+//        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
+//        limelight.start(); // This tells Limelight to start looking!
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;

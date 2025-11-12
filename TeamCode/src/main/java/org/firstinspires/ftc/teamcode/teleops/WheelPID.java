@@ -23,8 +23,10 @@ public class WheelPID extends ToxicTele {
     double speed = 0;
 
     double wheelVel=0; //dont change this
+
+    double wheelPow = 0;
     final int MAX_SHOOTING_SPEED = 2200;
-    final double BELTVEL = 600; //this can be changed
+    final double BELTVEL = 1200; //this can be changed
     final double INTAKEVEL = 30; //this can be changed
     public ElapsedTime time = new ElapsedTime();
 
@@ -35,10 +37,12 @@ public class WheelPID extends ToxicTele {
 
     double shootAngle = 0;
 
-    double p = 15;
+    double p1 = 15;
+    double p2 = 15;
     double d = 0.2;
     double i = 0.65;
-    double f = 3;
+    double f1 = 3;
+    double f2 = 3;
     double launchElevation = 0;
 
     final double MAXELEV = 0;
@@ -54,10 +58,12 @@ public class WheelPID extends ToxicTele {
     public void initialize() {
         //Frobot.belt.setVelocity(0);
         PIDFCoefficients wheel1coef = robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        p = 25;
-        d = 1.06;
-        i = .7;
-        f =3;
+        p1 = 0;//0.538;
+        p2 = 0;//.1;
+        d = 0;//.3;
+        i = 0;
+        f1 = 12.569;// 11.925;//12.569;
+        f2 = 12.5;//11.925; //12.500;
     }
 
     @Override
@@ -91,25 +97,24 @@ public class WheelPID extends ToxicTele {
 
 
         if(gamepad1.right_bumper){//shoot
-            if (wheelVel<2200) {/// <- this number is the max shooting speed
-                wheelVel = wheelVel + 40;
+            if (wheelVel<1) {/// <- this number is the max shooting speed
+                wheelVel +=20;
             }
+        } else if (gamepad1.left_bumper && wheelVel>0){
+            wheelVel -= 20;
+        }
+//        if (wheelVel>1.0){
+//            wheelPow = 1.0;
+//        }
+//        if (wheelPow<0){
+//            wheelPow = 0;
+//        }
 
-            //time.reset();
-
-//            if (!shootOn) {
-//                shootOn = true;
-//                if (wheelVel<1900) {
-//                    wheelVel = wheelVel+2;
-//                } else {
-//                    wheelVel = 1900;
-//                }
-//
-//            } else{
-//                shootOn = false;
-//                wheelVel = 0;
-//            }
-        } else if (gamepad1.left_bumper){
+        if(gamepad2.right_bumper){//shoot
+            if (wheelVel<2200) {/// <- this number is the max shooting speed
+                wheelVel = wheelVel + 20;
+            }
+        } else if (gamepad2.left_bumper){
             wheelVel = 0;
         }
 
@@ -128,18 +133,24 @@ public class WheelPID extends ToxicTele {
         }
 
         if (gamepad2.dpad_up){
-            p += 0.04;
+            p1 += 0.001;
         }
         if (gamepad2.dpad_down){
-            p -= 0.04;
+            p1 -= 0.001;
+        }
+        if (gamepad1.right_trigger>0){
+            p2+=0.001;
+        }if (gamepad1.left_trigger>0){
+            p2-=0.001;
         }
 
+
         if (gamepad2.dpad_left){
-            d -= 0.001;
+            d -= 0.002;
         }
 
         if (gamepad2.dpad_right){
-            d += 0.001;
+            d += 0.002;
         }
 
         if (gamepad2.triangle){
@@ -150,32 +161,42 @@ public class WheelPID extends ToxicTele {
         }
 
         if (gamepad2.square){
-            f -= 0.001;
+            f1 -= 0.001;
         }
         if (gamepad2.circle){
-            f += 0.001;
+            f1 += 0.001;
+        }
+        if (gamepad1.square){
+            f2 -= 0.001;
+        }
+        if (gamepad1.circle){
+            f2 += 0.001;
         }
 
         if (gamepad1.left_stick_button){
             d=0;
         }
         if (gamepad1.right_stick_button){
-            p=0;
+            p1=0;
         }
         if (gamepad2.left_stick_button){
-            f = 0;
+            f1 = 0;
         }
        if (gamepad2.right_stick_button){
            i = 0;
        }
 
 
-       robot.wheel1.setVelocityPIDFCoefficients(p,i,d,f);
-       robot.wheel2.setVelocityPIDFCoefficients(p,i,d,f);
+       robot.wheel1.setVelocityPIDFCoefficients(p1,i,d,f1);
+       robot.wheel2.setVelocityPIDFCoefficients(p2,i,d,f2);
 
 
         telemetry.addData("servo pos", robot.shooterServo.getPosition());
         telemetry.addLine();
+
+
+        //telemetry.addData("pow", wheelPow);
+        //telemetry.addData()
         telemetry.addData("set vel",wheelVel);
         telemetry.addData("actual wheel 1", robot.wheel1.getVelocity());
         telemetry.addData("actual wheel 2", robot.wheel2.getVelocity());
@@ -187,10 +208,14 @@ public class WheelPID extends ToxicTele {
         //telemetry.addData("harper vel", Math.abs(leftFrontPower));
         telemetry.addLine();
 
-        telemetry.addData("p", p);
+        telemetry.addData("p1", p1);
+        telemetry.addData("p2", p2);
+
         telemetry.addData("d", d);
         telemetry.addData("i", i);
-        telemetry.addData("f", f);
+        telemetry.addData("f1", f1);
+        telemetry.addData("f2", f2);
+
         telemetry.addLine();
 
         telemetry.addData("differemce",  Math.abs(robot.wheel1.getVelocity()-robot.wheel2.getVelocity()));

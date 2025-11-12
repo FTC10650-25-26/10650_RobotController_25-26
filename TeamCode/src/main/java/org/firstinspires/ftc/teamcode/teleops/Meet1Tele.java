@@ -1,6 +1,10 @@
 package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.PIDCoefficients;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -23,7 +27,7 @@ public class Meet1Tele extends ToxicTele {
 
     double wheelVel=0; //dont change this
     final int MAX_SHOOTING_SPEED = 2200;
-    final double BELTVEL = 600; //this can be changed
+    final double BELTVEL = 1400; //this can be changed
     final double INTAKEVEL = 30; //this can be changed
     public ElapsedTime time = new ElapsedTime();
 
@@ -33,12 +37,22 @@ public class Meet1Tele extends ToxicTele {
     double zPos = 0;
 
     double shootAngle = 0;
+    double p = 0;
+    double i = 0;
+    double d = 0;
+    double f = 0;
 
+    double p2 = 0;
+    double i2 = 0;
+    double d2 = 0;
+    double f2 = 0;
 
     double launchElevation = 0;
 
-    final double MAXELEV = 0;
+    final double MAXELEV = 1;
     final double MINELEV = 0;
+    PIDFCoefficients pidCoefficients1;
+    PIDFCoefficients pidCoefficients2;
 
 
     Boolean beltOn = false;
@@ -49,11 +63,28 @@ public class Meet1Tele extends ToxicTele {
     @Override
     public void initialize() {
         //Frobot.belt.setVelocity(0);
+
     }
 
     @Override
     public void teleLoop() {
+        telemetry.addData("pid default", robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        telemetry.addData("pid defaul2t", robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        pidCoefficients1 = robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+        pidCoefficients2 = robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+        p = pidCoefficients1.p;
+        i = pidCoefficients1.i;
+        d = pidCoefficients1.d;
+        f = pidCoefficients1.f;
 
+        p2 = pidCoefficients2.p;
+        i2 = pidCoefficients2.i;
+        d2 = pidCoefficients2.d;
+        f2 = pidCoefficients2.f;
+
+//        robot.wheel1.setVelocityPIDFCoefficients(p,i,0.187, f);
+//        robot.wheel2.setVelocityPIDFCoefficients(p2, i2, 0.187, f2);
+//
 
 
 //        xPos = robot.pinpoint.getPosX(DistanceUnit.INCH);
@@ -66,13 +97,13 @@ public class Meet1Tele extends ToxicTele {
 //        }
 
         if (gamepad2.dpad_up){
-            if (robot.shooterServo.getPosition()<MAXELEV){
-                robot.shooterServo.setPosition(robot.shooterServo.getPosition()+0.001);
-            }
+//            if (robot.shooterServo.getPosition()<MAXELEV){
+                robot.shooterServo.setPosition(robot.shooterServo.getPosition()+0.01);
+//            }
         }else if (gamepad2.dpad_down){
-            if (robot.shooterServo.getPosition()>MINELEV){
-                robot.shooterServo.setPosition(robot.shooterServo.getPosition()-0.001);
-            }
+//            if (robot.shooterServo.getPosition()>MINELEV){
+                robot.shooterServo.setPosition(robot.shooterServo.getPosition()-0.01);
+//            }
         }
 
 
@@ -92,6 +123,20 @@ public class Meet1Tele extends ToxicTele {
             robot.rightRear.setPower(.5);
 
         }
+
+        if(gamepad2.right_bumper){//shoot
+            if (wheelVel<1000) {
+                wheelVel += 20;
+            }else if (wheelVel<1720) {/// <- this number is the max shooting speed
+                wheelVel = wheelVel + 5;
+            }
+        } else if (gamepad2.left_bumper){//shoot
+            if (wheelVel>0) {/// <- this number is the max shooting speed
+                wheelVel = wheelVel - 5;
+            }
+        }
+
+
 
 
 
@@ -157,29 +202,29 @@ public class Meet1Tele extends ToxicTele {
         //final Vel/curent time = x
 
 
-        if(gamepad2.x){//shoot
-            if (wheelVel<MAX_SHOOTING_SPEED) {/// <- this number is the max shooting speed
-                wheelVel = wheelVel + 20;
-            }
-
-            //time.reset();
-
-//            if (!shootOn) {
-//                shootOn = true;
-//                if (wheelVel<1900) {
-//                    wheelVel = wheelVel+2;
-//                } else {
-//                    wheelVel = 1900;
-//                }
-//
-//            } else{
-//                shootOn = false;
-//                wheelVel = 0;
+//        if(gamepad2.x){//shoot
+//            if (wheelVel<MAX_SHOOTING_SPEED) {/// <- this number is the max shooting speed
+//                wheelVel = wheelVel + 20;
 //            }
-        } else{
-            wheelVel = 0;
-            //wasMax=false;
-        }
+//
+//            //time.reset();
+//
+////            if (!shootOn) {
+////                shootOn = true;
+////                if (wheelVel<1900) {
+////                    wheelVel = wheelVel+2;
+////                } else {
+////                    wheelVel = 1900;
+////                }
+////
+////            } else{
+////                shootOn = false;
+////                wheelVel = 0;
+////            }
+//        } else{
+//            wheelVel = 0;
+//            //wasMax=false;
+//        }
 
         robot.wheel1.setVelocity(wheelVel);
         robot.wheel2.setVelocity(wheelVel);
@@ -213,6 +258,9 @@ public class Meet1Tele extends ToxicTele {
         telemetry.addLine();
 
         telemetry.addData("harper vel", Math.abs(leftFrontPower));
+
+        telemetry.addData("pid default", robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        telemetry.addData("pid defaul2t", robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
 
         telemetry.update();
 
