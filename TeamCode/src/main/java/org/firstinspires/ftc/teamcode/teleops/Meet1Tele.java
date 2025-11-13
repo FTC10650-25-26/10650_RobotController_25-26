@@ -2,13 +2,10 @@ package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
 
@@ -25,7 +22,7 @@ public class Meet1Tele extends ToxicTele {
     double rightRearPower;
     double speed = 0;
 
-    double wheelVel=0; //dont change this
+    double wheelVel = 0; //dont change this
     final int MAX_SHOOTING_SPEED = 2200;
     final double BELTVEL = 1600; //this can be changed
     final double INTAKEVEL = 30; //this can be changed
@@ -56,14 +53,16 @@ public class Meet1Tele extends ToxicTele {
 
 
     Boolean beltOn = false;
-    Boolean wasMax = false;
+    Boolean triggerWasNotOn = true;
 
-    Boolean rightTriggerWasPressed = false;
+    Boolean incrementalSpeedUp = false;
+
+    Boolean slowingDown = false;
     Boolean leftBumperPressed;
     Boolean shootOn = false;
 
-    double nominalVoltage = 12.0;
-    double currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+    double nominalVoltage = 13.0;
+    double currentVoltage;
     double adjustedVel;
 
     double wheel1Vel;
@@ -114,9 +113,6 @@ public class Meet1Tele extends ToxicTele {
 //            shootAngle = Math.atan((yPos/xPos));
 //
 //        }
-
-
-
 
 
         //harper controls
@@ -189,90 +185,130 @@ public class Meet1Tele extends ToxicTele {
 
 
             //servo
-            if (gamepad2.dpad_down){
+            if (gamepad2.dpad_down) {
 //            if (robot.shooterServo.getPosition()<MAXELEV){
-                robot.shooterServo.setPosition(robot.shooterServo.getPosition()+0.01);
+                robot.shooterServo.setPosition(robot.shooterServo.getPosition() + 0.01);
 //            }
-            }else if (gamepad2.dpad_up){
+            } else if (gamepad2.dpad_up) {
 //            if (robot.shooterServo.getPosition()>MINELEV){
-                robot.shooterServo.setPosition(robot.shooterServo.getPosition()-0.01);
+                robot.shooterServo.setPosition(robot.shooterServo.getPosition() - 0.01);
 //            }
             }
 
+
             //start/stop flywheels
-            if (gamepad2.right_trigger>0){
-                if (wheelVel == 0) {
-                    rightTriggerWasPressed = true;
-                } else if (wheelVel>0){
+
+
+            if (gamepad2.squareWasPressed()) {
+                if (wheelVel > 0) {
+                    incrementalSpeedUp = false;
                     wheelVel = 0;
+                    //slowingDown = true;
+                    //incrementalSpeedUp = ;
+                } else {
+                    incrementalSpeedUp = true;
                 }
             }
+
             //incremental speed increase
-            if(rightTriggerWasPressed){
-                if (wheelVel<1320){
-                    wheelVel = wheelVel+20;
-                } else{
-                    rightTriggerWasPressed = false;
+            if (incrementalSpeedUp) {
+                if (wheelVel < 1320) {
+                    wheelVel = wheelVel + 40;
+                } else {
+                    incrementalSpeedUp = false;
+                    //triggerWasNotOn=true;
                 }
             }
             //+|- flywheel speed
-            if(gamepad2.rightBumperWasPressed()){
-                if (wheelVel<1200) {
+            if (gamepad2.rightBumperWasPressed()) {
+                if (wheelVel < 1200) {
                     wheelVel += 20;
-                }else if (wheelVel<1720) {/// <- this number is the max shooting speed
+                } else if (wheelVel < 1720) {/// <- this number is the max shooting speed
                     wheelVel = wheelVel + 5;
                 }
 
-            } else if (gamepad2.left_bumper){//shoot
-                if (wheelVel>0) {/// <- this number is the max shooting speed
+            } else if (gamepad2.left_bumper) {//shoot
+                if (wheelVel > 0) {/// <- this number is the max shooting speed
                     wheelVel = wheelVel - 5;
                 }
             }
 
             currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
-            adjustedVel = wheelVel * (nominalVoltage / currentVoltage);
+            adjustedVel = wheelVel * (nominalVoltage / currentVoltage) + 20;
             prevVel = adjustedVel;
 
 
-            if (Math.abs(wheelVel-robot.wheel1.getVelocity())>=20){
-                wheel1Vel = adjustedVel+ Math.copySign(20,wheelVel-robot.wheel1.getVelocity());
+
+
+            if (Math.abs(wheelVel - robot.wheel1.getVelocity()) >= 3 && Math.abs(wheelVel - robot.wheel1.getVelocity())<80) {
+                double errorScaled = Math.abs(wheelVel - robot.wheel1.getVelocity());
+
+                wheel1Vel = adjustedVel + Math.copySign(errorScaled, wheelVel - robot.wheel1.getVelocity());
             }
-            if (Math.abs(wheelVel-robot.wheel2.getVelocity())>=20){
-                wheel2Vel = adjustedVel+ Math.copySign(20,wheelVel-robot.wheel2.getVelocity());
+            if (Math.abs(wheelVel - robot.wheel2.getVelocity()) >= 3 && Math.abs(wheelVel - robot.wheel2.getVelocity())<80) {
+                double errorScaled = Math.abs(wheelVel - robot.wheel1.getVelocity())*1;
+
+                wheel2Vel = adjustedVel + Math.copySign(errorScaled, wheelVel - robot.wheel2.getVelocity());
             }
-            if (Math.abs(robot.wheel1.getVelocity()-robot.wheel2.getVelocity())>10){
+            if (Math.abs(robot.wheel1.getVelocity() - robot.wheel2.getVelocity()) > 10) {
 
             }
 
             robot.wheel1.setVelocity(wheel1Vel);
             robot.wheel2.setVelocity(wheel2Vel);
-
+            wheel1Vel = wheelVel;
+            wheel2Vel = wheelVel;
 
 
         }
 
-        telemetry.addData("pinpoint status", robot.pinpoint.getDeviceStatus());
-        telemetry.addData("x", xPos);
-        telemetry.addData("y", yPos);
-        telemetry.addData("theta", zPos);
+//        telemetry.addData("pinpoint status", robot.pinpoint.getDeviceStatus());
+//        telemetry.addData("x", xPos);
+//        telemetry.addData("y", yPos);
+//        telemetry.addData("theta", zPos);
+//        telemetry.addLine();
+
+
+        telemetry.addData("wheel vel", wheelVel);
+        telemetry.addData("adjusted vel", adjustedVel);
+        telemetry.addLine();
+        telemetry.addData("wheel vel1", wheel1Vel);
+        telemetry.addData("wheel vel2", wheel2Vel);
+
         telemetry.addLine();
 
 
-        telemetry.addData("wheel vel",wheelVel);
         telemetry.addData("actual wheel 1", robot.wheel1.getVelocity());
         telemetry.addData("actual wheel 2", robot.wheel2.getVelocity());
+        telemetry.addLine();
+
+        telemetry.addLine();
+
+        telemetry.addData("differemce", Math.abs(robot.wheel1.getVelocity() - robot.wheel2.getVelocity()));
+
+        telemetry.addLine();
+
+
+        telemetry.addData("current1", robot.wheel1.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetry.addData("current2", robot.wheel1.getCurrent(CurrentUnit.MILLIAMPS));
+        telemetry.addLine();
+        telemetry.addData("current1Alert", robot.wheel1.getCurrentAlert(CurrentUnit.MILLIAMPS));
+        telemetry.addData("current2 Alert", robot.wheel2.getCurrentAlert(CurrentUnit.MILLIAMPS));
+        telemetry.addLine();
         telemetry.addLine();
 
         telemetry.addData("angle servo pos", robot.shooterServo.getPosition());
         telemetry.addLine();
 
-        telemetry.addData("harper vel", Math.abs(leftFrontPower));
+        //telemetry.addData("harper vel", Math.abs(leftFrontPower));
 
-        telemetry.addData("pid default", robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
-        telemetry.addData("pid defaul2t", robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        //telemetry.addData("pid default", robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        //telemetry.addData("pid defaul2t", robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+
 
         telemetry.update();
 
 
     }
+
 }

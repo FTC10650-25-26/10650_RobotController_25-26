@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.teleops;
 //import com.bylazar.panels.Panels;
 import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.hardware.limelightvision.LLResult;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.bylazar.graph.*;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -47,7 +48,7 @@ import com.pedropathing.telemetry.SelectableOpMode;
 import com.pedropathing.util.*;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
+@Disabled
 
 @TeleOp (name= "tune wheel pid")
 public class TuneWheels extends ToxicTele {
