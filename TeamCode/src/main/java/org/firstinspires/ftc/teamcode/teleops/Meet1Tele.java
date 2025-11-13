@@ -61,9 +61,12 @@ public class Meet1Tele extends ToxicTele {
     Boolean leftBumperPressed;
     Boolean shootOn = false;
 
-    double nominalVoltage = 13.0;
+    double nominalVoltage = 12.0;
     double currentVoltage;
     double adjustedVel;
+
+    PIDFCoefficients pidfCoefficients1  = new PIDFCoefficients(0.0, 0.0, 0.186996, 11.932999);
+    PIDFCoefficients pidfCoefficients2  = new PIDFCoefficients(0.0, 0.0, 0.186996, 13.154999);
 
     double wheel1Vel;
     double wheel2Vel;
@@ -87,17 +90,20 @@ public class Meet1Tele extends ToxicTele {
 
         telemetry.addData("pid default", robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
         telemetry.addData("pid defaul2t", robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
-        pidCoefficients1 = robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        pidCoefficients2 = robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
-        p = pidCoefficients1.p;
-        i = pidCoefficients1.i;
-        d = pidCoefficients1.d;
-        f = pidCoefficients1.f;
+        //pidCoefficients1 = robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, );
+        //pidCoefficients2 = robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        p2 = pidCoefficients2.p;
-        i2 = pidCoefficients2.i;
-        d2 = pidCoefficients2.d;
-        f2 = pidCoefficients2.f;
+        robot.wheel1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients1);
+        robot.wheel2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients2);
+//        p = pidCoefficients1.p;
+//        i = pidCoefficients1.i;
+//        d = pidCoefficients1.d;
+//        f = pidCoefficients1.f;
+//
+//        p2 = pidCoefficients2.p;
+//        i2 = pidCoefficients2.i;
+//        d2 = pidCoefficients2.d;
+//        f2 = pidCoefficients2.f;
 
 
 //        robot.wheel1.setVelocityPIDFCoefficients(p,i,0.187, f);
@@ -206,9 +212,11 @@ public class Meet1Tele extends ToxicTele {
                     //slowingDown = true;
                     //incrementalSpeedUp = ;
                 } else {
+                    gamepad2.rumble(2000);
                     incrementalSpeedUp = true;
                 }
             }
+
 
             //incremental speed increase
             if (incrementalSpeedUp) {
@@ -220,7 +228,7 @@ public class Meet1Tele extends ToxicTele {
                 }
             }
             //+|- flywheel speed
-            if (gamepad2.rightBumperWasPressed()) {
+            if (gamepad2.right_bumper) {
                 if (wheelVel < 1200) {
                     wheelVel += 20;
                 } else if (wheelVel < 1720) {/// <- this number is the max shooting speed
@@ -233,22 +241,49 @@ public class Meet1Tele extends ToxicTele {
                 }
             }
 
+            if (gamepad1.triangle) {//up close shooting
+                wheelVel = 1330;
+                robot.shooterServo.setPosition(0.2009);
+            }
+            if (gamepad1.circle){ //medium close
+                wheelVel = 1375;
+                robot.shooterServo.setPosition(0);
+
+            }
+            if (gamepad1.cross){//middle
+                wheelVel = 1460;
+                robot.shooterServo.setPosition(0);
+
+            }
+            if (gamepad1.square){
+                wheelVel = 1720;
+                robot.shooterServo.setPosition(0);
+            }
+
             currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
-            adjustedVel = wheelVel * (nominalVoltage / currentVoltage) + 20;
+            adjustedVel = wheelVel * (nominalVoltage / currentVoltage);
             prevVel = adjustedVel;
 
+//            if (gamepad2.dpad_right){
+//                if (Math.abs(wheelVel - robot.wheel1.getVelocity()) >= 10){
+//                    nominalVoltage += .01;
+//                }
+//            }
+            nominalVoltage = 12.43;
 
+            currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+            adjustedVel = wheelVel * (nominalVoltage / currentVoltage);
+            prevVel = adjustedVel;
 
-
-            if (Math.abs(wheelVel - robot.wheel1.getVelocity()) >= 3 && Math.abs(wheelVel - robot.wheel1.getVelocity())<80) {
+            if (Math.abs(wheelVel - robot.wheel1.getVelocity()) >= 5 && Math.abs(wheelVel - robot.wheel1.getVelocity())<40 && wheelVel!= 0) {
                 double errorScaled = Math.abs(wheelVel - robot.wheel1.getVelocity());
 
                 wheel1Vel = adjustedVel + Math.copySign(errorScaled, wheelVel - robot.wheel1.getVelocity());
             }
-            if (Math.abs(wheelVel - robot.wheel2.getVelocity()) >= 3 && Math.abs(wheelVel - robot.wheel2.getVelocity())<80) {
+            if (Math.abs(wheelVel - robot.wheel2.getVelocity()) >= 5 && Math.abs(wheelVel - robot.wheel2.getVelocity())<40 && wheelVel!= 0) {
                 double errorScaled = Math.abs(wheelVel - robot.wheel1.getVelocity())*1;
 
-                wheel2Vel = adjustedVel + Math.copySign(errorScaled, wheelVel - robot.wheel2.getVelocity());
+                wheel2Vel = adjustedVel*(.11) + (Math.copySign(errorScaled, wheelVel - robot.wheel2.getVelocity()));
             }
             if (Math.abs(robot.wheel1.getVelocity() - robot.wheel2.getVelocity()) > 10) {
 
@@ -277,6 +312,7 @@ public class Meet1Tele extends ToxicTele {
 
         telemetry.addLine();
 
+        telemetry.addData("Nominal Voltage", nominalVoltage);
 
         telemetry.addData("actual wheel 1", robot.wheel1.getVelocity());
         telemetry.addData("actual wheel 2", robot.wheel2.getVelocity());
@@ -299,11 +335,11 @@ public class Meet1Tele extends ToxicTele {
 
         telemetry.addData("angle servo pos", robot.shooterServo.getPosition());
         telemetry.addLine();
-
+       // robot.wheel2.
         //telemetry.addData("harper vel", Math.abs(leftFrontPower));
 
-        //telemetry.addData("pid default", robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
-        //telemetry.addData("pid defaul2t", robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        telemetry.addData("pid default", robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        telemetry.addData("pid defaul2t", robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
 
 
         telemetry.update();
