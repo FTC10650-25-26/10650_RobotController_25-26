@@ -27,7 +27,7 @@ public class Meet1Tele extends ToxicTele {
 
     double wheelVel=0; //dont change this
     final int MAX_SHOOTING_SPEED = 2200;
-    final double BELTVEL = 1400; //this can be changed
+    final double BELTVEL = 1600; //this can be changed
     final double INTAKEVEL = 30; //this can be changed
     public ElapsedTime time = new ElapsedTime();
 
@@ -58,7 +58,23 @@ public class Meet1Tele extends ToxicTele {
     Boolean beltOn = false;
     Boolean wasMax = false;
 
+    Boolean rightTriggerWasPressed = false;
+    Boolean leftBumperPressed;
     Boolean shootOn = false;
+
+    double nominalVoltage = 12.0;
+    double currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+    double adjustedVel;
+
+    double wheel1Vel;
+    double wheel2Vel;
+
+    double prevVel;
+
+    double voltage;
+    double feedforward;
+    //double feedback = kP * (targetRPM - measuredRPM);
+
 
     @Override
     public void initialize() {
@@ -68,6 +84,8 @@ public class Meet1Tele extends ToxicTele {
 
     @Override
     public void teleLoop() {
+
+
         telemetry.addData("pid default", robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
         telemetry.addData("pid defaul2t", robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
         pidCoefficients1 = robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -81,6 +99,7 @@ public class Meet1Tele extends ToxicTele {
         i2 = pidCoefficients2.i;
         d2 = pidCoefficients2.d;
         f2 = pidCoefficients2.f;
+
 
 //        robot.wheel1.setVelocityPIDFCoefficients(p,i,0.187, f);
 //        robot.wheel2.setVelocityPIDFCoefficients(p2, i2, 0.187, f2);
@@ -96,151 +115,141 @@ public class Meet1Tele extends ToxicTele {
 //
 //        }
 
-        if (gamepad2.dpad_up){
+
+
+
+
+        //harper controls
+        {
+            if (gamepad1.dpad_up) {//fast speed
+                speed = .9;//this can be changed
+            } else if (gamepad1.dpad_down) { //slow speed
+                speed = .15;//this can be changed
+            } else { //normal speed
+                speed = .5;//this can be changed
+            }
+
+            //ignore all of whats below
+            x = Math.pow(-gamepad1.left_stick_x, 3) * speed;  // Note: pushing stick forward gives negative value
+            y = Math.pow(-gamepad1.left_stick_y, 3) * speed;  // Note: pushing stick forward gives negative value
+            z = -Math.pow(-gamepad1.right_stick_x, 3) * speed;  // Note: pushing stick forward gives negative value
+
+            leftFrontPower = x + y + z;
+            rightFrontPower = x - y - z;
+            leftRearPower = x - y + z;
+            rightRearPower = x + y - z;
+
+            if (leftFrontPower > 1) {
+                leftFrontPower = 1;
+            }
+            if (leftRearPower > 1) {
+                leftRearPower = 1;
+            }
+            if (rightFrontPower > 1) {
+                rightFrontPower = 1;
+            }
+            if (rightRearPower > 1) {
+                rightRearPower = 1;
+            }
+            robot.leftFront.setPower(leftFrontPower);
+            robot.leftRear.setPower(leftRearPower);
+            robot.rightRear.setPower(rightRearPower);
+            robot.rightFront.setPower(rightFrontPower);
+
+
+            //this button powers off drivetrain
+            if (gamepad1.right_bumper) {//force stop
+                robot.leftFront.setPower(0);
+                robot.leftRear.setPower(0);
+                robot.rightRear.setPower(0);
+                robot.rightFront.setPower(0);
+            }
+
+        }
+
+        //lobangang controls
+        {
+            //intake
+            if (gamepad2.left_trigger > 0) {
+                robot.intake.setPower(1.0);
+            } else {
+                robot.intake.setPower(0.0);
+            }
+
+            //belt
+            if (gamepad2.crossWasPressed()) { //belt speed set at very top, only change it there
+                if (!beltOn) {
+                    beltOn = true;
+                    robot.belt.setVelocity(BELTVEL);
+                } else if (beltOn) {
+                    robot.belt.setVelocity(0);
+                    beltOn = false;
+                }
+            }
+
+
+            //servo
+            if (gamepad2.dpad_down){
 //            if (robot.shooterServo.getPosition()<MAXELEV){
                 robot.shooterServo.setPosition(robot.shooterServo.getPosition()+0.01);
 //            }
-        }else if (gamepad2.dpad_down){
+            }else if (gamepad2.dpad_up){
 //            if (robot.shooterServo.getPosition()>MINELEV){
                 robot.shooterServo.setPosition(robot.shooterServo.getPosition()-0.01);
 //            }
-        }
-
-
-        if (gamepad1.dpad_left){
-           robot.leftFront.setPower(.5);
-
-        }
-        if (gamepad1.dpad_right){
-            robot.rightFront.setPower(.5);
-
-        }
-        if (gamepad1.left_stick_button){
-            robot.leftRear.setPower(.5);
-
-        }
-        if (gamepad1.right_stick_button){
-            robot.rightRear.setPower(.5);
-
-        }
-
-        if(gamepad2.right_bumper){//shoot
-            if (wheelVel<1000) {
-                wheelVel += 20;
-            }else if (wheelVel<1720) {/// <- this number is the max shooting speed
-                wheelVel = wheelVel + 5;
             }
-        } else if (gamepad2.left_bumper){//shoot
-            if (wheelVel>0) {/// <- this number is the max shooting speed
-                wheelVel = wheelVel - 5;
+
+            //start/stop flywheels
+            if (gamepad2.right_trigger>0){
+                if (wheelVel == 0) {
+                    rightTriggerWasPressed = true;
+                } else if (wheelVel>0){
+                    wheelVel = 0;
+                }
             }
-        }
-
-
-
-
-
-
-
-
-        //below must be <=1
-
-        if (gamepad1.dpad_up){//fast speed
-            speed = .9;//this can be changed
-        } else if (gamepad1.dpad_down){ //slow speed
-            speed = .15;//this can be changed
-        } else { //normal speed
-            speed = .5;//this can be changed
-        }
-
-        //ignore all of whats below
-        x = Math.pow(-gamepad1.left_stick_y, 3)*speed;  // Note: pushing stick forward gives negative value
-        y = Math.pow(-gamepad1.left_stick_x, 3)*speed;  // Note: pushing stick forward gives negative value
-        z = -Math.pow(-gamepad1.right_stick_x, 3)*speed;  // Note: pushing stick forward gives negative value
-
-        leftFrontPower = x+y+z;
-        rightFrontPower = x-y-z;
-        leftRearPower = x-y+z;
-        rightRearPower = x+y-z;
-
-        if (leftFrontPower>1){
-            leftFrontPower=1;
-        }
-        if (leftRearPower>1){
-            leftRearPower=1;
-        }
-        if (rightFrontPower>1){
-            rightFrontPower=1;
-        }
-        if (rightRearPower>1){
-            rightRearPower=1;
-        }
-        robot.leftFront.setPower(leftFrontPower);
-        robot.leftRear.setPower(leftRearPower);
-        robot.rightRear.setPower(rightRearPower);
-        robot.rightFront.setPower(rightFrontPower);
-
-
-        //this button powers off drivetrain
-        if (gamepad1.right_bumper) {//force stop
-            robot.leftFront.setPower(0);
-            robot.leftRear.setPower(0);
-            robot.rightRear.setPower(0);
-            robot.rightFront.setPower(0);
-        }
-
-
-
-
-        if (gamepad2.left_trigger>0){//intake
-            robot.intake.setPower(1.0);
-        } else{
-            robot.intake.setPower(0.0);
-        }
-
-        //finalVel = x (current time)
-        //final Vel/curent time = x
-
-
-//        if(gamepad2.x){//shoot
-//            if (wheelVel<MAX_SHOOTING_SPEED) {/// <- this number is the max shooting speed
-//                wheelVel = wheelVel + 20;
-//            }
-//
-//            //time.reset();
-//
-////            if (!shootOn) {
-////                shootOn = true;
-////                if (wheelVel<1900) {
-////                    wheelVel = wheelVel+2;
-////                } else {
-////                    wheelVel = 1900;
-////                }
-////
-////            } else{
-////                shootOn = false;
-////                wheelVel = 0;
-////            }
-//        } else{
-//            wheelVel = 0;
-//            //wasMax=false;
-//        }
-
-        robot.wheel1.setVelocity(wheelVel);
-        robot.wheel2.setVelocity(wheelVel);
-
-
-        if (gamepad2.crossWasPressed()) { //belt speed set at very top, only change it there
-            if (!beltOn) {
-                beltOn = true;
-                robot.belt.setVelocity(BELTVEL);
-            } else if (beltOn) {
-                robot.belt.setVelocity(0);
-                beltOn = false;
+            //incremental speed increase
+            if(rightTriggerWasPressed){
+                if (wheelVel<1320){
+                    wheelVel = wheelVel+20;
+                } else{
+                    rightTriggerWasPressed = false;
+                }
             }
+            //+|- flywheel speed
+            if(gamepad2.rightBumperWasPressed()){
+                if (wheelVel<1200) {
+                    wheelVel += 20;
+                }else if (wheelVel<1720) {/// <- this number is the max shooting speed
+                    wheelVel = wheelVel + 5;
+                }
+
+            } else if (gamepad2.left_bumper){//shoot
+                if (wheelVel>0) {/// <- this number is the max shooting speed
+                    wheelVel = wheelVel - 5;
+                }
+            }
+
+            currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
+            adjustedVel = wheelVel * (nominalVoltage / currentVoltage);
+            prevVel = adjustedVel;
+
+
+            if (Math.abs(wheelVel-robot.wheel1.getVelocity())>=20){
+                wheel1Vel = adjustedVel+ Math.copySign(20,wheelVel-robot.wheel1.getVelocity());
+            }
+            if (Math.abs(wheelVel-robot.wheel2.getVelocity())>=20){
+                wheel2Vel = adjustedVel+ Math.copySign(20,wheelVel-robot.wheel2.getVelocity());
+            }
+            if (Math.abs(robot.wheel1.getVelocity()-robot.wheel2.getVelocity())>10){
+
+            }
+
+            robot.wheel1.setVelocity(wheel1Vel);
+            robot.wheel2.setVelocity(wheel2Vel);
+
+
+
         }
-
-
 
         telemetry.addData("pinpoint status", robot.pinpoint.getDeviceStatus());
         telemetry.addData("x", xPos);
