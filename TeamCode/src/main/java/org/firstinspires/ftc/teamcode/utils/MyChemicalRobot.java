@@ -290,7 +290,6 @@ public class MyChemicalRobot {
     }
 
 
-
 //    public void chooseName(double x, double y,double theta){
 //        if (LLPosDeque.size() == maxCapacity){
 //            sumLLPosX-= LLPosDeque.
