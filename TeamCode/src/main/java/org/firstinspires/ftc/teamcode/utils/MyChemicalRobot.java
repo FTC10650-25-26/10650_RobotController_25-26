@@ -170,6 +170,7 @@ public class MyChemicalRobot {
         pinpoint.setEncoderDirections(GoBildaPinpointDriver.EncoderDirection.FORWARD, GoBildaPinpointDriver.EncoderDirection.FORWARD);//camera block
         pinpoint.setOffsets(4, 0.5, DistanceUnit.INCH);
         pinpoint.recalibrateIMU();
+        pinpoint.initialize();
         {
 //            webcamName = hardwareMap.get(WebcamName.class, "camera");
 //            camera = OpenCvCameraFactory.getInstance().createWebcam(webcamName, cameraMonitorViewId);

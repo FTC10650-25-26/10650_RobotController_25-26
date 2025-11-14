@@ -2,10 +2,13 @@ package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
 
@@ -76,11 +79,18 @@ public class Meet1Tele extends ToxicTele {
     double voltage;
     double feedforward;
     //double feedback = kP * (targetRPM - measuredRPM);
+    public ElapsedTime timer = new ElapsedTime();
+
 
 
     @Override
     public void initialize() {
         //Frobot.belt.setVelocity(0);
+
+        robot.pinpoint.initialize();
+        robot.pinpoint.resetPosAndIMU();
+        robot.pinpoint.recalibrateIMU();
+
 
     }
 
@@ -111,9 +121,10 @@ public class Meet1Tele extends ToxicTele {
 //
 
 
-//        xPos = robot.pinpoint.getPosX(DistanceUnit.INCH);
-//        yPos = robot.pinpoint.getPosY(DistanceUnit.INCH);
-//        zPos = robot.pinpoint.getHeading(AngleUnit.DEGREES);
+        xPos = robot.pinpoint.getPosX(DistanceUnit.INCH);
+        yPos = robot.pinpoint.getPosY(DistanceUnit.INCH);
+        zPos = robot.pinpoint.getHeading(AngleUnit.DEGREES);
+        robot.pinpoint.update();
 //
 //        if (gamepad1.triangle){
 //            shootAngle = Math.atan((yPos/xPos));
@@ -276,18 +287,25 @@ public class Meet1Tele extends ToxicTele {
             prevVel = adjustedVel;
 
             if (Math.abs(wheelVel - robot.wheel1.getVelocity()) >= 5 && Math.abs(wheelVel - robot.wheel1.getVelocity())<40 && wheelVel!= 0) {
-                double errorScaled = Math.abs(wheelVel - robot.wheel1.getVelocity());
+                double errorScaled = Math.abs(adjustedVel - robot.wheel1.getVelocity());
 
-                wheel1Vel = adjustedVel + Math.copySign(errorScaled, wheelVel - robot.wheel1.getVelocity());
+                wheel1Vel = adjustedVel + Math.copySign(10, wheelVel - robot.wheel1.getVelocity());//Math.copySign(errorScaled, wheelVel - robot.wheel1.getVelocity());
             }
             if (Math.abs(wheelVel - robot.wheel2.getVelocity()) >= 5 && Math.abs(wheelVel - robot.wheel2.getVelocity())<40 && wheelVel!= 0) {
-                double errorScaled = Math.abs(wheelVel - robot.wheel1.getVelocity())*1;
+                double errorScaled = Math.abs(adjustedVel - robot.wheel1.getVelocity())*1;
 
-                wheel2Vel = adjustedVel*(.11) + (Math.copySign(errorScaled, wheelVel - robot.wheel2.getVelocity()));
+                wheel2Vel = adjustedVel +(Math.copySign(10, wheelVel - robot.wheel2.getVelocity()));//(Math.copySign(errorScaled, wheelVel - robot.wheel2.getVelocity()));
             }
-            if (Math.abs(robot.wheel1.getVelocity() - robot.wheel2.getVelocity()) > 10) {
+//            if (Math.abs(robot.wheel1.getVelocity() - robot.wheel2.getVelocity()) > 60 && Math.abs(wheelVel - robot.wheel2.getVelocity())>100) {
+//                if (robot.wheel1.getVelocity()>robot.wheel2.getVelocity()){
+//                    wheel1Vel = robot.wheel2.getVelocity();
+//
+//                } else if (robot.wheel1.getVelocity()<robot.wheel2.getVelocity()){
+//                    wheel2Vel = robot.wheel1.getVelocity();
+//                }
+//            }
 
-            }
+            //if ()
 
             robot.wheel1.setVelocity(wheel1Vel);
             robot.wheel2.setVelocity(wheel2Vel);
@@ -297,11 +315,11 @@ public class Meet1Tele extends ToxicTele {
 
         }
 
-//        telemetry.addData("pinpoint status", robot.pinpoint.getDeviceStatus());
-//        telemetry.addData("x", xPos);
-//        telemetry.addData("y", yPos);
-//        telemetry.addData("theta", zPos);
-//        telemetry.addLine();
+        telemetry.addData("pinpoint status", robot.pinpoint.getDeviceStatus());
+        telemetry.addData("x", xPos);
+        telemetry.addData("y", yPos);
+        telemetry.addData("theta", zPos);
+        telemetry.addLine();
 
 
         telemetry.addData("wheel vel", wheelVel);

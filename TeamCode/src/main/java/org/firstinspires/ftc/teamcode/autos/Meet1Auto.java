@@ -13,6 +13,6 @@ public class Meet1Auto extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        //init
+        //init        robot.pinpoint.update();
     }
 }
