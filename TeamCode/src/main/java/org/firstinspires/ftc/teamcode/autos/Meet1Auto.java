@@ -11,12 +11,39 @@ import org.firstinspires.ftc.teamcode.utils.RadioactiveAuto;
 @Autonomous (name = "meet 1 auto")
 abstract public class Meet1Auto extends RadioactiveAuto {
 
-    public MyChemicalRobot robot;
+    //public MyChemicalRobot robot;
 
     @Override
     public void runOpMode() throws InterruptedException {
+        while(opModeIsActive()){
+            telemetry.addLine("got yay far");
+            telemetry.update();
+        }
+        initialize();
+        while(opModeIsActive()){
+            telemetry.addLine("got nay far");
+            telemetry.update();
+        }
+        telemetry.addLine("1");
+        telemetry.update();
         //init        robot.pinpoint.update();
         waitForStart();
+        wait(100000);
+        telemetry.addLine("2");
+        telemetry.update();
+        while(opModeIsActive()){
+            telemetry.addLine("got this far");
+            telemetry.update();
+        }
+        move(0.7, 1095,-964,-982,1084);
+        while(opModeIsActive()){
+            telemetry.addLine("got this far");
+            telemetry.update();
+        }
+        telemetry.addLine("3");
+        telemetry.update();
+
+        sleep(1000000000);
     }
 
     @Override
@@ -45,10 +72,11 @@ abstract public class Meet1Auto extends RadioactiveAuto {
 
     @Override
     public void begin() {
-        move(0.7, 100,100,100,100);
-        sleep(1000000000);
+
     }
     public void move(double power, int setPosFR, int setPosFL, int setPosBR, int setPosBL){
+        telemetry.addLine("1");
+        telemetry.update();
         robot.rightFront.setTargetPosition(setPosFR);
         robot.leftFront.setTargetPosition(setPosFL);
         robot.rightRear.setTargetPosition(setPosBR);
@@ -59,6 +87,20 @@ abstract public class Meet1Auto extends RadioactiveAuto {
         robot.rightRear.setPower(power);
         robot.leftRear.setPower(power);
 
+        while (
+                (robot.rightFront.isBusy()&&robot.leftFront.isBusy()&&robot.rightRear.isBusy()&&robot.leftRear.isBusy())) {
+            // Display it for the driver.
+            telemetry.addData("Running to",  " %7d :%7d");
+            telemetry.addData("Currently at",  " at %7d :%7d");
+            telemetry.update();
+        }
+        robot.leftFront.setPower(0);
+        robot.leftFront.setPower(0);
+        robot.leftFront.setPower(0);
+        robot.leftFront.setPower(0);
+
+
+        telemetry.addLine("reached");
         robot.rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -72,11 +114,14 @@ abstract public class Meet1Auto extends RadioactiveAuto {
         robot.leftRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.rightFront.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         robot.rightRear.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        telemetry.update();
+
     }
 
-    public void moveLine(){
 
-    }
+
+
 
 
 }

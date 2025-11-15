@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -12,8 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
 
-@TeleOp(name = "Meet1Tele")
-public class Meet1Tele extends ToxicTele {
+@TeleOp(name = "Meat1Tele FieldCentric")
+public class Meat1TeleFieldCentric extends ToxicTele {
 
     double x;  // Note: pushing stick forward gives negative value
     double y;
@@ -59,7 +58,7 @@ public class Meet1Tele extends ToxicTele {
     Boolean triggerWasNotOn = true;
 
     Boolean incrementalSpeedUp = false;
-    Boolean incrementalSpeedUp1330 = false;
+    Boolean incrementalSpeedUp1345 = false;
     Boolean incrementalSpeedUp1375 = false;
     Boolean incrementalSpeedUp1460 = false;
 
@@ -95,6 +94,7 @@ public class Meet1Tele extends ToxicTele {
         robot.pinpoint.initialize();
         robot.pinpoint.resetPosAndIMU();
         robot.pinpoint.recalibrateIMU();
+        robot.imu.resetYaw();
 
 
     }
@@ -148,14 +148,39 @@ public class Meet1Tele extends ToxicTele {
             }
 
             //ignore all of whats below
-            x = Math.pow(-gamepad1.left_stick_x, 3) * speed;  // Note: pushing stick forward gives negative value
-            y = Math.pow(-gamepad1.left_stick_y, 3) * speed;  // Note: pushing stick forward gives negative value
+            y = Math.pow(-gamepad1.left_stick_x, 3) * speed;  // Note: pushing stick forward gives negative value
+            x = Math.pow(-gamepad1.left_stick_y, 3) * speed;  // Note: pushing stick forward gives negative value
             z = -Math.pow(-gamepad1.right_stick_x, 3) * speed;  // Note: pushing stick forward gives negative value
 
-            leftFrontPower = x + y + z;
-            rightFrontPower = x - y - z;
-            leftRearPower = x - y + z;
-            rightRearPower = x + y - z;
+
+            double botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
+            // Rotate the movement direction counter to the bot's rotation
+            double rotX = x * Math.sin(-botHeading) - y * Math.cos(-botHeading);
+            double rotY = x * Math.cos(-botHeading) + y * Math.sin(-botHeading);
+
+            rotX = rotX * 1.2;  // Counteract imperfect strafing
+
+            // Denominator is the largest motor power (absolute value) or 1
+            // This ensures all the powers maintain the same ratio,
+            // but only if at least one is out of the range [-1, 1]
+            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(z), 1);
+            leftFrontPower = (rotY + rotX + z) ;
+            leftRearPower = (rotY - rotX + z);
+            rightFrontPower = (rotY - rotX - z);
+            rightRearPower = (rotY + rotX - z);
+
+//            frontLeftMotor.setPower(frontLeftPower);
+//            backLeftMotor.setPower(backLeftPower);
+//            frontRightMotor.setPower(frontRightPower);
+//            backRightMotor.setPower(backRightPower);
+//
+//
+//
+//            leftFrontPower = x + y + z;
+//            rightFrontPower = x - y - z;
+//            leftRearPower = x - y + z;
+//            rightRearPower = x + y - z;
 
             if (leftFrontPower > 1) {
                 leftFrontPower = 1;
@@ -250,7 +275,7 @@ public class Meet1Tele extends ToxicTele {
 
             //incremental speed increase
             if (incrementalSpeedUp) {
-                if (wheelVel < 1320) {
+                if (wheelVel < 1345) {
                     wheelVel = wheelVel + 40;
                 } else {
                     incrementalSpeedUp = false;
@@ -259,14 +284,14 @@ public class Meet1Tele extends ToxicTele {
                     //triggerWasNotOn=true;
                 }
             }
-            if (incrementalSpeedUp1330) {
-                if (wheelVel < 1330) {
+            if (incrementalSpeedUp1345) {
+                if (wheelVel < 1345) {
                     wheelVel = wheelVel + 40;
-                    if (wheelVel>1330){
-                        wheelVel= 1330;
+                    if (wheelVel>1345){
+                        wheelVel= 1345;
                     }
                 } else {
-                    incrementalSpeedUp1330 = false;
+                    incrementalSpeedUp1345 = false;
                     gamepad2.rumble(500);
                     //triggerWasNotOn=true;
                 }
@@ -299,7 +324,7 @@ public class Meet1Tele extends ToxicTele {
 
 
             if (incrementalSpeedUp) {
-                if (wheelVel < 1320) {
+                if (wheelVel < 1345) {
                     wheelVel = wheelVel + 40;
                 } else {
                     incrementalSpeedUp = false;
@@ -326,7 +351,7 @@ public class Meet1Tele extends ToxicTele {
             }
 
             if (gamepad1.triangle) {//up close shooting
-                wheelVel = 1330;
+                wheelVel = 1345;
                 monitor = true;
                 //incrementalSpeedUp1330 = true;
 
