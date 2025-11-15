@@ -102,10 +102,11 @@ public class MyChemicalRobot {
                 rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 rightRear.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-                leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-                rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+                leftFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                rightFront.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
+                //
             }
 
             //outtake
@@ -136,7 +137,7 @@ public class MyChemicalRobot {
 
                 shooterServo = hardwareMap.get(Servo.class, "shooterServo");
                 shooterServo.setDirection(Servo.Direction.REVERSE);
-                shooterServo.scaleRange(0.2678, 0.8);
+                shooterServo.scaleRange(0.2678, 0.795);
 
 
                 belt = hardwareMap.get(DcMotorEx.class, "belt");
