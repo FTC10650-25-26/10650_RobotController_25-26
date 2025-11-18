@@ -12,6 +12,8 @@ import java.util.List;
 
 @TeleOp (name= "limlelight tele")
 public class LimelightTestTele extends ToxicTele {
+
+    //Color color = RED;
     @Override
     public void initialize() {
         robot.limelight.pipelineSwitch(0); // Switch to pipeline number 0

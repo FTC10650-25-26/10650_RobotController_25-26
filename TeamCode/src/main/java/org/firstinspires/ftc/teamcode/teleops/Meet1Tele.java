@@ -59,7 +59,7 @@ public class Meet1Tele extends ToxicTele {
     Boolean triggerWasNotOn = true;
 
     Boolean incrementalSpeedUp = false;
-    Boolean incrementalSpeedUp1330 = false;
+    Boolean incrementalSpeedUp1345 = false;
     Boolean incrementalSpeedUp1375 = false;
     Boolean incrementalSpeedUp1460 = false;
 
@@ -250,7 +250,7 @@ public class Meet1Tele extends ToxicTele {
 
             //incremental speed increase
             if (incrementalSpeedUp) {
-                if (wheelVel < 1320) {
+                if (wheelVel < 1345) {
                     wheelVel = wheelVel + 40;
                 } else {
                     incrementalSpeedUp = false;
@@ -259,14 +259,14 @@ public class Meet1Tele extends ToxicTele {
                     //triggerWasNotOn=true;
                 }
             }
-            if (incrementalSpeedUp1330) {
-                if (wheelVel < 1330) {
+            if (incrementalSpeedUp1345) {
+                if (wheelVel < 1345) {
                     wheelVel = wheelVel + 40;
-                    if (wheelVel>1330){
-                        wheelVel= 1330;
+                    if (wheelVel>1345){
+                        wheelVel= 1345;
                     }
                 } else {
-                    incrementalSpeedUp1330 = false;
+                    incrementalSpeedUp1345 = false;
                     gamepad2.rumble(500);
                     //triggerWasNotOn=true;
                 }
@@ -299,7 +299,7 @@ public class Meet1Tele extends ToxicTele {
 
 
             if (incrementalSpeedUp) {
-                if (wheelVel < 1320) {
+                if (wheelVel < 1345) {
                     wheelVel = wheelVel + 40;
                 } else {
                     incrementalSpeedUp = false;
@@ -326,7 +326,7 @@ public class Meet1Tele extends ToxicTele {
             }
 
             if (gamepad1.triangle) {//up close shooting
-                wheelVel = 1330;
+                wheelVel = 1345;
                 monitor = true;
                 //incrementalSpeedUp1330 = true;
 

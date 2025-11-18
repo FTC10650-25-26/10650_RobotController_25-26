@@ -24,12 +24,15 @@ public abstract class ToxicTele extends LinearOpMode {
     double y;
     double z;
 
+
     // Combine the joystick requests for each axis-motion to determine each wheel's power.
     // Set up a variable for each drive wheel to save the power level for telemetry.
     double leftFrontPower;
     double rightFrontPower;
     double leftRearPower;
     double rightRearPower;
+
+
 
 
 
@@ -44,6 +47,8 @@ public abstract class ToxicTele extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()) {
             teleLoop();
+            robot.loopLimelightPoseData(false);
+            //robot.findTag();
         }
     }
     abstract public void initialize();

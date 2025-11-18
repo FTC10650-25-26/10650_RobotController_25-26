@@ -52,13 +52,13 @@ public class Constants {
             .yVelocity(74.11616);
     public static PinpointConstants localizerConstants =
             new PinpointConstants()
-                .forwardPodY(-3.625)
-                .strafePodX(0.0)
+                .forwardPodY(0)
+                .strafePodX(3.625)
                 .distanceUnit(DistanceUnit.INCH)
                 .hardwareMapName("pinpoint")
                 .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
                 .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
-                .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+                .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
 //    public static ThreeWheelIMUConstants localizerConstants =
 //            new ThreeWheelIMUConstants()
 //                    .forwardTicksToInches(.001989436789)

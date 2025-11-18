@@ -72,9 +72,14 @@ public class MyChemicalRobot {
     public int weightedAvgLLPoseCapacity = 200;
 
     public ArrayDeque<Pose> LLPosDeque =  new ArrayDeque<>(weightedAvgLLPoseCapacity);
-    //public ArrayDeque<Double> imuPoses = new ArrayDeque<>()
 
 
+    public double encoderDegrees;
+
+    public LLResult result;
+
+    public double tx = 0;
+    public double ty = 0;
     //double re
 
     public void initHardware(boolean useMotors) {
@@ -137,7 +142,7 @@ public class MyChemicalRobot {
 
                 shooterServo = hardwareMap.get(Servo.class, "shooterServo");
                 shooterServo.setDirection(Servo.Direction.REVERSE);
-                shooterServo.scaleRange(0.2678, 0.795);
+                shooterServo.scaleRange(0.2678, 0.790);
 
 
                 belt = hardwareMap.get(DcMotorEx.class, "belt");
@@ -152,9 +157,9 @@ public class MyChemicalRobot {
         }
 
 
-//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-//        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
-//        limelight.start(); // This tells Limelight to start looking!
+        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
+        limelight.start(); // This tells Limelight to start looking!
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
@@ -187,8 +192,8 @@ public class MyChemicalRobot {
         LLResult result = limelight.getLatestResult();
         if (result != null && result.isValid()) {
 
-            double tx = result.getTx(); // How far left or right the target is (degrees)
-            double ty = result.getTy(); // How far up or down the target is (degrees)
+            tx = result.getTx(); // How far left or right the target is (degrees)
+            ty = result.getTy(); // How far up or down the target is (degrees)
             double ta = result.getTa(); // How big the target looks (0%-100% of the image)
 
             if (useLLTelem) {
@@ -291,6 +296,37 @@ public class MyChemicalRobot {
     }
 
 
+//    public double getServoDegrees(double servoPos, Color color){
+//        servoPos = servo.getPosition();
+//        encoderDegrees = (servo.getPosition/1)*1800;
+//        while(encoderDegrees>360){
+//            encoderDegrees-=360;
+//        }
+//        encoderDegrees = encoderDegrees + pinpoint.getHeading(AngleUnit.DEGREES);
+//
+//    }
+
+    public final int BLUE_TAG_ID = 20;
+    public final int RED_TAG_ID = 24;
+
+
+    public void findTag(Color color){
+
+        if (color== Color.RED) {
+            //LimelightHelpers.SetFiducialIDFiltersOverride("limelight", BLUE_TAG_ID);
+            limelight.pipelineSwitch(1);
+
+            //double turnAngle = Math.atan(pinpoint.getPosX(DistanceUnit.INCH)/pinpoint.getPosY(DistanceUnit.INCH));
+
+        }else if (color==Color.RED){
+            limelight.pipelineSwitch(0);
+        }
+        if (limelight.getLatestResult()==null){
+            //shooterServo.setPosition(.getPosition()+ Math.copySign(0.005, tx));
+        }
+    }
+
+
 //    public void chooseName(double x, double y,double theta){
 //        if (LLPosDeque.size() == maxCapacity){
 //            sumLLPosX-= LLPosDeque.
@@ -298,4 +334,8 @@ public class MyChemicalRobot {
 //
 //    }
 
+}
+
+enum Color{
+    RED,BLUE
 }
