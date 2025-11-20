@@ -11,8 +11,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
 
-@TeleOp(name = "Meat1Tele FieldCentric")
-public class Meat1TeleFieldCentric extends ToxicTele {
+@TeleOp(name = "Meet1TeleRawPid")
+public class Meet1TeleRawPid extends ToxicTele {
 
     double x;  // Note: pushing stick forward gives negative value
     double y;
@@ -94,7 +94,6 @@ public class Meat1TeleFieldCentric extends ToxicTele {
         robot.pinpoint.initialize();
         robot.pinpoint.resetPosAndIMU();
         robot.pinpoint.recalibrateIMU();
-        robot.imu.resetYaw();
 
 
     }
@@ -148,39 +147,14 @@ public class Meat1TeleFieldCentric extends ToxicTele {
             }
 
             //ignore all of whats below
-            y = Math.pow(-gamepad1.left_stick_x, 3) * speed;  // Note: pushing stick forward gives negative value
-            x = Math.pow(-gamepad1.left_stick_y, 3) * speed;  // Note: pushing stick forward gives negative value
+            x = Math.pow(-gamepad1.left_stick_x, 3) * speed;  // Note: pushing stick forward gives negative value
+            y = Math.pow(-gamepad1.left_stick_y, 3) * speed;  // Note: pushing stick forward gives negative value
             z = -Math.pow(-gamepad1.right_stick_x, 3) * speed;  // Note: pushing stick forward gives negative value
 
-
-            double botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-
-            // Rotate the movement direction counter to the bot's rotation
-            double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
-            double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
-
-            rotX = rotX * 1.2;  // Counteract imperfect strafing
-
-            // Denominator is the largest motor power (absolute value) or 1
-            // This ensures all the powers maintain the same ratio,
-            // but only if at least one is out of the range [-1, 1]
-            double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(z), 1);
-            leftFrontPower = (rotY + rotX + z) ;
-            leftRearPower = (rotY - rotX + z);
-            rightFrontPower = (rotY - rotX - z);
-            rightRearPower = (rotY + rotX - z);
-
-//            frontLeftMotor.setPower(frontLeftPower);
-//            backLeftMotor.setPower(backLeftPower);
-//            frontRightMotor.setPower(frontRightPower);
-//            backRightMotor.setPower(backRightPower);
-//
-//
-//
-//            leftFrontPower = x + y + z;
-//            rightFrontPower = x - y - z;
-//            leftRearPower = x - y + z;
-//            rightRearPower = x + y - z;
+            leftFrontPower = x + y + z;
+            rightFrontPower = x - y - z;
+            leftRearPower = x - y + z;
+            rightRearPower = x + y - z;
 
             if (leftFrontPower > 1) {
                 leftFrontPower = 1;
@@ -387,22 +361,8 @@ public class Meat1TeleFieldCentric extends ToxicTele {
 //                    nominalVoltage += .01;
 //                }
 //            }
-            nominalVoltage = 12.43;
 
-            currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
-            adjustedVel = wheelVel * (nominalVoltage / currentVoltage);
-            prevVel = adjustedVel;
 
-            if (Math.abs(wheelVel - robot.wheel1.getVelocity()) >= 5 && Math.abs(wheelVel - robot.wheel1.getVelocity())<40 && wheelVel!= 0) {
-                double errorScaled = Math.abs(adjustedVel - robot.wheel1.getVelocity());
-
-                wheel1Vel = adjustedVel + Math.copySign(10, wheelVel - robot.wheel1.getVelocity());//Math.copySign(errorScaled, wheelVel - robot.wheel1.getVelocity());
-            }
-            if (Math.abs(wheelVel - robot.wheel2.getVelocity()) >= 5 && Math.abs(wheelVel - robot.wheel2.getVelocity())<40 && wheelVel!= 0) {
-                double errorScaled = Math.abs(adjustedVel - robot.wheel1.getVelocity())*1;
-
-                wheel2Vel = adjustedVel +(Math.copySign(10, wheelVel - robot.wheel2.getVelocity()));//(Math.copySign(errorScaled, wheelVel - robot.wheel2.getVelocity()));
-            }
 //            if (Math.abs(robot.wheel1.getVelocity() - robot.wheel2.getVelocity()) > 60 && Math.abs(wheelVel - robot.wheel2.getVelocity())>100) {
 //                if (robot.wheel1.getVelocity()>robot.wheel2.getVelocity()){
 //                    wheel1Vel = robot.wheel2.getVelocity();

@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+//import org.firstinspires.ftc.teamcode.utils.Color;
+import org.firstinspires.ftc.teamcode.utils.MyChemicalRobot;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
 
@@ -56,6 +58,7 @@ public class Meet1Tele extends ToxicTele {
 
 
     Boolean beltOn = false;
+    Boolean align = false;
     Boolean triggerWasNotOn = true;
 
     Boolean incrementalSpeedUp = false;
@@ -135,6 +138,18 @@ public class Meet1Tele extends ToxicTele {
 //            shootAngle = Math.atan((yPos/xPos));
 //
 //        }
+        //robot.findTagTele();
+        if (gamepad1.dpad_down){
+            align = true;
+        }
+        if (align){
+            robot.findTagTele(MyChemicalRobot.Color.RED
+            );
+        }
+
+
+
+        //robot.findTagTele(MyChemicalRobot.Color.RED, false);
 
 
         //harper controls
@@ -169,10 +184,15 @@ public class Meet1Tele extends ToxicTele {
             if (rightRearPower > 1) {
                 rightRearPower = 1;
             }
-            robot.leftFront.setPower(leftFrontPower);
-            robot.leftRear.setPower(leftRearPower);
-            robot.rightRear.setPower(rightRearPower);
-            robot.rightFront.setPower(rightFrontPower);
+
+            if(!robot.isOverridingMotorControl) {
+                robot.leftFront.setPower(leftFrontPower);
+                robot.leftRear.setPower(leftRearPower);
+                robot.rightRear.setPower(rightRearPower);
+                robot.rightFront.setPower(rightFrontPower);
+                align = false;
+            }
+
 
 
             //this button powers off drivetrain
@@ -340,13 +360,13 @@ public class Meet1Tele extends ToxicTele {
                 robot.shooterServo.setPosition(0);
 
             }
-            if (gamepad1.cross){//middle
-                wheelVel = 1460;
-                monitor = true;
-                //incrementalSpeedUp1460 = true;
-                robot.shooterServo.setPosition(0);
-
-            }
+//            if (gamepad1.cross){//middle
+//                wheelVel = 1460;
+//                monitor = true;
+//                //incrementalSpeedUp1460 = true;
+//                robot.shooterServo.setPosition(0);
+//
+//            }
             if (gamepad1.square){
                 wheelVel = 1720;
                 monitor = true;
@@ -362,6 +382,8 @@ public class Meet1Tele extends ToxicTele {
 //                    nominalVoltage += .01;
 //                }
 //            }
+
+
             nominalVoltage = 12.43;
 
             currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
@@ -389,10 +411,11 @@ public class Meet1Tele extends ToxicTele {
 
             //if ()
 
-            robot.wheel1.setVelocity(wheel1Vel);
-            robot.wheel2.setVelocity(wheel2Vel);
+            robot.wheel1.setVelocity(-wheel1Vel);
+            robot.wheel2.setVelocity(-wheel2Vel);
             wheel1Vel = wheelVel;
             wheel2Vel = wheelVel;
+
 
 
         }
@@ -428,8 +451,8 @@ public class Meet1Tele extends ToxicTele {
         telemetry.addData("current1", robot.wheel1.getCurrent(CurrentUnit.MILLIAMPS));
         telemetry.addData("current2", robot.wheel1.getCurrent(CurrentUnit.MILLIAMPS));
         telemetry.addLine();
-        telemetry.addData("current1Alert", robot.wheel1.getCurrentAlert(CurrentUnit.MILLIAMPS));
-        telemetry.addData("current2 Alert", robot.wheel2.getCurrentAlert(CurrentUnit.MILLIAMPS));
+        telemetry.addData("isOverridingcontorl", robot.isOverridingMotorControl);
+        telemetry.addData("align",align);
         telemetry.addLine();
         telemetry.addLine();
 

@@ -40,10 +40,12 @@ public class MyChemicalRobot {
         this.telemetry = telemetry;
     }
 
-    public DcMotor leftFront;
-    public DcMotor leftRear;
-    public DcMotor rightFront;
-    public DcMotor rightRear;
+    public DcMotorEx leftFront;
+    public DcMotorEx leftRear;
+    public DcMotorEx rightFront;
+    public DcMotorEx rightRear;
+
+    public boolean isOverridingMotorControl = false;
 
     public Limelight3A limelight;
     public DcMotorEx wheel1;
@@ -80,6 +82,9 @@ public class MyChemicalRobot {
 
     public double tx = 0;
     public double ty = 0;
+
+    double turnAngle = 0;
+
     //double re
 
     public void initHardware(boolean useMotors) {
@@ -117,7 +122,7 @@ public class MyChemicalRobot {
             //outtake
             {
                 wheel1 = hardwareMap.get(DcMotorEx.class, "wheelL");
-                wheel1.setDirection(DcMotorSimple.Direction.REVERSE);
+                wheel1.setDirection(DcMotorSimple.Direction.FORWARD);
                 //wheel1.setVelocity(0);
                 wheel1.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -125,7 +130,7 @@ public class MyChemicalRobot {
                 wheel1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
 
                 wheel2 = hardwareMap.get(DcMotorEx.class, "wheelR");
-                wheel2.setDirection(DcMotorSimple.Direction.FORWARD);
+                wheel2.setDirection(DcMotorSimple.Direction.REVERSE);
                 //wheel2.setVelocity(0);
                 wheel2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
@@ -318,7 +323,7 @@ public class MyChemicalRobot {
 
             //double turnAngle = Math.atan(pinpoint.getPosX(DistanceUnit.INCH)/pinpoint.getPosY(DistanceUnit.INCH));
 
-        }else if (color==Color.RED){
+        }else if (color==Color.BLUE){
             limelight.pipelineSwitch(0);
         }
         if (limelight.getLatestResult()==null){
@@ -326,7 +331,93 @@ public class MyChemicalRobot {
         }
     }
 
+    public void findTagTele(Color color){
+        double heading  = pinpoint.getHeading(AngleUnit.DEGREES);
 
+        LLResult latestResult = limelight.getLatestResult();
+        if(latestResult.isValid()){
+            isOverridingMotorControl = false;
+            leftFront.setVelocity(0);
+            rightFront.setVelocity(0);
+            leftRear.setVelocity(0);
+            rightRear.setVelocity(0);
+            return;
+        }
+
+        isOverridingMotorControl = true;
+
+        if (color== Color.RED) {
+            limelight.pipelineSwitch(1);
+        }else if (color==Color.BLUE){
+            limelight.pipelineSwitch(0);
+        }
+
+//        if (pinpoint.getHeading(AngleUnit.DEGREES)>-90 && pinpoint.getHeading(AngleUnit.DEGREES)<90 && limelight.getLatestResult()==null){
+//            leftFront.setVelocity(200);
+//            rightFront.setVelocity(200);
+//            leftRear.setVelocity(-200);
+//            rightRear.setVelocity(-200);
+//        }else if ((heading>=90 && heading<180) || (heading<=-90 && heading>=-180) && limelight.getLatestResult()==null){
+            leftFront.setVelocity(-400);
+            rightFront.setVelocity(400);
+            leftRear.setVelocity(-400);
+            rightRear.setVelocity(400);
+//        }
+
+
+    }
+
+    public void findTagTelePinpoint(Color color){
+        double heading  = pinpoint.getHeading(AngleUnit.DEGREES);
+        heading = heading+180;
+        double turnAngle = 0;
+
+        LLResult latestResult = limelight.getLatestResult();
+        if(latestResult.isValid()){
+            isOverridingMotorControl = false;
+            leftFront.setVelocity(0);
+            rightFront.setVelocity(0);
+            leftRear.setVelocity(0);
+            rightRear.setVelocity(0);
+            return;
+        }
+
+        isOverridingMotorControl = true;
+
+        if (color== Color.RED) {
+            limelight.pipelineSwitch(1);
+            turnAngle = Math.atan(pinpoint.getPosY(DistanceUnit.INCH)/(144-pinpoint.getPosX(DistanceUnit.INCH)));
+
+        }else if (color==Color.BLUE){
+            limelight.pipelineSwitch(0);
+            turnAngle = 360-Math.atan((144-pinpoint.getPosY(DistanceUnit.INCH))/(144-pinpoint.getPosX(DistanceUnit.INCH)));
+        }
+
+        double maxFlipped = Math.abs(Math.max(turnAngle, heading)-360);
+        if((heading>turnAngle)||(turnAngle>heading+180)){//counterclock
+
+        } //else if ((heading<=turnAngle)-){
+
+        //}
+            //counterclock
+//        if (pinpoint.getHeading(AngleUnit.DEGREES)>-90 && pinpoint.getHeading(AngleUnit.DEGREES)<90 && limelight.getLatestResult()==null){
+//            leftFront.setVelocity(200);
+//            rightFront.setVelocity(200);
+//            leftRear.setVelocity(-200);
+//            rightRear.setVelocity(-200);
+//        }else if ((heading>=90 && heading<180) || (heading<=-90 && heading>=-180) && limelight.getLatestResult()==null){
+        leftFront.setVelocity(-400);
+        rightFront.setVelocity(400);
+        leftRear.setVelocity(-400);
+        rightRear.setVelocity(400);
+//        }
+
+
+    }
+
+    public enum Color{
+        RED,BLUE
+    }
 //    public void chooseName(double x, double y,double theta){
 //        if (LLPosDeque.size() == maxCapacity){
 //            sumLLPosX-= LLPosDeque.
@@ -336,6 +427,3 @@ public class MyChemicalRobot {
 
 }
 
-enum Color{
-    RED,BLUE
-}
