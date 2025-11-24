@@ -119,6 +119,14 @@ public class Meet2Tele extends ToxicTele {
 //        d2 = pidCoefficients2.d;
 //        f2 = pidCoefficients2.f;
 
+        if(gamepad1.dpad_up){
+            x = robot.pinpoint.getPosX(DistanceUnit.INCH);
+            y = robot.pinpoint.getPosY(DistanceUnit.INCH);
+            //turnAngle = Math.atan(robot.pinpoint.getPosX(DistanceUnit.INCH)/robot.pinpoint.getPosY(DistanceUnit.INCH));//different for red & blue
+        }
+
+
+
 
 //        robot.wheel1.setVelocityPIDFCoefficients(p,i,0.187, f);
 //        robot.wheel2.setVelocityPIDFCoefficients(p2, i2, 0.187, f2);
@@ -151,23 +159,7 @@ public class Meet2Tele extends ToxicTele {
             y = Math.pow(-gamepad1.left_stick_y, 3) * speed;  // Note: pushing stick forward gives negative value
             z = -Math.pow(-gamepad1.right_stick_x, 3) * speed;  // Note: pushing stick forward gives negative value
 
-            leftFrontPower = x + y + z;
-            rightFrontPower = x - y - z;
-            leftRearPower = x - y + z;
-            rightRearPower = x + y - z;
 
-            if (leftFrontPower > 1) {
-                leftFrontPower = 1;
-            }
-            if (leftRearPower > 1) {
-                leftRearPower = 1;
-            }
-            if (rightFrontPower > 1) {
-                rightFrontPower = 1;
-            }
-            if (rightRearPower > 1) {
-                rightRearPower = 1;
-            }
             robot.leftFront.setPower(leftFrontPower);
             robot.leftRear.setPower(leftRearPower);
             robot.rightRear.setPower(rightRearPower);
@@ -361,8 +353,6 @@ public class Meet2Tele extends ToxicTele {
 //                    nominalVoltage += .01;
 //                }
 //            }
-
-
             nominalVoltage = 12.43;
 
             currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
@@ -390,8 +380,6 @@ public class Meet2Tele extends ToxicTele {
 
             //if ()
 
-            robot.wheel1.setVelocity(-wheel1Vel);
-            robot.wheel2.setVelocity(-wheel2Vel);
             wheel1Vel = wheelVel;
             wheel2Vel = wheelVel;
 
