@@ -141,11 +141,16 @@ public class Meet1Tele extends ToxicTele {
         //robot.findTagTele();
         if (gamepad1.dpad_down){
             align = true;
+            robot.findTagTele(MyChemicalRobot.Color.RED);
+        } else {
+            robot.isOverridingMotorControl = false;
+            robot.findTagStartingHeading = robot.pinpoint.getHeading(AngleUnit.RADIANS);
         }
-        if (align){
-            robot.findTagTele(MyChemicalRobot.Color.RED
-            );
-        }
+
+//        telemetry.addData("tx", ;
+//        telemetry.addData("sign", sign);
+//        telemetry.addData("velocity", velocity);
+//        telemetry.update();
 
 
 

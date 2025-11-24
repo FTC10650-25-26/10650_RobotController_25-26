@@ -46,6 +46,8 @@ public class MyChemicalRobot {
     public DcMotorEx rightRear;
 
     public boolean isOverridingMotorControl = false;
+    public double findTagStartingHeading = 0;
+    public double STARTING_HEADING_RELATIVE_TO_OPPOSITE_GOAL_WALL = (-3*Math.PI)/2; // starting heading as viewed by looking at the goals from the opposite wall, can change per auto
 
     public Limelight3A limelight;
     public DcMotorEx wheel1;
@@ -336,11 +338,12 @@ public class MyChemicalRobot {
 
         LLResult latestResult = limelight.getLatestResult();
         if(latestResult.isValid()){
-            isOverridingMotorControl = false;
-            leftFront.setVelocity(0);
-            rightFront.setVelocity(0);
-            leftRear.setVelocity(0);
-            rightRear.setVelocity(0);
+            centerTagInView();
+//            isOverridingMotorControl = false;
+//            leftFront.setVelocity(0);
+//            rightFront.setVelocity(0);
+//            leftRear.setVelocity(0);
+//            rightRear.setVelocity(0);
             return;
         }
 
@@ -351,18 +354,58 @@ public class MyChemicalRobot {
         }else if (color==Color.BLUE){
             limelight.pipelineSwitch(0);
         }
+        double magnitude = 400;
 
-//        if (pinpoint.getHeading(AngleUnit.DEGREES)>-90 && pinpoint.getHeading(AngleUnit.DEGREES)<90 && limelight.getLatestResult()==null){
-//            leftFront.setVelocity(200);
-//            rightFront.setVelocity(200);
-//            leftRear.setVelocity(-200);
-//            rightRear.setVelocity(-200);
-//        }else if ((heading>=90 && heading<180) || (heading<=-90 && heading>=-180) && limelight.getLatestResult()==null){
-            leftFront.setVelocity(-400);
-            rightFront.setVelocity(400);
-            leftRear.setVelocity(-400);
-            rightRear.setVelocity(400);
-//        }
+        int sign = 1;
+        // TODO: Add offset for the starting heading of the auto. The "0" that this function is comparing itself to should be offset based on where the robot was rotated starting-wise.
+        if(findTagStartingHeading < -Math.PI) {//STARTING_HEADING_RELATIVE_TO_OPPOSITE_GOAL_WALL > 0) {
+            sign = -1;
+        }
+        if (findTagStartingHeading<-Math.PI && findTagStartingHeading>-(3*(Math.PI/2))){
+            magnitude = 800;
+        }
+        leftFront.setVelocity(-magnitude*sign);
+        rightFront.setVelocity(magnitude*sign);
+        leftRear.setVelocity(-magnitude*sign);
+        rightRear.setVelocity(magnitude*sign);
+
+
+    }
+
+    public void centerTagInView() {
+        LLResult result = limelight.getLatestResult();
+
+        // 1. Find the position of the April Tag in the camera space
+
+        double tx = result.getTx();
+
+        // 2. Calculate the horizontal offset from the center
+        double offset = tx;
+
+        // 3. Estimate velocity needed based on distance from center
+
+        double velocity = tx*10+10;
+        if (Math.abs(tx)<7){
+
+            velocity=0;
+            isOverridingMotorControl=false;
+        }
+
+        // 4. Find sign (left or right)
+
+        double sign =Math.copySign(1, tx);
+
+        // 5. Apply motor velocities
+
+        leftFront.setVelocity(-velocity*sign);
+        rightFront.setVelocity(velocity*sign);
+        leftRear.setVelocity(-velocity*sign);
+        rightRear.setVelocity(velocity*sign);
+        // 6. Zero velocities if the distance is within threshold
+
+        telemetry.addData("tx", tx);
+        telemetry.addData("sign", sign);
+        telemetry.addData("velocity", velocity);
 
 
     }

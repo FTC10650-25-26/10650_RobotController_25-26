@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.utils.MyChemicalRobot;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
 
@@ -52,6 +53,7 @@ public class Meat1TeleFieldCentric extends ToxicTele {
     final double MINELEV = 0;
     PIDFCoefficients pidCoefficients1;
     PIDFCoefficients pidCoefficients2;
+    boolean align = false;
 
 
     Boolean beltOn = false;
@@ -96,7 +98,6 @@ public class Meat1TeleFieldCentric extends ToxicTele {
         robot.pinpoint.recalibrateIMU();
         robot.imu.resetYaw();
 
-
     }
 
     @Override
@@ -128,7 +129,7 @@ public class Meat1TeleFieldCentric extends ToxicTele {
 
         xPos = robot.pinpoint.getPosX(DistanceUnit.INCH);
         yPos = robot.pinpoint.getPosY(DistanceUnit.INCH);
-        zPos = robot.pinpoint.getHeading(AngleUnit.DEGREES);
+        zPos = robot.pinpoint.getHeading(AngleUnit.RADIANS);
         robot.pinpoint.update();
 //
 //        if (gamepad1.triangle){
@@ -153,13 +154,17 @@ public class Meat1TeleFieldCentric extends ToxicTele {
             z = -Math.pow(-gamepad1.right_stick_x, 3) * speed;  // Note: pushing stick forward gives negative value
 
 
-            double botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            //double botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            double botHeading = robot.pinpoint.getHeading(AngleUnit.RADIANS);
+
 
             // Rotate the movement direction counter to the bot's rotation
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-            rotX = rotX * 1.2;  // Counteract imperfect strafing
+            rotY = rotY ;//* 1.2;  // Counteract imperfect strafing
+
+
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
@@ -169,6 +174,10 @@ public class Meat1TeleFieldCentric extends ToxicTele {
             leftRearPower = (rotY - rotX + z);
             rightFrontPower = (rotY - rotX - z);
             rightRearPower = (rotY + rotX - z);
+
+            telemetry.addData("rotX", rotX);
+            telemetry.addData("rotY", rotY);
+            telemetry.addData("botHeading", botHeading);
 
 //            frontLeftMotor.setPower(frontLeftPower);
 //            backLeftMotor.setPower(backLeftPower);
@@ -201,11 +210,21 @@ public class Meat1TeleFieldCentric extends ToxicTele {
 
 
             //this button powers off drivetrain
-            if (gamepad1.right_bumper) {//force stop
-                robot.leftFront.setPower(0);
-                robot.leftRear.setPower(0);
-                robot.rightRear.setPower(0);
-                robot.rightFront.setPower(0);
+            if(!robot.isOverridingMotorControl) {
+                robot.leftFront.setPower(leftFrontPower);
+                robot.leftRear.setPower(leftRearPower);
+                robot.rightRear.setPower(rightRearPower);
+                robot.rightFront.setPower(rightFrontPower);
+                align = false;
+            }
+
+
+            if (gamepad1.dpad_down){
+                align = true;
+            }
+            if (align){
+                robot.findTagTele(MyChemicalRobot.Color.RED
+                );
             }
 
         }
