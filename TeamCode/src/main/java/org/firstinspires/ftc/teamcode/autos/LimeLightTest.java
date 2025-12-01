@@ -1,21 +1,21 @@
 package org.firstinspires.ftc.teamcode.autos;
 
-import com.bylazar.field.FieldManager;
-import com.bylazar.field.PanelsField;
+//import com.bylazar.field.FieldManager;
+//import com.bylazar.field.PanelsField;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 
 import org.firstinspires.ftc.teamcode.utils.RadioactiveAuto;
 
-import com.bylazar.configurables.annotations.Configurable;
-import com.bylazar.configurables.annotations.IgnoreConfigurable;
-import com.bylazar.configurables.PanelsConfigurables;
-import com.bylazar.field.FieldManager;
-import com.bylazar.field.PanelsField;
-import com.bylazar.field.Style;
-import com.bylazar.telemetry.PanelsTelemetry;
-import com.bylazar.telemetry.TelemetryManager;
-
+//import com.bylazar.configurables.annotations.Configurable;
+//import com.bylazar.configurables.annotations.IgnoreConfigurable;
+//import com.bylazar.configurables.PanelsConfigurables;
+//import com.bylazar.field.FieldManager;
+//import com.bylazar.field.PanelsField;
+//import com.bylazar.field.Style;
+//import com.bylazar.telemetry.PanelsTelemetry;
+//import com.bylazar.telemetry.TelemetryManager;
+//
 
 
 @Autonomous(name = "limelight test")
