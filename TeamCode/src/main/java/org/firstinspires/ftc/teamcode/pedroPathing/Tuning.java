@@ -17,6 +17,7 @@ import com.acmerobotics.dashboard.config.Config;
 //import com.bylazar.field.Style;
 //import com.bylazar.telemetry.PanelsTelemetry;
 //import com.bylazar.telemetry.TelemetryManager;
+import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.*;
 import com.pedropathing.math.*;
@@ -740,7 +741,13 @@ class LateralZeroPowerAccelerationTuner extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/12/2024
  */
+@Config
 class TranslationalTuner extends OpMode {
+    public static double p = 0;
+    public static double i = 0;
+    public static double d = 0;
+    public static double f = 0;
+
     public static double DISTANCE = 40;
     private boolean forward = true;
 
@@ -765,6 +772,7 @@ class TranslationalTuner extends OpMode {
     public void start() {
         follower.deactivateAllPIDFs();
         follower.activateTranslational();
+       // follower.setTranslationalPIDFCoefficients(new PIDFCoefficients(p, i, d, f));
         forwards = new Path(new BezierLine(new Pose(0,0), new Pose(DISTANCE,0)));
         forwards.setConstantHeadingInterpolation(0);
         backwards = new Path(new BezierLine(new Pose(DISTANCE,0), new Pose(0,0)));
@@ -776,6 +784,39 @@ class TranslationalTuner extends OpMode {
     @Override
     public void loop() {
         follower.update();
+
+        if (gamepad2.dpad_up){
+            p += 0.001;
+        }
+        if (gamepad2.dpad_down){
+            p -= 0.001;
+        }
+
+        if (gamepad2.dpad_left){
+            d -= 0.002;
+        }
+
+        if (gamepad2.dpad_right){
+            d += 0.002;
+        }
+
+        if (gamepad2.triangle){
+            i +=0.001;
+        }
+        if (gamepad2.cross){
+            i -= 0.001;
+        }
+
+        if (gamepad2.square){
+            f -= 0.001;
+        }
+        if (gamepad2.circle){
+            f += 0.001;
+        }
+
+        //p = ga
+        follower.setTranslationalPIDFCoefficients(new PIDFCoefficients(p, i, d, f));
+
         draw();
 
         if (!follower.isBusy()) {
@@ -788,7 +829,15 @@ class TranslationalTuner extends OpMode {
             }
         }
 
+
         telemetryA.addLine("Push the robot laterally to test the Translational PIDF(s).");
+
+        telemetryA.addData("p", p);
+        telemetryA.addData("i", i);
+        telemetryA.addData("d", d);
+        telemetryA.addData("f", f);
+
+
         telemetryA.update();
     }
 }
@@ -1211,7 +1260,7 @@ class Drawing {
      * This draws everything that will be used in the Follower's telemetryDebug() method. This takes
      * a Follower as an input, so an instance of the DashboardDrawingHandler class is not needed.
      *
-     * @param follower
+     * //@param follower
      */
     public static void drawDebug(Follower follower) {
         if (follower.getCurrentPath() != null) {
