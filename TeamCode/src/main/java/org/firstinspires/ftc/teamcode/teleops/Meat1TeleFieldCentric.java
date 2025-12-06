@@ -89,6 +89,36 @@ public class Meat1TeleFieldCentric extends ToxicTele {
 
 
 
+    double scorePos = 144;
+    double scoreHeight = 53.8;
+    double launcherHeight = 14;
+    double vertMultilierX = 0.823;
+    double vertMultiplierY = 0.91;
+    double currentPos = 0;
+    double dist = 0;
+    double midDist = 0;
+    double finalHeight = 0;
+
+    double a;
+    double launchVel;
+    double velY;
+    double launchAngle;
+
+
+
+    public void calcLaunchVel(){
+        dist = scorePos - currentPos;
+        midDist = (vertMultilierX *dist) + currentPos;
+        finalHeight = vertMultiplierY*scoreHeight;
+
+        a = (launcherHeight-finalHeight)/(-(Math.pow(a-midDist, 2)));
+        launchVel = -2*a*(-midDist);
+    }
+
+    public void calcLaunchAngle(){
+        launchAngle = Math.asin(velY/launchVel);
+    }
+
     @Override
     public void initialize() {
         //Frobot.belt.setVelocity(0);
@@ -102,6 +132,7 @@ public class Meat1TeleFieldCentric extends ToxicTele {
 
     @Override
     public void teleLoop() {
+
 
 
         telemetry.addData("pid default", robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
@@ -170,10 +201,10 @@ public class Meat1TeleFieldCentric extends ToxicTele {
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(z), 1);
-            leftFrontPower = (rotY + rotX + z) ;
-            leftRearPower = (rotY - rotX + z);
-            rightFrontPower = (rotY - rotX - z);
-            rightRearPower = (rotY + rotX - z);
+            leftFrontPower = (rotY + rotX + z)/denominator ;
+            leftRearPower = (rotY - rotX + z)/denominator;
+            rightFrontPower = (rotY - rotX - z)/denominator;
+            rightRearPower = (rotY + rotX - z)/denominator;
 
             telemetry.addData("rotX", rotX);
             telemetry.addData("rotY", rotY);
@@ -191,18 +222,18 @@ public class Meat1TeleFieldCentric extends ToxicTele {
 //            leftRearPower = x - y + z;
 //            rightRearPower = x + y - z;
 
-            if (leftFrontPower > 1) {
-                leftFrontPower = 1;
-            }
-            if (leftRearPower > 1) {
-                leftRearPower = 1;
-            }
-            if (rightFrontPower > 1) {
-                rightFrontPower = 1;
-            }
-            if (rightRearPower > 1) {
-                rightRearPower = 1;
-            }
+//            if (leftFrontPower > 1) {
+//                leftFrontPower = 1;
+//            }
+//            if (leftRearPower > 1) {
+//                leftRearPower = 1;
+//            }
+//            if (rightFrontPower > 1) {
+//                rightFrontPower = 1;
+//            }
+//            if (rightRearPower > 1) {
+//                rightRearPower = 1;
+//            }
             robot.leftFront.setPower(leftFrontPower);
             robot.leftRear.setPower(leftRearPower);
             robot.rightRear.setPower(rightRearPower);

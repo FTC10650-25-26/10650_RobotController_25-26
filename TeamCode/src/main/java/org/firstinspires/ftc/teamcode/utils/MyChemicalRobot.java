@@ -149,7 +149,7 @@ public class MyChemicalRobot {
 
                 shooterServo = hardwareMap.get(Servo.class, "shooterServo");
                 shooterServo.setDirection(Servo.Direction.REVERSE);
-                shooterServo.scaleRange(0.2678, 0.790);
+                //shooterServo.scaleRange(0.2678, 0.790);
 
 
                 belt = hardwareMap.get(DcMotorEx.class, "belt");
