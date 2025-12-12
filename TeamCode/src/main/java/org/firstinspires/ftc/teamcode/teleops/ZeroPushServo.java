@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
-@TeleOp (name = "ZeroServo")
-public class ZeroServo extends ToxicTele {
+@TeleOp (name = "ZeroPusherServo")
+public class ZeroPushServo extends ToxicTele {
 
     @Override
     public void initialize() {
@@ -27,10 +27,10 @@ public class ZeroServo extends ToxicTele {
         }
 
         if (gamepad2.square){
-            robot.pusherServo.setPosition(0.1011);
+            robot.pusherServo.setPosition(0);
         }
         if (gamepad2.circle){
-            robot.pusherServo.setPosition(.9);
+            robot.pusherServo.setPosition(1);
         }
 
         if (gamepad2.left_bumper){
@@ -38,6 +38,14 @@ public class ZeroServo extends ToxicTele {
         } else {
             robot.intake.setPower(0);
         }
+        if(gamepad2.left_stick_y<0){//go up
+            robot.belt.setVelocity(1800);
+        }else if(gamepad2.left_stick_y>0) {//go down
+            robot.belt.setVelocity(-1800);
+        } else{
+            robot.belt.setVelocity(0);
+        }
+
         telemetry.addData("servoPos", robot.pusherServo.getPosition());
         telemetry.update();
     }

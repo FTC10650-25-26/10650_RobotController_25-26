@@ -1,10 +1,5 @@
 package org.firstinspires.ftc.teamcode.utils;
 
-import static com.sun.tools.javac.jvm.ByteCodes.ret;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
-
-import androidx.xr.runtime.math.Vector3;
-
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.Limelight3A;
@@ -19,13 +14,9 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.GoBildaPinpointDriver;
-import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
 
 import java.util.ArrayDeque;
 
@@ -61,6 +52,8 @@ public class MyChemicalRobot {
     public GoBildaPinpointDriver pinpoint;
 
     public CRServo intakePush;
+
+    public Servo pusherServo;
 
     public Servo shooterServo;
 
@@ -145,6 +138,9 @@ public class MyChemicalRobot {
                 intake = hardwareMap.get(CRServo.class, "intake");
                 intake.setDirection(CRServo.Direction.REVERSE);
 
+                pusherServo = hardwareMap.get(Servo.class, "pusherServo");
+                pusherServo.setDirection(Servo.Direction.FORWARD);
+                pusherServo.scaleRange(0.0917, 0.3065);
 
 
                 shooterServo = hardwareMap.get(Servo.class, "shooterServo");

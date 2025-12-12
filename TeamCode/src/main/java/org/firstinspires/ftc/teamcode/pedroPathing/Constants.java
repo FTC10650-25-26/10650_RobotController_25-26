@@ -29,16 +29,53 @@ public class Constants {
             .useSecondaryTranslationalPIDF(false)
             .useSecondaryHeadingPIDF(false)
             .useSecondaryDrivePIDF(true)
-            .centripetalScaling(0.000065)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.01, 0, 0.0001, 0.02))//p=0.05 //0.06, 0, 0.01, 0
+            .centripetalScaling(0.00027)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0.0001, 0.012)) //0.06, 0, 0.01, 0
             //.translationalPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0)) //0.06, 0, 0.01, 0
             .headingPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0, 0.015))
             .drivePIDFCoefficients(
-                    new FilteredPIDFCoefficients(0.0045, 0, 0.00037, 0, 0.02)
+                    new FilteredPIDFCoefficients(0.0025, 0, 0.00037, 0, 0.02)//p = 0.0045
             )
             .secondaryDrivePIDFCoefficients(
                     new FilteredPIDFCoefficients(0, 0, 0, 0, 0)
+            )
+            .secondaryHeadingPIDFCoefficients(
+                    new PIDFCoefficients(0, 0, 0, 0)
+            )
+            .secondaryTranslationalPIDFCoefficients(
+                    new PIDFCoefficients(0, 0, 0, 0)
             );
+
+
+//
+//     .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0.0001, 0.012)) //0.06, 0, 0.01, 0
+//            //.translationalPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0)) //0.06, 0, 0.01, 0
+//            .headingPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0, 0.015))
+//            .drivePIDFCoefficients(
+//                    new FilteredPIDFCoefficients(0.0045, 0, 0.00037, 0, 0.02)
+//            )
+//                    .secondaryDrivePIDFCoefficients(
+//                    new FilteredPIDFCoefficients(0, 0, 0, 0, 0)
+//            )
+//                    .secondaryHeadingPIDFCoefficients(
+//                    new PIDFCoefficients(0, 0, 0, 0)
+//            )
+//                    .secondaryTranslationalPIDFCoefficients(
+//                    new PIDFCoefficients(0, 0, 0, 0)
+//            );
+
+
+
+
+//            .translationalPIDFCoefficients(new PIDFCoefficients(0.01, 0, 0.0001, 0.02))//p=0.05 //0.06, 0, 0.01, 0
+//            //.translationalPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0)) //0.06, 0, 0.01, 0
+//            .headingPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0, 0.015))
+//            .drivePIDFCoefficients(
+//                    new FilteredPIDFCoefficients(0.0045, 0, 0.00037, 0, 0.02)
+//            )
+//            .secondaryDrivePIDFCoefficients(
+//                    new FilteredPIDFCoefficients(0, 0, 0, 0, 0)
+//            );
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .leftFrontMotorName("leftFront")
@@ -60,6 +97,7 @@ public class Constants {
                 .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
                 .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
                 .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+
 //    public static ThreeWheelIMUConstants localizerConstants =
 //            new ThreeWheelIMUConstants()
 //                    .forwardTicksToInches(.001989436789)
@@ -83,7 +121,7 @@ public class Constants {
 //                    );
 
     public static PathConstraints pathConstraints = new PathConstraints(
-            0.995,
+            0.998, //.995
             500,
             1,
             1

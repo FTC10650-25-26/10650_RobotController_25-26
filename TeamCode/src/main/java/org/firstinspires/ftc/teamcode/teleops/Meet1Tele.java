@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -10,7 +9,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 //import org.firstinspires.ftc.teamcode.utils.Color;
-import org.firstinspires.ftc.teamcode.utils.MyChemicalRobot;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
 
@@ -239,11 +237,11 @@ public class Meet1Tele extends ToxicTele {
             //servo
             if (gamepad2.dpad_down) {
 //            if (robot.shooterServo.getPosition()<MAXELEV){
-                robot.shooterServo.setPosition(robot.shooterServo.getPosition() + 0.01);
+                robot.pusherServo.setPosition(robot.pusherServo.getPosition() + 0.01);
 //            }
             } else if (gamepad2.dpad_up) {
 //            if (robot.shooterServo.getPosition()>MINELEV){
-                robot.shooterServo.setPosition(robot.shooterServo.getPosition() - 0.01);
+                robot.pusherServo.setPosition(robot.pusherServo.getPosition() - 0.01);
 //            }
             }
 
@@ -259,7 +257,7 @@ public class Meet1Tele extends ToxicTele {
                     //incrementalSpeedUp = ;
                 } else {
                     incrementalSpeedUp = true;
-                    robot.shooterServo.setPosition(0.2009);
+                    robot.pusherServo.setPosition(0.2009);
 
                 }
             }
@@ -355,14 +353,14 @@ public class Meet1Tele extends ToxicTele {
                 monitor = true;
                 //incrementalSpeedUp1330 = true;
 
-                robot.shooterServo.setPosition(0.2009);
+                robot.pusherServo.setPosition(0.2009);
             }
             if (gamepad1.circle){ //medium close
                 wheelVel = 1375;
                 monitor = true;
                 //incrementalSpeedUp1375 = true;
 
-                robot.shooterServo.setPosition(0);
+                robot.pusherServo.setPosition(0);
 
             }
 //            if (gamepad1.cross){//middle
@@ -375,7 +373,7 @@ public class Meet1Tele extends ToxicTele {
             if (gamepad1.square){
                 wheelVel = 1720;
                 monitor = true;
-                robot.shooterServo.setPosition(0);
+                robot.pusherServo.setPosition(0);
             }
 
             currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
@@ -461,7 +459,7 @@ public class Meet1Tele extends ToxicTele {
         telemetry.addLine();
         telemetry.addLine();
 
-        telemetry.addData("angle servo pos", robot.shooterServo.getPosition());
+        telemetry.addData("angle servo pos", robot.pusherServo.getPosition());
         telemetry.addLine();
        // robot.wheel2.
         //telemetry.addData("harper vel", Math.abs(leftFrontPower));

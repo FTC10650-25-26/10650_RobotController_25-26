@@ -10,7 +10,6 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 @Autonomous (name = "Meat2Pedro")
@@ -30,7 +29,7 @@ public class Meat2Pedro extends RadioactivePedroAuto{
         final Pose cntrlPose1, cntrlPose2, cntrlPose3;
 
         // First, set the starting pose
-        startPose = new Pose(0, 0, 0);
+        startingPose = new Pose(0, 0, 0);
 
         pose2 = new Pose(33,43,inRads(117));
         pose3 =  new Pose(33,114, 0);
@@ -50,7 +49,7 @@ public class Meat2Pedro extends RadioactivePedroAuto{
 
 
 
-        path1 = new Path(new BezierCurve(startPose, pose2));
+        path1 = new Path(new BezierCurve(startingPose, pose2));
         path1.setLinearHeadingInterpolation(0, inRads(117));
 
         path2 = new Path(new BezierLine(pose2, pose3));
@@ -144,7 +143,7 @@ public class Meat2Pedro extends RadioactivePedroAuto{
         time.reset();
         double incrementalVel = 0;
         while(time.seconds()<9){
-            robot.shooterServo.setPosition(servoPos);
+            robot.pusherServo.setPosition(servoPos);
 
             if (incrementalVel< velocity){
                 incrementalVel +=60;

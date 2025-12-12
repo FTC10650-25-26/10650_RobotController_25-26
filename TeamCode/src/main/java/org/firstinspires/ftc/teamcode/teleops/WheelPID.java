@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.teleops;
 
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.PIDCoefficients;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -70,9 +69,9 @@ public class WheelPID extends ToxicTele {
     public void teleLoop() {
 
         if (gamepad1.dpad_up){
-            robot.shooterServo.setPosition(robot.shooterServo.getPosition()+0.01);
+            robot.pusherServo.setPosition(robot.pusherServo.getPosition()+0.01);
         } else if (gamepad1.dpad_down){
-            robot.shooterServo.setPosition((robot.shooterServo.getPosition()-0.01));
+            robot.pusherServo.setPosition((robot.pusherServo.getPosition()-0.01));
         }
 
 
@@ -191,7 +190,7 @@ public class WheelPID extends ToxicTele {
        robot.wheel2.setVelocityPIDFCoefficients(p2,i,d,f2);
 
 
-        telemetry.addData("servo pos", robot.shooterServo.getPosition());
+        telemetry.addData("servo pos", robot.pusherServo.getPosition());
         telemetry.addLine();
 
 

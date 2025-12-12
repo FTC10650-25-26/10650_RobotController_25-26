@@ -34,6 +34,7 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.paths.Path;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
@@ -53,13 +54,22 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
     int LLPoseCorrectionFreq= Integer.MAX_VALUE;
     int lastLLPoseCorrectionRefreshTime = (int) System.currentTimeMillis();
     Pose startingPose;
+    public Boolean startWheels = false;
+    public double servoPos;
+    public double velocity;
+    public double incrementalVel = 0;
+
+    public ElapsedTime time = new ElapsedTime();
+    public double time2;
+
+
 
 
 
     @Override
     public void runOpMode() throws InterruptedException {
         robot = new MyChemicalRobot(hardwareMap, telemetry);
-        robot.initHardware(false); // do NOT double declare the motors!
+        robot.initHardware(true); // do NOT double declare the motors!
         initialize();
         waitForStart();
         begin();
@@ -72,12 +82,13 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
         opModeTimer.resetTimer();
 
         follower = Constants.createFollower(hardwareMap);
-        follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
+//        follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
 
         //follower = org.firstinspires.ftc.teamcode.pedroPathing.Constants.createFollower(hardwareMap);
-        follower.setStartingPose(startingPose);
 
         buildPaths();
+
+        follower.setStartingPose(startingPose);
 
 //        telemetryA = new MultipleTelemetry(this.telemetry, FtcDashboard.getInstance().getTelemetry());
 //
@@ -92,7 +103,35 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
         pathTimer.resetTimer();
     }
 
+
     public void pathingLoop(){
+        boolean isFullSpeed = false;
+        follower.update();
+        autonomousPathUpdate();
+
+
+//        if (startWheels = true){
+//            if(time.seconds()<9) {
+//                robot.shooterServo.setPosition(servoPos);
+//
+//                if (incrementalVel < velocity) {
+//                    incrementalVel += 60;
+//                    if (incrementalVel > velocity || incrementalVel == velocity) {
+//                        incrementalVel = velocity;
+//                        isFullSpeed = true;
+//
+//                    }
+//                }
+//                robot.wheel1.setVelocity(incrementalVel);
+//                robot.wheel2.setVelocity(incrementalVel);
+//                if (isFullSpeed) {
+//                    robot.belt.setVelocity(1900);
+//                }
+//                if (!follower.isBusy()) {
+//                    stop();
+//                }
+//            }
+//        }
 
         //robot.loopLimelightPoseData(true);
 
@@ -101,8 +140,12 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
 //            follower.setPose(robot.getLLPose());
 //            lastLLPoseCorrectionRefreshTime = (int) System.currentTimeMillis();
 //        }
-        follower.update();
-        autonomousPathUpdate();
+
+        telemetry.addData("path state", pathState);
+        telemetry.addData("x", follower.getPose().getX());
+        telemetry.addData("y",follower.getPose().getY());
+        telemetry.addData("headigng", follower.getPose().getHeading());
+        telemetry.update();
 
         //add get limleight data metatag2
 
@@ -128,14 +171,16 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
         }
     }
 
+
+
     public void startPath(Path startPath){
-        follower.followPath(startPath);
-        setPathState(1);
+//        follower.followPath(startPath);
+//        setPathState(1);
     }
 
     public void goNextPath(Path currentPath, int nextCaseNum){
-       follower.followPath(currentPath);
-       setPathState(nextCaseNum);
+//       follower.followPath(currentPath);
+//       setPathState(nextCaseNum);
     }
 
 

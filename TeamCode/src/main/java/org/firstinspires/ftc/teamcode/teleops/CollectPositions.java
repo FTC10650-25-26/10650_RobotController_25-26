@@ -229,7 +229,7 @@ public class CollectPositions extends ToxicTele {
         telemetry.addLine();
         telemetry.addLine();
 
-        telemetry.addData("angle servo pos", robot.shooterServo.getPosition());
+        telemetry.addData("angle servo pos", robot.pusherServo.getPosition());
         telemetry.addLine();
        // robot.wheel2.
         //telemetry.addData("harper vel", Math.abs(leftFrontPower));

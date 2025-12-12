@@ -213,11 +213,11 @@ public class Meet1TeleRawPid extends ToxicTele {
             //servo
             if (gamepad2.dpad_down) {
 //            if (robot.shooterServo.getPosition()<MAXELEV){
-                robot.shooterServo.setPosition(robot.shooterServo.getPosition() + 0.01);
+                robot.pusherServo.setPosition(robot.pusherServo.getPosition() + 0.01);
 //            }
             } else if (gamepad2.dpad_up) {
 //            if (robot.shooterServo.getPosition()>MINELEV){
-                robot.shooterServo.setPosition(robot.shooterServo.getPosition() - 0.01);
+                robot.pusherServo.setPosition(robot.pusherServo.getPosition() - 0.01);
 //            }
             }
 
@@ -233,7 +233,7 @@ public class Meet1TeleRawPid extends ToxicTele {
                     //incrementalSpeedUp = ;
                 } else {
                     incrementalSpeedUp = true;
-                    robot.shooterServo.setPosition(0.2009);
+                    robot.pusherServo.setPosition(0.2009);
 
                 }
             }
@@ -329,27 +329,27 @@ public class Meet1TeleRawPid extends ToxicTele {
                 monitor = true;
                 //incrementalSpeedUp1330 = true;
 
-                robot.shooterServo.setPosition(0.2009);
+                robot.pusherServo.setPosition(0.2009);
             }
             if (gamepad1.circle){ //medium close
                 wheelVel = 1375;
                 monitor = true;
                 //incrementalSpeedUp1375 = true;
 
-                robot.shooterServo.setPosition(0);
+                robot.pusherServo.setPosition(0);
 
             }
             if (gamepad1.cross){//middle
                 wheelVel = 1460;
                 monitor = true;
                 //incrementalSpeedUp1460 = true;
-                robot.shooterServo.setPosition(0);
+                robot.pusherServo.setPosition(0);
 
             }
             if (gamepad1.square){
                 wheelVel = 1720;
                 monitor = true;
-                robot.shooterServo.setPosition(0);
+                robot.pusherServo.setPosition(0);
             }
 
             currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
@@ -418,7 +418,7 @@ public class Meet1TeleRawPid extends ToxicTele {
         telemetry.addLine();
         telemetry.addLine();
 
-        telemetry.addData("angle servo pos", robot.shooterServo.getPosition());
+        telemetry.addData("angle servo pos", robot.pusherServo.getPosition());
         telemetry.addLine();
        // robot.wheel2.
         //telemetry.addData("harper vel", Math.abs(leftFrontPower));

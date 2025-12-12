@@ -1261,15 +1261,80 @@ class DriveTuner extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/12/2024
  */
+
+@Config
 class Line extends OpMode {
     public static double DISTANCE = 40;
     private boolean forward = true;
+    public static double brakingStrength = 1;
+    public static double brakingStart = 1;
+    boolean changed = true;
 
     private Path forwards;
     private Path backwards;
 
     @Override
     public void init() {}
+
+    public static FollowerConstants followerConstants = new FollowerConstants()
+            .mass(10.48)
+            .forwardZeroPowerAcceleration(-37.92754)
+            .lateralZeroPowerAcceleration(-65.1992)
+            .useSecondaryTranslationalPIDF(false)
+            .useSecondaryHeadingPIDF(false)
+            .useSecondaryDrivePIDF(true)
+            .centripetalScaling(0.000065)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0.0001, 0.012)) //0.06, 0, 0.01, 0
+            //.translationalPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0)) //0.06, 0, 0.01, 0
+            .headingPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0, 0.015))
+            .drivePIDFCoefficients(
+                    new FilteredPIDFCoefficients(0.0045, 0, 0.00037, 0, 0.02)
+            )
+            .secondaryDrivePIDFCoefficients(
+                    new FilteredPIDFCoefficients(0, 0, 0, 0, 0)
+            )
+            .secondaryHeadingPIDFCoefficients(
+                    new PIDFCoefficients(0, 0, 0, 0)
+            )
+            .secondaryTranslationalPIDFCoefficients(
+                    new PIDFCoefficients(0, 0, 0, 0)
+            );
+
+
+    public static MecanumConstants driveConstants = new MecanumConstants()
+            .leftFrontMotorName("leftFront")
+            .leftRearMotorName("leftRear")
+            .rightFrontMotorName("rightFront")
+            .rightRearMotorName("rightRear")
+            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .xVelocity(62.43972)
+            .yVelocity(77.60633);
+    public static PinpointConstants localizerConstants =
+            new PinpointConstants()
+                    .forwardPodY(0)
+                    .strafePodX(3.625)
+                    .distanceUnit(DistanceUnit.INCH)
+                    .hardwareMapName("pinpoint")
+                    .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
+                    .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+                    .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+    public static PathConstraints pathConstraints = new PathConstraints(
+            0.995,
+            500,
+            brakingStrength,
+            brakingStart
+    );
+
+    public static Follower createFollower(HardwareMap hardwareMap) {
+        return new FollowerBuilder(followerConstants, hardwareMap)
+                .mecanumDrivetrain(driveConstants)
+                .pinpointLocalizer(localizerConstants)
+                .pathConstraints(pathConstraints)
+                .build();
+    }
 
     /** This initializes the Follower and creates the forward and backward Paths. */
     @Override
@@ -1284,6 +1349,7 @@ class Line extends OpMode {
 
     @Override
     public void start() {
+        follower = createFollower(hardwareMap);
         follower.activateAllPIDFs();
         forwards = new Path(new BezierLine(new Pose(0,0), new Pose(DISTANCE,0)));
         forwards.setConstantHeadingInterpolation(0);
@@ -1297,6 +1363,18 @@ class Line extends OpMode {
     public void loop() {
         follower.update();
         draw();
+
+        if (gamepad2.circle){
+            changed = true;
+            follower.activateAllPIDFs();
+            forwards = new Path(new BezierLine(new Pose(0,0), new Pose(DISTANCE,0)));
+            forwards.setConstantHeadingInterpolation(0);
+            backwards = new Path(new BezierLine(new Pose(DISTANCE,0), new Pose(0,0)));
+            backwards.setConstantHeadingInterpolation(0);
+            follower.followPath(forwards);
+        }
+
+
 
         if (!follower.isBusy()) {
             if (forward) {
@@ -1336,6 +1414,7 @@ class CentripetalTuner extends OpMode {
 
     public static double brakingStrength = 1;
     public static double brakingStart = 1;
+    public static double centripetalScaling = 0.000065;
 
     boolean changed = false;
 
@@ -1349,7 +1428,7 @@ class CentripetalTuner extends OpMode {
             .useSecondaryTranslationalPIDF(false)
             .useSecondaryHeadingPIDF(false)
             .useSecondaryDrivePIDF(true)
-            .centripetalScaling(0.000065)
+            .centripetalScaling(centripetalScaling)
             .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0.0001, 0.012)) //0.06, 0, 0.01, 0
             //.translationalPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0)) //0.06, 0, 0.01, 0
             .headingPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0, 0.015))
