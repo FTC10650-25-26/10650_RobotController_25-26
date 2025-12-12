@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
 
-@TeleOp(name = "collect positions")
+@TeleOp(name = "collectPositions")
 public class CollectPositions extends ToxicTele {
 
     double x;  // Note: pushing stick forward gives negative value

@@ -2,12 +2,14 @@ package org.firstinspires.ftc.teamcode.autos;
 
 //import com.bylazar.field.Line;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.utils.MyChemicalRobot;
 import org.firstinspires.ftc.teamcode.utils.RadioactiveAuto;
 
+@Disabled
 @Autonomous (name = "meet 1 auto")
 abstract public class Meet1Auto extends RadioactiveAuto {
 

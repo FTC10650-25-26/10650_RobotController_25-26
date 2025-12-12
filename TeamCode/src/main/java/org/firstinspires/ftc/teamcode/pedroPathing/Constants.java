@@ -30,13 +30,14 @@ public class Constants {
             .useSecondaryHeadingPIDF(false)
             .useSecondaryDrivePIDF(true)
             .centripetalScaling(0.000065)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.1, 0, 0, 0)) //0.06, 0, 0.01, 0
-            .headingPIDFCoefficients(new PIDFCoefficients(0.8, 0, 0.09, 0))
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.01, 0, 0.0001, 0.02))//p=0.05 //0.06, 0, 0.01, 0
+            //.translationalPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0)) //0.06, 0, 0.01, 0
+            .headingPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0, 0.015))
             .drivePIDFCoefficients(
-                    new FilteredPIDFCoefficients(0.0075, 0, 0.0001, 0.6, 0)
+                    new FilteredPIDFCoefficients(0.0045, 0, 0.00037, 0, 0.02)
             )
             .secondaryDrivePIDFCoefficients(
-                    new FilteredPIDFCoefficients(0.001, 0, 0.0001, 0.6, 0)
+                    new FilteredPIDFCoefficients(0, 0, 0, 0, 0)
             );
 
     public static MecanumConstants driveConstants = new MecanumConstants()

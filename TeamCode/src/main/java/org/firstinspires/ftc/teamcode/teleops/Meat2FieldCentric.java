@@ -8,12 +8,11 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.teamcode.utils.MyChemicalRobot;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
 
-@TeleOp(name = "Meat1Tele FieldCentric")
-public class Meat1TeleFieldCentric extends ToxicTele {
+@TeleOp(name = "Meat2FieldCentric")
+public class Meat2FieldCentric extends ToxicTele {
 
     double x;  // Note: pushing stick forward gives negative value
     double y;
@@ -60,6 +59,10 @@ public class Meat1TeleFieldCentric extends ToxicTele {
     Boolean triggerWasNotOn = true;
 
     Boolean incrementalSpeedUp = false;
+    Boolean incrementalSpeedUpStart = false;
+
+    double vel = 0;
+
     Boolean incrementalSpeedUp1345 = false;
     Boolean incrementalSpeedUp1375 = false;
     Boolean incrementalSpeedUp1460 = false;
@@ -104,6 +107,8 @@ public class Meat1TeleFieldCentric extends ToxicTele {
     double velY;
     double launchAngle;
 
+    double degrees;
+
 
 
     public void calcLaunchVel(){
@@ -135,10 +140,7 @@ public class Meat1TeleFieldCentric extends ToxicTele {
 
 
 
-        telemetry.addData("pid default", robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
-        telemetry.addData("pid defaul2t", robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
-        //pidCoefficients1 = robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, );
-        //pidCoefficients2 = robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER);
+
 
         robot.wheel1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients1);
         robot.wheel2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients2);
@@ -171,9 +173,9 @@ public class Meat1TeleFieldCentric extends ToxicTele {
 
         //harper controls
         {
-            if (gamepad1.left_bumper) {//fast speed
+            if (gamepad1.cross) {//fast speed
                 speed = .9;//this can be changed
-            } else if (gamepad1.left_trigger>0) { //slow speed
+            } else if (gamepad1.circle) { //slow speed
                 speed = .19;//this can be changed
             } else { //normal speed
                 speed = .8;//this can be changed
@@ -185,8 +187,7 @@ public class Meat1TeleFieldCentric extends ToxicTele {
             z = -Math.pow(-gamepad1.right_stick_x, 3) * speed;  // Note: pushing stick forward gives negative value
 
 
-            //double botHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            double botHeading = robot.pinpoint.getHeading(AngleUnit.RADIANS);
+            double botHeading = robot.pinpoint.getHeading(AngleUnit.RADIANS); //+- 90
 
 
             // Rotate the movement direction counter to the bot's rotation
@@ -206,9 +207,6 @@ public class Meat1TeleFieldCentric extends ToxicTele {
             rightFrontPower = (rotY - rotX - z)/denominator;
             rightRearPower = (rotY + rotX - z)/denominator;
 
-            telemetry.addData("rotX", rotX);
-            telemetry.addData("rotY", rotY);
-            telemetry.addData("botHeading", botHeading);
 
 //            frontLeftMotor.setPower(frontLeftPower);
 //            backLeftMotor.setPower(backLeftPower);
@@ -239,24 +237,28 @@ public class Meat1TeleFieldCentric extends ToxicTele {
             robot.rightRear.setPower(rightRearPower);
             robot.rightFront.setPower(rightFrontPower);
 
+            if (gamepad1.leftBumperWasPressed()){
+                robot.pinpoint.resetPosAndIMU();
+            }
+
 
             //this button powers off drivetrain
-            if(!robot.isOverridingMotorControl) {
-                robot.leftFront.setPower(leftFrontPower);
-                robot.leftRear.setPower(leftRearPower);
-                robot.rightRear.setPower(rightRearPower);
-                robot.rightFront.setPower(rightFrontPower);
-                align = false;
-            }
+//            if(!robot.isOverridingMotorControl) {
+//                robot.leftFront.setPower(leftFrontPower);
+//                robot.leftRear.setPower(leftRearPower);
+//                robot.rightRear.setPower(rightRearPower);
+//                robot.rightFront.setPower(rightFrontPower);
+//                align = false;
+//            }
 
-
-            if (gamepad1.dpad_down){
-                align = true;
-            }
-            if (align){
-                robot.findTagTele(MyChemicalRobot.Color.RED
-                );
-            }
+//
+//            if (gamepad1.dpad_down){
+//                align = true;
+//            }
+//            if (align){
+//                //robot.findTagTele(MyChemicalRobot.Color.RED
+//                //);
+//            }
 
         }
 
@@ -270,28 +272,37 @@ public class Meat1TeleFieldCentric extends ToxicTele {
             }
 
             //belt
-            if (gamepad2.crossWasPressed()) { //belt speed set at very top, only change it there
-                if (!beltOn) {
-                    beltOn = true;
-                    robot.belt.setVelocity(BELTVEL);
 
-                } else if (beltOn) {
-                    robot.belt.setVelocity(0);
-                    beltOn = false;
-                }
-            }
-
-            if (gamepad2.triangle){
+            if(gamepad2.left_stick_y<0){//go up
+                robot.belt.setVelocity(BELTVEL);
+            }else if(gamepad2.left_stick_y>0) {//go down
                 robot.belt.setVelocity(-BELTVEL);
+            } else{
+                robot.belt.setVelocity(0);
             }
+
+//            if (gamepad2.crossWasPressed()) { //belt speed set at very top, only change it there
+//                if (!beltOn) {
+//                    beltOn = true;
+//                    robot.belt.setVelocity(BELTVEL);
+//
+//                } else if (beltOn) {
+//                    robot.belt.setVelocity(0);
+//                    beltOn = false;
+//                }
+//            }
+
+//            if (gamepad2.triangle){
+//                robot.belt.setVelocity(-BELTVEL);
+//            }
 
 
             //servo
-            if (gamepad2.dpad_down) {
+            if (gamepad2.triangle) {
 //            if (robot.shooterServo.getPosition()<MAXELEV){
                 robot.shooterServo.setPosition(robot.shooterServo.getPosition() + 0.01);
 //            }
-            } else if (gamepad2.dpad_up) {
+            } else if (gamepad2.cross) {
 //            if (robot.shooterServo.getPosition()>MINELEV){
                 robot.shooterServo.setPosition(robot.shooterServo.getPosition() - 0.01);
 //            }
@@ -303,130 +314,64 @@ public class Meat1TeleFieldCentric extends ToxicTele {
 
             if (gamepad2.squareWasPressed()) {
                 if (wheelVel > 0) {
-                    incrementalSpeedUp = false;
+                    incrementalSpeedUpStart = false;
                     wheelVel = 0;
                     //slowingDown = true;
                     //incrementalSpeedUp = ;
                 } else {
-                    incrementalSpeedUp = true;
-                    robot.shooterServo.setPosition(0.2009);
+                    incrementalSpeedUpStart = true;
 
                 }
             }
+
             if (monitor) {
                 if (wheel1Vel < wheelVel || wheel1Vel>wheelVel) {
 
                 } else {
                     monitor = false;
-                    gamepad2.rumble(500);
+                    gamepad2.rumble(100);
                     //triggerWasNotOn=true;
                 }
             }
 
             //incremental speed increase
-            if (incrementalSpeedUp) {
-                if (wheelVel < 1345) {
-                    wheelVel = wheelVel + 40;
-                } else {
-                    incrementalSpeedUp = false;
-                    gamepad2.rumble(500);
 
-                    //triggerWasNotOn=true;
-                }
-            }
-            if (incrementalSpeedUp1345) {
-                if (wheelVel < 1345) {
-                    wheelVel = wheelVel + 40;
-                    if (wheelVel>1345){
-                        wheelVel= 1345;
-                    }
-                } else {
-                    incrementalSpeedUp1345 = false;
-                    gamepad2.rumble(500);
-                    //triggerWasNotOn=true;
-                }
-            }
-            if (incrementalSpeedUp1375) {
-                if (wheelVel < 1375) {
-                    wheelVel = wheelVel + 40;
-                    if (wheelVel>1375){
-                        wheelVel= 1375;
-                    }
-                } else {
-                    incrementalSpeedUp1375 = false;
-                    gamepad2.rumble(500);
-                    //triggerWasNotOn=true;
-                }
-            }
-
-            if (incrementalSpeedUp1460) {
-                if (wheelVel < 1460) {
-                    wheelVel = wheelVel + 40;
-                    if (wheelVel>1460){
-                        wheelVel= 1460;
-                    }
-                } else {
-                    incrementalSpeedUp1460 = false;
-                    gamepad2.rumble(500);
-                    //triggerWasNotOn=true;
-                }
-            }
-
-
-            if (incrementalSpeedUp) {
-                if (wheelVel < 1345) {
-                    wheelVel = wheelVel + 40;
-                } else {
-                    incrementalSpeedUp = false;
-                    gamepad2.rumble(500);
-
-                    //triggerWasNotOn=true;
-                }
-            }
 
             //+|- flywheel speed
             if (gamepad2.right_bumper) {
                 if (wheelVel < 1200) {
                     wheelVel += 20;
                     monitor = true;
-                } else if (wheelVel < 1720) {/// <- this number is the max shooting speed
-                    wheelVel = wheelVel + 5;
-                    monitor = true;
+//                } else if (wheelVel < 2000) {/// <- this number is the max shooting speed
+//                    wheelVel += 20;
+//                    monitor = true;
                 }
 
             } else if (gamepad2.left_bumper) {//shoot
-                if (wheelVel > 0) {/// <- this number is the max shooting speed
-                    wheelVel = wheelVel - 5;
+                if (wheelVel >= 20) {///
+                    wheelVel = wheelVel - 20;
                 }
             }
 
-            if (gamepad1.triangle) {//up close shooting
-                wheelVel = 1345;
-                monitor = true;
-                //incrementalSpeedUp1330 = true;
-
-                robot.shooterServo.setPosition(0.2009);
+            if (gamepad2.dpad_up){
+                incrementalSpeedUp = true;
+                vel = 1800;
             }
-            if (gamepad1.circle){ //medium close
-                wheelVel = 1375;
-                monitor = true;
-                //incrementalSpeedUp1375 = true;
-
-                robot.shooterServo.setPosition(0);
-
+            if (gamepad2.dpad_left){
+                incrementalSpeedUp = true;
+                vel = 1700;
             }
-            if (gamepad1.cross){//middle
-                wheelVel = 1460;
-                monitor = true;
-                //incrementalSpeedUp1460 = true;
-                robot.shooterServo.setPosition(0);
+            if (gamepad2.dpad_down){
+                incrementalSpeedUp = true;
+                vel = 1600;
+            }
 
+
+            if (incrementalSpeedUp){
+                incSpeedUp(vel);
             }
-            if (gamepad1.square){
-                wheelVel = 1720;
-                monitor = true;
-                robot.shooterServo.setPosition(0);
-            }
+
+
 
             currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
             adjustedVel = wheelVel * (nominalVoltage / currentVoltage);
@@ -472,31 +417,32 @@ public class Meat1TeleFieldCentric extends ToxicTele {
 
         }
 
-        telemetry.addData("pinpoint status", robot.pinpoint.getDeviceStatus());
-        telemetry.addData("x", xPos);
-        telemetry.addData("y", yPos);
-        telemetry.addData("theta", zPos);
-        telemetry.addLine();
+
 
 
         telemetry.addData("wheel vel", wheelVel);
         telemetry.addData("adjusted vel", adjustedVel);
         telemetry.addLine();
-        telemetry.addData("wheel vel1", wheel1Vel);
-        telemetry.addData("wheel vel2", wheel2Vel);
-
-        telemetry.addLine();
-
-        telemetry.addData("Nominal Voltage", nominalVoltage);
-
         telemetry.addData("actual wheel 1", robot.wheel1.getVelocity());
         telemetry.addData("actual wheel 2", robot.wheel2.getVelocity());
-        telemetry.addLine();
-
-        telemetry.addLine();
-
         telemetry.addData("differemce", Math.abs(robot.wheel1.getVelocity() - robot.wheel2.getVelocity()));
 
+
+
+        //telemetry.addData("Nominal Voltage", nominalVoltage);
+
+
+        telemetry.addLine();
+
+        telemetry.addLine();
+
+
+        telemetry.addLine();
+
+        telemetry.addData("pinpoint status", robot.pinpoint.getDeviceStatus());
+        telemetry.addData("x", xPos);
+        telemetry.addData("y", yPos);
+        telemetry.addData("theta", zPos);
         telemetry.addLine();
 
 
@@ -517,9 +463,24 @@ public class Meat1TeleFieldCentric extends ToxicTele {
         telemetry.addData("pid defaul2t", robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
 
 
+
+
         telemetry.update();
 
 
+    }
+
+    public void incSpeedUp(double velocity){
+        if (wheelVel < velocity) {
+            wheelVel = wheelVel + 60;
+            if (wheelVel>velocity){
+                wheelVel= velocity;
+            }
+        } else {
+            incrementalSpeedUp = false;
+            gamepad2.rumble(250);
+            //triggerWasNotOn=true;
+        }
     }
 
 }

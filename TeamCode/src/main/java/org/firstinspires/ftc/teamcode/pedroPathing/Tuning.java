@@ -775,7 +775,7 @@ class TranslationalTuner extends OpMode {
             .useSecondaryHeadingPIDF(false)
             .useSecondaryDrivePIDF(true)
             .centripetalScaling(0.000065)
-            .translationalPIDFCoefficients(new PIDFCoefficients(p, i, d, f)) //0.06, 0, 0.01, 0
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0.0001, 0.02)) //0.06, 0, 0.01, 0
             .headingPIDFCoefficients(new PIDFCoefficients(0.8, 0, 0.09, 0))
             .drivePIDFCoefficients(
                     new FilteredPIDFCoefficients(0.0075, 0, 0.0001, 0.6, 0)
@@ -838,7 +838,7 @@ class TranslationalTuner extends OpMode {
     public void start() {
         follower.deactivateAllPIDFs();
         follower.activateTranslational();
-        follower.setTranslationalPIDFCoefficients(new PIDFCoefficients(p, i, d, f));
+        //follower.setTranslationalPIDFCoefficients(new PIDFCoefficients(p, i, d, f));
         forwards = new Path(new BezierLine(new Pose(0,0), new Pose(DISTANCE,0)));
         forwards.setConstantHeadingInterpolation(0);
         backwards = new Path(new BezierLine(new Pose(DISTANCE,0), new Pose(0,0)));
@@ -852,47 +852,64 @@ class TranslationalTuner extends OpMode {
         follower.update();
 
         if (gamepad2.dpad_up){
-            p += 0.001;
+            p += 0.03;
             changed = true;
         }
         if (gamepad2.dpad_down){
-            p -= 0.001;
+            p -= 0.03;
+            changed = true;
+
         }
 
         if (gamepad2.dpad_left){
             d -= 0.002;
+            changed = true;
+
         }
 
         if (gamepad2.dpad_right){
             d += 0.002;
+            changed = true;
+
         }
 
         if (gamepad2.triangle){
             i +=0.001;
+            changed = true;
+
         }
         if (gamepad2.cross){
             i -= 0.001;
+            changed = true;
+
         }
 
         if (gamepad2.square){
-            f -= 0.001;
+            f -= 0.03;
+            changed = true;
+
         }
         if (gamepad2.circle){
-            f += 0.001;
+            f += 0.03;
+            changed = true;
+
         }
 
         //p = ga
         if (changed) {
-            
 
             follower = createFollower(hardwareMap);
+            follower.deactivateAllPIDFs();
+            follower.activateTranslational();
             //follower.setTranslationalPIDFCoefficients(new PIDFCoefficients(p, i, d, f));
+
             forwards = new Path(new BezierLine(new Pose(0,0), new Pose(DISTANCE,0)));
             forwards.setConstantHeadingInterpolation(0);
             backwards = new Path(new BezierLine(new Pose(DISTANCE,0), new Pose(0,0)));
             backwards.setConstantHeadingInterpolation(0);
             follower.followPath(forwards);
-        }
+            changed = false;
+       }
         draw();
 
         if (!follower.isBusy()) {
@@ -915,6 +932,8 @@ class TranslationalTuner extends OpMode {
 
 
         telemetryA.update();
+
+
     }
 }
 
@@ -929,9 +948,13 @@ class TranslationalTuner extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/12/2024
  */
+
+@Config
 class HeadingTuner extends OpMode {
     public static double DISTANCE = 40;
     private boolean forward = true;
+
+    boolean changed = false;
 
     private Path forwards;
     private Path backwards;
@@ -943,6 +966,58 @@ class HeadingTuner extends OpMode {
      * This initializes the Follower and creates the forward and backward Paths. Additionally, this
      * initializes the Panels telemetry.
      */
+
+    public static FollowerConstants followerConstants = new FollowerConstants()
+            .mass(10.48)
+            .forwardZeroPowerAcceleration(-37.92754)
+            .lateralZeroPowerAcceleration(-65.1992)
+            .useSecondaryTranslationalPIDF(false)
+            .useSecondaryHeadingPIDF(false)
+            .useSecondaryDrivePIDF(true)
+            .centripetalScaling(0.000065)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0)) //0.06, 0, 0.01, 0
+            .headingPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0))
+            .drivePIDFCoefficients(
+                    new FilteredPIDFCoefficients(0, 0, 0, 0, 0)
+            )
+            .secondaryDrivePIDFCoefficients(
+                    new FilteredPIDFCoefficients(0, 0, 0, 0, 0)
+            );
+
+    public static MecanumConstants driveConstants = new MecanumConstants()
+            .leftFrontMotorName("leftFront")
+            .leftRearMotorName("leftRear")
+            .rightFrontMotorName("rightFront")
+            .rightRearMotorName("rightRear")
+            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .xVelocity(62.43972)
+            .yVelocity(77.60633);
+    public static PinpointConstants localizerConstants =
+            new PinpointConstants()
+                    .forwardPodY(0)
+                    .strafePodX(3.625)
+                    .distanceUnit(DistanceUnit.INCH)
+                    .hardwareMapName("pinpoint")
+                    .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
+                    .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+                    .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+    public static PathConstraints pathConstraints = new PathConstraints(
+            0.995,
+            500,
+            1,
+            1
+    );
+
+    public static Follower createFollower(HardwareMap hardwareMap) {
+        return new FollowerBuilder(followerConstants, hardwareMap)
+                .mecanumDrivetrain(driveConstants)
+                .pinpointLocalizer(localizerConstants)
+                .pathConstraints(pathConstraints)
+                .build();
+    }
     @Override
     public void init_loop() {
         telemetryA.addLine("This will activate the heading PIDF(s).");
@@ -973,6 +1048,27 @@ class HeadingTuner extends OpMode {
         follower.update();
         draw();
 
+        if (gamepad2.circle){
+            changed = true;
+
+        }
+
+        //p = ga
+        if (changed) {
+
+            follower = createFollower(hardwareMap);
+            follower.deactivateAllPIDFs();
+            follower.activateHeading();
+            //follower.setTranslationalPIDFCoefficients(new PIDFCoefficients(p, i, d, f));
+
+            forwards = new Path(new BezierLine(new Pose(0,0), new Pose(DISTANCE,0)));
+            forwards.setConstantHeadingInterpolation(0);
+            backwards = new Path(new BezierLine(new Pose(DISTANCE,0), new Pose(0,0)));
+            backwards.setConstantHeadingInterpolation(0);
+            follower.followPath(forwards);
+            changed = false;
+        }
+
         if (!follower.isBusy()) {
             if (forward) {
                 forward = false;
@@ -997,15 +1093,74 @@ class HeadingTuner extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/12/2024
  */
+@Config
 class DriveTuner extends OpMode {
     public static double DISTANCE = 40;
     private boolean forward = true;
 
+    boolean changed = false;
+
     private PathChain forwards;
     private PathChain backwards;
 
+    public static double brakingStrength = 1;
+    public static double brakingStart = 1;
+
     @Override
     public void init() {}
+
+    public static FollowerConstants followerConstants = new FollowerConstants()
+            .mass(10.48)
+            .forwardZeroPowerAcceleration(-37.92754)
+            .lateralZeroPowerAcceleration(-65.1992)
+            .useSecondaryTranslationalPIDF(false)
+            .useSecondaryHeadingPIDF(false)
+            .useSecondaryDrivePIDF(true)
+            .centripetalScaling(0.000065)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0)) //0.06, 0, 0.01, 0
+            .headingPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0))
+            .drivePIDFCoefficients(
+                    new FilteredPIDFCoefficients(0, 0, 0, 0, 0)
+            )
+            .secondaryDrivePIDFCoefficients(
+                    new FilteredPIDFCoefficients(0, 0, 0, 0, 0)
+                    );
+
+
+    public static MecanumConstants driveConstants = new MecanumConstants()
+            .leftFrontMotorName("leftFront")
+            .leftRearMotorName("leftRear")
+            .rightFrontMotorName("rightFront")
+            .rightRearMotorName("rightRear")
+            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .xVelocity(62.43972)
+            .yVelocity(77.60633);
+    public static PinpointConstants localizerConstants =
+            new PinpointConstants()
+                    .forwardPodY(0)
+                    .strafePodX(3.625)
+                    .distanceUnit(DistanceUnit.INCH)
+                    .hardwareMapName("pinpoint")
+                    .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
+                    .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+                    .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+    public static PathConstraints pathConstraints = new PathConstraints(
+            0.995,
+            500,
+            brakingStrength,
+            brakingStart
+    );
+
+    public static Follower createFollower(HardwareMap hardwareMap) {
+        return new FollowerBuilder(followerConstants, hardwareMap)
+                .mecanumDrivetrain(driveConstants)
+                .pinpointLocalizer(localizerConstants)
+                .pathConstraints(pathConstraints)
+                .build();
+    }
 
     /**
      * This initializes the Follower and creates the forward and backward Paths. Additionally, this
@@ -1049,6 +1204,37 @@ class DriveTuner extends OpMode {
     public void loop() {
         follower.update();
         draw();
+
+
+        if (gamepad2.circle){
+            changed = true;
+
+        }
+
+
+        //p = ga
+        if (changed) {
+
+            follower = createFollower(hardwareMap);
+            follower.deactivateAllPIDFs();
+            follower.activateDrive();
+            //follower.setTranslationalPIDFCoefficients(new PIDFCoefficients(p, i, d, f));
+
+            forwards = follower.pathBuilder()
+                    .setGlobalDeceleration()
+                    .addPath(new BezierLine(new Pose(0,0), new Pose(DISTANCE,0)))
+                    .setConstantHeadingInterpolation(0)
+                    .build();
+
+            backwards = follower.pathBuilder()
+                    .setGlobalDeceleration()
+                    .addPath(new BezierLine(new Pose(DISTANCE,0), new Pose(0,0)))
+                    .setConstantHeadingInterpolation(0)
+                    .build();
+
+            follower.followPath(forwards);
+            changed = false;
+        }
 
         if (!follower.isBusy()) {
             if (forward) {
@@ -1140,6 +1326,7 @@ class Line extends OpMode {
  * @author Harrison Womack - 10158 Scott's Bots
  * @version 1.0, 3/13/2024
  */
+@Config
 class CentripetalTuner extends OpMode {
     public static double DISTANCE = 20;
     private boolean forward = true;
@@ -1147,8 +1334,67 @@ class CentripetalTuner extends OpMode {
     private Path forwards;
     private Path backwards;
 
+    public static double brakingStrength = 1;
+    public static double brakingStart = 1;
+
+    boolean changed = false;
+
     @Override
     public void init() {}
+
+    public static FollowerConstants followerConstants = new FollowerConstants()
+            .mass(10.48)
+            .forwardZeroPowerAcceleration(-37.92754)
+            .lateralZeroPowerAcceleration(-65.1992)
+            .useSecondaryTranslationalPIDF(false)
+            .useSecondaryHeadingPIDF(false)
+            .useSecondaryDrivePIDF(true)
+            .centripetalScaling(0.000065)
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.05, 0, 0.0001, 0.012)) //0.06, 0, 0.01, 0
+            //.translationalPIDFCoefficients(new PIDFCoefficients(0, 0, 0, 0)) //0.06, 0, 0.01, 0
+            .headingPIDFCoefficients(new PIDFCoefficients(0.5, 0, 0, 0.015))
+            .drivePIDFCoefficients(
+                    new FilteredPIDFCoefficients(0.0045, 0, 0.00037, 0, 0.02)
+            )
+            .secondaryDrivePIDFCoefficients(
+                    new FilteredPIDFCoefficients(0, 0, 0, 0, 0)
+            );
+
+
+    public static MecanumConstants driveConstants = new MecanumConstants()
+            .leftFrontMotorName("leftFront")
+            .leftRearMotorName("leftRear")
+            .rightFrontMotorName("rightFront")
+            .rightRearMotorName("rightRear")
+            .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
+            .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD)
+            .xVelocity(62.43972)
+            .yVelocity(77.60633);
+    public static PinpointConstants localizerConstants =
+            new PinpointConstants()
+                    .forwardPodY(0)
+                    .strafePodX(3.625)
+                    .distanceUnit(DistanceUnit.INCH)
+                    .hardwareMapName("pinpoint")
+                    .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
+                    .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+                    .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+    public static PathConstraints pathConstraints = new PathConstraints(
+            0.995,
+            500,
+            brakingStrength,
+            brakingStart
+    );
+
+    public static Follower createFollower(HardwareMap hardwareMap) {
+        return new FollowerBuilder(followerConstants, hardwareMap)
+                .mecanumDrivetrain(driveConstants)
+                .pinpointLocalizer(localizerConstants)
+                .pathConstraints(pathConstraints)
+                .build();
+    }
 
     /**
      * This initializes the Follower and creates the forward and backward Paths.
@@ -1184,6 +1430,30 @@ class CentripetalTuner extends OpMode {
     public void loop() {
         follower.update();
         draw();
+
+        if (gamepad2.circle){
+            changed = true;
+
+        }
+
+
+        //p = ga
+        if (changed) {
+
+            follower = createFollower(hardwareMap);
+            follower.activateAllPIDFs();
+            forwards = new Path(new BezierCurve(new Pose(), new Pose(Math.abs(DISTANCE),0), new Pose(Math.abs(DISTANCE),DISTANCE)));
+            backwards = new Path(new BezierCurve(new Pose(Math.abs(DISTANCE),DISTANCE), new Pose(Math.abs(DISTANCE),0), new Pose(0,0)));
+
+            backwards.setTangentHeadingInterpolation();
+            backwards.reverseHeadingInterpolation();
+
+            follower.followPath(forwards);
+
+            changed = false;
+        }
+
+
         if (!follower.isBusy()) {
             if (forward) {
                 forward = false;
@@ -1193,6 +1463,11 @@ class CentripetalTuner extends OpMode {
                 follower.followPath(forwards);
             }
         }
+
+        Drawing.drawPath(forwards, "blue");
+        Drawing.drawRobot(follower.getPose(), "purple");
+        Drawing.drawPoseHistory(follower.getPoseHistory(), "purple");
+        Drawing.sendPacket();
 
         telemetryA.addLine("Driving away from the origin along the curve?: " + forward);
         telemetryA.update();
@@ -1314,6 +1589,7 @@ class Circle extends OpMode {
             follower.followPath(circle);
         }
     }
+
 }
 
 /**

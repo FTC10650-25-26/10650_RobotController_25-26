@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleops;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -10,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
-
+@Disabled
 @TeleOp(name = "Meet2Tele")
 public class Meet2Tele extends ToxicTele {
 

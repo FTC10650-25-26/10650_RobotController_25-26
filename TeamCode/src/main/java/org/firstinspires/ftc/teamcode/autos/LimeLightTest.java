@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode.autos;
 //import com.bylazar.field.PanelsField;
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 
 import org.firstinspires.ftc.teamcode.utils.RadioactiveAuto;
 
@@ -17,8 +18,8 @@ import org.firstinspires.ftc.teamcode.utils.RadioactiveAuto;
 //import com.bylazar.telemetry.TelemetryManager;
 //
 
-
-@Autonomous(name = "limelight test")
+@Disabled
+@Autonomous(name = "LimeLightTestAuto")
 public class LimeLightTest extends RadioactiveAuto {
 
 

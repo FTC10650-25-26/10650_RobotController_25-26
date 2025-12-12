@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
 import java.util.List;
 
-@TeleOp (name= "limlelight tele")
+@TeleOp (name= "LimelightTestTele")
 public class LimelightTestTele extends ToxicTele {
 
     //Color color = RED;

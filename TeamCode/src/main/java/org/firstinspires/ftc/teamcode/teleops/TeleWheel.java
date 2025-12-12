@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.teleops;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
+@Disabled
 @TeleOp (name = "spin wheel")
 public class TeleWheel extends LinearOpMode {
     public DcMotorEx wheel;

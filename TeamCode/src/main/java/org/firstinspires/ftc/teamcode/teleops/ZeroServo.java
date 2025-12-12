@@ -27,10 +27,10 @@ public class ZeroServo extends ToxicTele {
         }
 
         if (gamepad2.square){
-            robot.shooterServo.setPosition(0);
+            robot.shooterServo.setPosition(0.1011);
         }
-        if (gamepad2.square){
-            robot.shooterServo.setPosition(1);
+        if (gamepad2.circle){
+            robot.shooterServo.setPosition(.9);
         }
 
         if (gamepad2.left_bumper){

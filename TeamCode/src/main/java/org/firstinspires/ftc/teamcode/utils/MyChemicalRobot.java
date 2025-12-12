@@ -149,7 +149,7 @@ public class MyChemicalRobot {
 
                 shooterServo = hardwareMap.get(Servo.class, "shooterServo");
                 shooterServo.setDirection(Servo.Direction.REVERSE);
-                //shooterServo.scaleRange(0.2678, 0.790);
+                shooterServo.scaleRange(0.1011, 0.9228);
 
 
                 belt = hardwareMap.get(DcMotorEx.class, "belt");
@@ -164,9 +164,9 @@ public class MyChemicalRobot {
         }
 
 
-        limelight = hardwareMap.get(Limelight3A.class, "limelight");
-        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
-        limelight.start(); // This tells Limelight to start looking!
+//        limelight = hardwareMap.get(Limelight3A.class, "limelight");
+//        limelight.setPollRateHz(100); // This sets how often we ask Limelight for data (100 times per second)
+//        limelight.start(); // This tells Limelight to start looking!
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
         RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
@@ -193,117 +193,117 @@ public class MyChemicalRobot {
 
     }
 
-    public void loopLimelightPoseData(boolean useLLTelem) {
+//    public void loopLimelightPoseData(boolean useLLTelem) {
+//
+//        double x = 0, y = 0, z=0;
+//        LLResult result = limelight.getLatestResult();
+//        if (result != null && result.isValid()) {
+//
+//            tx = result.getTx(); // How far left or right the target is (degrees)
+//            ty = result.getTy(); // How far up or down the target is (degrees)
+//            double ta = result.getTa(); // How big the target looks (0%-100% of the image)
+//
+//            if (useLLTelem) {
+//                telemetry.addData("Target X", tx);
+//                telemetry.addData("Target Y", ty);
+//                telemetry.addData("Target Area", ta);
+//
+//            }
+//        } else if (useLLTelem) {
+//            telemetry.addData("Limelight", "No Targets");
+//
+//        }
+//
+//
+//        // First, tell Limelight which way your robot is facing
+//        double hubYaw = imu.getRobotYawPitchRollAngles().getYaw();
+//        double pinpointYaw = pinpoint.getHeading(AngleUnit.DEGREES);
+//
+//
+//        double robotYaw =imu.getRobotYawPitchRollAngles().getYaw();//in rads
+//        limelight.updateRobotOrientation(robotYaw);
+//        if (result != null && result.isValid()) {
+//            Pose3D botpose_mt2 = result.getBotpose_MT2();
+//            if (botpose_mt2 != null) {
+//                x = botpose_mt2.getPosition().x;
+//                y = botpose_mt2.getPosition().y;
+//
+//
+//                if (useLLTelem) {
+//                    telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
+//                }
+//            }
+//        }
+//        z =(pinpointYaw*.75)+(hubYaw*.25);
+//
+//
+//
+//
+//        if (useLLTelem) {
+//            telemetry.update();
+//        }
+//
+//        currentLLPoseX = x;
+//        currentLLPoseY = y;
+//        currentImuPose = z;
+//
+//        LLPosDeque.addLast(getLLPose());
+//        if (LLPosDeque.size()>=weightedAvgLLPoseCapacity){
+//            LLPosDeque.removeFirst();
+//        }
+//
+//
+//    }
+//
+//    //non-weighted average
+//    public Pose getLLPoseSimpleAvg(int avgCount){
+//
+//        if (avgCount > weightedAvgLLPoseCapacity){
+//            avgCount = weightedAvgLLPoseCapacity;
+//        } else if (avgCount == 0 || avgCount < 0){
+//            return new Pose(currentLLPoseX, currentLLPoseY, currentImuPose);
+//        }
+//
+//        Pose sum = new Pose(0,0,0);
+//        for (Pose pose : LLPosDeque){
+//            sum = sum.plus(pose);
+//        }
+//        Pose avgdPose = sum.div(avgCount);
+//
+//        return  avgdPose;
+//
+//    }
+//
+//    public Pose getLLPoseWeightedAvg(int weightSteps){
+//        int currentIndex = 0;
+//
+//        if (weightSteps > weightedAvgLLPoseCapacity){
+//            weightSteps = weightedAvgLLPoseCapacity;
+//        } else if (weightSteps == 0 || weightSteps < 0){
+//            return new Pose(currentLLPoseX, currentLLPoseY, currentImuPose);
+//        }
+//
+//        Pose sum = new Pose(0,0,0);
+//        for (Pose pose : LLPosDeque){
+//            double mult = Math.pow(.5, currentIndex+1);
+//            if (currentIndex == 0){
+//                mult += Math.pow(.5, LLPosDeque.size());
+//            }
+//            Pose multedPose = pose.times(mult);
+//            sum = sum.plus(multedPose);
+//
+//            currentIndex++;
+//        }
+//
+//        return sum;
+//    }
+//
+//    public Pose getLLPose(){
+//        return getLLPoseSimpleAvg(0);
+//    }
 
-        double x = 0, y = 0, z=0;
-        LLResult result = limelight.getLatestResult();
-        if (result != null && result.isValid()) {
 
-            tx = result.getTx(); // How far left or right the target is (degrees)
-            ty = result.getTy(); // How far up or down the target is (degrees)
-            double ta = result.getTa(); // How big the target looks (0%-100% of the image)
-
-            if (useLLTelem) {
-                telemetry.addData("Target X", tx);
-                telemetry.addData("Target Y", ty);
-                telemetry.addData("Target Area", ta);
-
-            }
-        } else if (useLLTelem) {
-            telemetry.addData("Limelight", "No Targets");
-
-        }
-
-
-        // First, tell Limelight which way your robot is facing
-        double hubYaw = imu.getRobotYawPitchRollAngles().getYaw();
-        double pinpointYaw = pinpoint.getHeading(AngleUnit.DEGREES);
-
-
-        double robotYaw =imu.getRobotYawPitchRollAngles().getYaw();//in rads
-        limelight.updateRobotOrientation(robotYaw);
-        if (result != null && result.isValid()) {
-            Pose3D botpose_mt2 = result.getBotpose_MT2();
-            if (botpose_mt2 != null) {
-                x = botpose_mt2.getPosition().x;
-                y = botpose_mt2.getPosition().y;
-
-
-                if (useLLTelem) {
-                    telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
-                }
-            }
-        }
-        z =(pinpointYaw*.75)+(hubYaw*.25);
-
-
-
-
-        if (useLLTelem) {
-            telemetry.update();
-        }
-
-        currentLLPoseX = x;
-        currentLLPoseY = y;
-        currentImuPose = z;
-
-        LLPosDeque.addLast(getLLPose());
-        if (LLPosDeque.size()>=weightedAvgLLPoseCapacity){
-            LLPosDeque.removeFirst();
-        }
-
-
-    }
-
-    //non-weighted average
-    public Pose getLLPoseSimpleAvg(int avgCount){
-
-        if (avgCount > weightedAvgLLPoseCapacity){
-            avgCount = weightedAvgLLPoseCapacity;
-        } else if (avgCount == 0 || avgCount < 0){
-            return new Pose(currentLLPoseX, currentLLPoseY, currentImuPose);
-        }
-
-        Pose sum = new Pose(0,0,0);
-        for (Pose pose : LLPosDeque){
-            sum = sum.plus(pose);
-        }
-        Pose avgdPose = sum.div(avgCount);
-
-        return  avgdPose;
-
-    }
-
-    public Pose getLLPoseWeightedAvg(int weightSteps){
-        int currentIndex = 0;
-
-        if (weightSteps > weightedAvgLLPoseCapacity){
-            weightSteps = weightedAvgLLPoseCapacity;
-        } else if (weightSteps == 0 || weightSteps < 0){
-            return new Pose(currentLLPoseX, currentLLPoseY, currentImuPose);
-        }
-
-        Pose sum = new Pose(0,0,0);
-        for (Pose pose : LLPosDeque){
-            double mult = Math.pow(.5, currentIndex+1);
-            if (currentIndex == 0){
-                mult += Math.pow(.5, LLPosDeque.size());
-            }
-            Pose multedPose = pose.times(mult);
-            sum = sum.plus(multedPose);
-
-            currentIndex++;
-        }
-
-        return sum;
-    }
-
-    public Pose getLLPose(){
-        return getLLPoseSimpleAvg(0);
-    }
-
-
-//    public double getServoDegrees(double servoPos, Color color){
+//   // public double getServoDegrees(double servoPos, Color color){
 //        servoPos = servo.getPosition();
 //        encoderDegrees = (servo.getPosition/1)*1800;
 //        while(encoderDegrees>360){
@@ -317,146 +317,146 @@ public class MyChemicalRobot {
     public final int RED_TAG_ID = 24;
 
 
-    public void findTag(Color color){
-
-        if (color== Color.RED) {
-            //LimelightHelpers.SetFiducialIDFiltersOverride("limelight", BLUE_TAG_ID);
-            limelight.pipelineSwitch(1);
-
-            //double turnAngle = Math.atan(pinpoint.getPosX(DistanceUnit.INCH)/pinpoint.getPosY(DistanceUnit.INCH));
-
-        }else if (color==Color.BLUE){
-            limelight.pipelineSwitch(0);
-        }
-        if (limelight.getLatestResult()==null){
-            //shooterServo.setPosition(.getPosition()+ Math.copySign(0.005, tx));
-        }
-    }
-
-    public void findTagTele(Color color){
-        double heading  = pinpoint.getHeading(AngleUnit.DEGREES);
-
-        LLResult latestResult = limelight.getLatestResult();
-        if(latestResult.isValid()){
-            centerTagInView();
+//    public void findTag(Color color){
+//
+//        if (color== Color.RED) {
+//            //LimelightHelpers.SetFiducialIDFiltersOverride("limelight", BLUE_TAG_ID);
+//            limelight.pipelineSwitch(1);
+//
+//            //double turnAngle = Math.atan(pinpoint.getPosX(DistanceUnit.INCH)/pinpoint.getPosY(DistanceUnit.INCH));
+//
+//        }else if (color==Color.BLUE){
+//            limelight.pipelineSwitch(0);
+//        }
+//        if (limelight.getLatestResult()==null){
+//            //shooterServo.setPosition(.getPosition()+ Math.copySign(0.005, tx));
+//        }
+//    }
+//
+//    public void findTagTele(Color color){
+//        double heading  = pinpoint.getHeading(AngleUnit.DEGREES);
+//
+//        LLResult latestResult = limelight.getLatestResult();
+//        if(latestResult.isValid()){
+//            centerTagInView();
+////            isOverridingMotorControl = false;
+////            leftFront.setVelocity(0);
+////            rightFront.setVelocity(0);
+////            leftRear.setVelocity(0);
+////            rightRear.setVelocity(0);
+//            return;
+//        }
+//
+//        isOverridingMotorControl = true;
+//
+//        if (color== Color.RED) {
+//            limelight.pipelineSwitch(1);
+//        }else if (color==Color.BLUE){
+//            limelight.pipelineSwitch(0);
+//        }
+//        double magnitude = 400;
+//
+//        int sign = 1;
+//        // TODO: Add offset for the starting heading of the auto. The "0" that this function is comparing itself to should be offset based on where the robot was rotated starting-wise.
+//        if(findTagStartingHeading < -Math.PI) {//STARTING_HEADING_RELATIVE_TO_OPPOSITE_GOAL_WALL > 0) {
+//            sign = -1;
+//        }
+//        if (findTagStartingHeading<-Math.PI && findTagStartingHeading>-(3*(Math.PI/2))){
+//            magnitude = 800;
+//        }
+//        leftFront.setVelocity(-magnitude*sign);
+//        rightFront.setVelocity(magnitude*sign);
+//        leftRear.setVelocity(-magnitude*sign);
+//        rightRear.setVelocity(magnitude*sign);
+//
+//
+//    }
+//
+//    public void centerTagInView() {
+//        LLResult result = limelight.getLatestResult();
+//
+//        // 1. Find the position of the April Tag in the camera space
+//
+//        double tx = result.getTx();
+//
+//        // 2. Calculate the horizontal offset from the center
+//        double offset = tx;
+//
+//        // 3. Estimate velocity needed based on distance from center
+//
+//        double velocity = tx*10+10;
+//        if (Math.abs(tx)<7){
+//
+//            velocity=0;
+//            isOverridingMotorControl=false;
+//        }
+//
+//        // 4. Find sign (left or right)
+//
+//        double sign =Math.copySign(1, tx);
+//
+//        // 5. Apply motor velocities
+//
+//        leftFront.setVelocity(-velocity*sign);
+//        rightFront.setVelocity(velocity*sign);
+//        leftRear.setVelocity(-velocity*sign);
+//        rightRear.setVelocity(velocity*sign);
+//        // 6. Zero velocities if the distance is within threshold
+//
+//        telemetry.addData("tx", tx);
+//        telemetry.addData("sign", sign);
+//        telemetry.addData("velocity", velocity);
+//
+//
+//    }
+//
+//    public void findTagTelePinpoint(Color color){
+//        double heading  = pinpoint.getHeading(AngleUnit.DEGREES);
+//        heading = heading+180;
+//        double turnAngle = 0;
+//
+//        LLResult latestResult = limelight.getLatestResult();
+//        if(latestResult.isValid()){
 //            isOverridingMotorControl = false;
 //            leftFront.setVelocity(0);
 //            rightFront.setVelocity(0);
 //            leftRear.setVelocity(0);
 //            rightRear.setVelocity(0);
-            return;
-        }
-
-        isOverridingMotorControl = true;
-
-        if (color== Color.RED) {
-            limelight.pipelineSwitch(1);
-        }else if (color==Color.BLUE){
-            limelight.pipelineSwitch(0);
-        }
-        double magnitude = 400;
-
-        int sign = 1;
-        // TODO: Add offset for the starting heading of the auto. The "0" that this function is comparing itself to should be offset based on where the robot was rotated starting-wise.
-        if(findTagStartingHeading < -Math.PI) {//STARTING_HEADING_RELATIVE_TO_OPPOSITE_GOAL_WALL > 0) {
-            sign = -1;
-        }
-        if (findTagStartingHeading<-Math.PI && findTagStartingHeading>-(3*(Math.PI/2))){
-            magnitude = 800;
-        }
-        leftFront.setVelocity(-magnitude*sign);
-        rightFront.setVelocity(magnitude*sign);
-        leftRear.setVelocity(-magnitude*sign);
-        rightRear.setVelocity(magnitude*sign);
-
-
-    }
-
-    public void centerTagInView() {
-        LLResult result = limelight.getLatestResult();
-
-        // 1. Find the position of the April Tag in the camera space
-
-        double tx = result.getTx();
-
-        // 2. Calculate the horizontal offset from the center
-        double offset = tx;
-
-        // 3. Estimate velocity needed based on distance from center
-
-        double velocity = tx*10+10;
-        if (Math.abs(tx)<7){
-
-            velocity=0;
-            isOverridingMotorControl=false;
-        }
-
-        // 4. Find sign (left or right)
-
-        double sign =Math.copySign(1, tx);
-
-        // 5. Apply motor velocities
-
-        leftFront.setVelocity(-velocity*sign);
-        rightFront.setVelocity(velocity*sign);
-        leftRear.setVelocity(-velocity*sign);
-        rightRear.setVelocity(velocity*sign);
-        // 6. Zero velocities if the distance is within threshold
-
-        telemetry.addData("tx", tx);
-        telemetry.addData("sign", sign);
-        telemetry.addData("velocity", velocity);
-
-
-    }
-
-    public void findTagTelePinpoint(Color color){
-        double heading  = pinpoint.getHeading(AngleUnit.DEGREES);
-        heading = heading+180;
-        double turnAngle = 0;
-
-        LLResult latestResult = limelight.getLatestResult();
-        if(latestResult.isValid()){
-            isOverridingMotorControl = false;
-            leftFront.setVelocity(0);
-            rightFront.setVelocity(0);
-            leftRear.setVelocity(0);
-            rightRear.setVelocity(0);
-            return;
-        }
-
-        isOverridingMotorControl = true;
-
-        if (color== Color.RED) {
-            limelight.pipelineSwitch(1);
-            turnAngle = Math.atan(pinpoint.getPosY(DistanceUnit.INCH)/(144-pinpoint.getPosX(DistanceUnit.INCH)));
-
-        }else if (color==Color.BLUE){
-            limelight.pipelineSwitch(0);
-            turnAngle = 360-Math.atan((144-pinpoint.getPosY(DistanceUnit.INCH))/(144-pinpoint.getPosX(DistanceUnit.INCH)));
-        }
-
-        double maxFlipped = Math.abs(Math.max(turnAngle, heading)-360);
-        if((heading>turnAngle)||(turnAngle>heading+180)){//counterclock
-
-        } //else if ((heading<=turnAngle)-){
-
-        //}
-            //counterclock
-//        if (pinpoint.getHeading(AngleUnit.DEGREES)>-90 && pinpoint.getHeading(AngleUnit.DEGREES)<90 && limelight.getLatestResult()==null){
-//            leftFront.setVelocity(200);
-//            rightFront.setVelocity(200);
-//            leftRear.setVelocity(-200);
-//            rightRear.setVelocity(-200);
-//        }else if ((heading>=90 && heading<180) || (heading<=-90 && heading>=-180) && limelight.getLatestResult()==null){
-        leftFront.setVelocity(-400);
-        rightFront.setVelocity(400);
-        leftRear.setVelocity(-400);
-        rightRear.setVelocity(400);
+//            return;
 //        }
-
-
-    }
+//
+//        isOverridingMotorControl = true;
+//
+//        if (color== Color.RED) {
+//            limelight.pipelineSwitch(1);
+//            turnAngle = Math.atan(pinpoint.getPosY(DistanceUnit.INCH)/(144-pinpoint.getPosX(DistanceUnit.INCH)));
+//
+//        }else if (color==Color.BLUE){
+//            limelight.pipelineSwitch(0);
+//            turnAngle = 360-Math.atan((144-pinpoint.getPosY(DistanceUnit.INCH))/(144-pinpoint.getPosX(DistanceUnit.INCH)));
+//        }
+//
+//        double maxFlipped = Math.abs(Math.max(turnAngle, heading)-360);
+//        if((heading>turnAngle)||(turnAngle>heading+180)){//counterclock
+//
+//        } //else if ((heading<=turnAngle)-){
+//
+//        //}
+//            //counterclock
+////        if (pinpoint.getHeading(AngleUnit.DEGREES)>-90 && pinpoint.getHeading(AngleUnit.DEGREES)<90 && limelight.getLatestResult()==null){
+////            leftFront.setVelocity(200);
+////            rightFront.setVelocity(200);
+////            leftRear.setVelocity(-200);
+////            rightRear.setVelocity(-200);
+////        }else if ((heading>=90 && heading<180) || (heading<=-90 && heading>=-180) && limelight.getLatestResult()==null){
+//        leftFront.setVelocity(-400);
+//        rightFront.setVelocity(400);
+//        leftRear.setVelocity(-400);
+//        rightRear.setVelocity(400);
+////        }
+//
+//
+//    }
 
     public enum Color{
         RED,BLUE

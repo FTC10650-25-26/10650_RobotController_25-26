@@ -4,18 +4,23 @@ package org.firstinspires.ftc.teamcode.autos;
 //import com.pedropathing.pathgen.BezierCurve;
 //import com.pedropathing.pathgen.BezierLine;
 //import com.pedropathing.pathgen.Path;
+
+import com.pedropathing.geometry.BezierCurve;
+import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
-import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.pedropathing.geometry.*;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
-@Disabled
-@Autonomous (name = "scrimmage auto")
-public class PedroScrimmage extends RadioactivePedroAuto{
+@Autonomous (name = "Meat2Pedro")
+public class Meat2Pedro extends RadioactivePedroAuto{
 
     private Path path1,path2, path3, path4, path5, path6, path7, path8, path9;
+    public ElapsedTime time = new ElapsedTime();
+
+    Boolean isFullSpeed = false;
+
     //private PathChain
 
 
@@ -25,9 +30,9 @@ public class PedroScrimmage extends RadioactivePedroAuto{
         final Pose cntrlPose1, cntrlPose2, cntrlPose3;
 
         // First, set the starting pose
-        startPose = new Pose(9, 84, 0);
+        startPose = new Pose(0, 0, 0);
 
-        pose2 = new Pose(33,101,0);
+        pose2 = new Pose(33,43,inRads(117));
         pose3 =  new Pose(33,114, 0);
 
         pose4shoot1 =  new Pose(57, 84, inRads(35.5));
@@ -46,7 +51,7 @@ public class PedroScrimmage extends RadioactivePedroAuto{
 
 
         path1 = new Path(new BezierCurve(startPose, pose2));
-        path1.setConstantHeadingInterpolation(startPose.getHeading());
+        path1.setLinearHeadingInterpolation(0, inRads(117));
 
         path2 = new Path(new BezierLine(pose2, pose3));
         path2.setConstantHeadingInterpolation(pose2.getHeading());
@@ -83,6 +88,7 @@ public class PedroScrimmage extends RadioactivePedroAuto{
                 break;
             case 1:
                 if (!follower.isBusy()){
+                    shoot3(1700, 0.5);
                     //start intaking?
                     endPath(follower);
                     goNextPath(path2, 2);
@@ -130,6 +136,29 @@ public class PedroScrimmage extends RadioactivePedroAuto{
             case 9:
                 endPath(follower);
                 break;
+        }
+    }
+
+    public void shoot3(double velocity, double servoPos){
+
+        time.reset();
+        double incrementalVel = 0;
+        while(time.seconds()<9){
+            robot.shooterServo.setPosition(servoPos);
+
+            if (incrementalVel< velocity){
+                incrementalVel +=60;
+                if (incrementalVel>velocity||incrementalVel==velocity){
+                    incrementalVel = velocity;
+                    isFullSpeed = true;
+
+                }
+            }
+            robot.wheel1.setVelocity(incrementalVel);
+            robot.wheel2.setVelocity(incrementalVel);
+            if (isFullSpeed){
+                robot.belt.setVelocity(1900);
+            }
         }
     }
 

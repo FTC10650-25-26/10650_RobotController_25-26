@@ -21,6 +21,7 @@ import com.pedropathing.math.*;
 import com.pedropathing.paths.*;
 import com.pedropathing.telemetry.SelectableOpMode;
 import com.pedropathing.util.*;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -31,6 +32,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 //import org.firstinspires.ftc.teamcode.pedroPathing.FConstants;
 //import org.firstinspires.ftc.teamcode.pedroPathing.LConstants;
 
+@Disabled
 @Autonomous (name = "pedro auto 1")
 public class PedroTest1 extends RadioactivePedroAuto {
     private Path path1,path2, path3;

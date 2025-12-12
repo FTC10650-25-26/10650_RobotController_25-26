@@ -47,7 +47,7 @@ public abstract class ToxicTele extends LinearOpMode {
         waitForStart();
         while(opModeIsActive()) {
             teleLoop();
-            robot.loopLimelightPoseData(false);
+            //robot.loopLimelightPoseData(false);
             //robot.findTag();
         }
     }

@@ -94,13 +94,13 @@ abstract public class RadioactivePedroAuto extends RadioactiveAuto {
 
     public void pathingLoop(){
 
-        robot.loopLimelightPoseData(true);
+        //robot.loopLimelightPoseData(true);
 
 
-        if (System.currentTimeMillis()-lastLLPoseCorrectionRefreshTime>=LLPoseCorrectionFreq) {
-            follower.setPose(robot.getLLPose());
-            lastLLPoseCorrectionRefreshTime = (int) System.currentTimeMillis();
-        }
+//        if (System.currentTimeMillis()-lastLLPoseCorrectionRefreshTime>=LLPoseCorrectionFreq) {
+//            follower.setPose(robot.getLLPose());
+//            lastLLPoseCorrectionRefreshTime = (int) System.currentTimeMillis();
+//        }
         follower.update();
         autonomousPathUpdate();
 
