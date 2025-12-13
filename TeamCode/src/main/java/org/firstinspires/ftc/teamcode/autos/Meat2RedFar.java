@@ -21,8 +21,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //import org.firstinspires.ftc.teamcode.pedroPathing.LConstants;
 
 
-@Autonomous (name = "Meat2RedGoal")
-public class Meat2RedGoal extends RadioactivePedroAuto {
+@Autonomous (name = "Meat2RedFar")
+public class Meat2RedFar extends RadioactivePedroAuto {
     private Path path1,path2, path3, path4, path5, path6, path7, path8, path9;
 
     public ElapsedTime time = new ElapsedTime();
@@ -42,17 +42,24 @@ public class Meat2RedGoal extends RadioactivePedroAuto {
         startingPose = new Pose(0, 0, inRads(0));
         follower.setPose(startingPose);
 
-        Pose pose1 = new Pose(-24.25,-50.5,inRads(-49));//shoot
-        Pose pose2 = new Pose(-10.25,-50,inRads(90));//prepare   //y=51
-        Pose pose3 =  new Pose(9.25,-50,inRads(90));//final intake
+        Pose pose1 = new Pose(10,16,inRads(-20));//shoot
+        Pose pose2 = new Pose(25,16,inRads(0));//shoot
 
-        Pose pose4 = new Pose(-24.25, -50.5, inRads(-45));//shoot  //x = 55-> -22,
-        Pose pose5 = new Pose(-10.25, -72.5, inRads(90));//prepare
-        Pose pose6 = new Pose(9.25, -72.5, inRads(90));//final intake
 
-        Pose pose7 = new Pose(-22.5, -53.5, inRads(-45));//shoot
-        Pose pose8 = new Pose(-10.25, -98, inRads(93));//prepare
-        Pose pose9 =  new Pose(9.25,-98,inRads(93));//final intake
+
+
+//        Pose pose2 = new Pose(-10.25,-50,inRads(90));//prepare   //y=51
+//
+//
+//        Pose pose3 =  new Pose(9.25,-50,inRads(90));//final intake
+
+//        Pose pose4 = new Pose(-24.25, -50.5, inRads(-45));//shoot  //x = 55-> -22,
+//        Pose pose5 = new Pose(-10.25, -72.5, inRads(90));//prepare
+//        Pose pose6 = new Pose(9.25, -72.5, inRads(90));//final intake
+//
+//        Pose pose7 = new Pose(-22.5, -53.5, inRads(-45));//shoot
+//        Pose pose8 = new Pose(-10.25, -98, inRads(93));//prepare
+//        Pose pose9 =  new Pose(9.25,-98,inRads(93));//final intake
 
 
 
@@ -79,30 +86,30 @@ public class Meat2RedGoal extends RadioactivePedroAuto {
 //                .setLinearConstra`
 //        )
 
-        path3 = new Path(new BezierLine(pose2, pose3));
-        path3.setLinearHeadingInterpolation(pose2.getHeading(), pose3.getHeading());
-        path3.setVelocityConstraint(.0000000000001);
-        //path3.setVelocityConstraint();
-
-        path4 = new Path(new BezierLine(pose3, pose4));
-        path4.setLinearHeadingInterpolation(pose3.getHeading(), pose4.getHeading());
-
-        path5 = new Path(new BezierLine(pose4, pose5));
-        path5.setLinearHeadingInterpolation(pose4.getHeading(), pose5.getHeading());
-
-        path6 = new Path(new BezierLine(pose5, pose6));
-        path6.setLinearHeadingInterpolation(pose5.getHeading(), pose6.getHeading());
-        path6.setVelocityConstraint(0.0000000001);
-
-        path7 = new Path(new BezierLine(pose6, pose7));
-        path7.setLinearHeadingInterpolation(pose6.getHeading(), pose7.getHeading());
-
-        path8 = new Path(new BezierLine(pose7, pose8));
-        path8.setLinearHeadingInterpolation(pose7.getHeading(), pose8.getHeading());
-
-        path9 = new Path(new BezierLine(pose8, pose9));
-        path9.setLinearHeadingInterpolation(pose8.getHeading(), pose9.getHeading());
-        path9.setVelocityConstraint(0.000001);
+//        path3 = new Path(new BezierLine(pose2, pose3));
+//        path3.setLinearHeadingInterpolation(pose2.getHeading(), pose3.getHeading());
+//        path3.setVelocityConstraint(.0000000000001);
+//        //path3.setVelocityConstraint();
+//
+//        path4 = new Path(new BezierLine(pose3, pose4));
+//        path4.setLinearHeadingInterpolation(pose3.getHeading(), pose4.getHeading());
+//
+//        path5 = new Path(new BezierLine(pose4, pose5));
+//        path5.setLinearHeadingInterpolation(pose4.getHeading(), pose5.getHeading());
+//
+//        path6 = new Path(new BezierLine(pose5, pose6));
+//        path6.setLinearHeadingInterpolation(pose5.getHeading(), pose6.getHeading());
+//        path6.setVelocityConstraint(0.0000000001);
+//
+//        path7 = new Path(new BezierLine(pose6, pose7));
+//        path7.setLinearHeadingInterpolation(pose6.getHeading(), pose7.getHeading());
+//
+//        path8 = new Path(new BezierLine(pose7, pose8));
+//        path8.setLinearHeadingInterpolation(pose7.getHeading(), pose8.getHeading());
+//
+//        path9 = new Path(new BezierLine(pose8, pose9));
+//        path9.setLinearHeadingInterpolation(pose8.getHeading(), pose9.getHeading());
+//        path9.setVelocityConstraint(0.000001);
 //
 //        path10 = new Path(new BezierLine(pose9, pose10));
 //        path10.setLinearHeadingInterpolation(pose6.getHeading(), pose7.getHeading());
@@ -123,7 +130,7 @@ public class Meat2RedGoal extends RadioactivePedroAuto {
             case 1:
                 //going shoot
                 if (!follower.isBusy()){
-                    shoot3(1360, .3);//.192
+                    shoot3(1640, 0);//.192
                     follower.followPath(path2);
                     setPathState(2);
                     robot.intake.setPower(1);
@@ -147,54 +154,58 @@ public class Meat2RedGoal extends RadioactivePedroAuto {
             case 3:
                 //to final intake pos
                 if (!follower.isBusy()){
-                    follower.followPath(path4);
-                    setPathState(4);
-
-                }
-                break;
-            case 4:
-                robot.intake.setPower(0);
-                robot.belt.setVelocity(0);
-                //to shoot
-                if (!follower.isBusy()){
-                    shoot3(1360, .2);
-                    follower.followPath(path5);
-                    setPathState(5);
-                }
-                break;
-            case 5:
-                //prepare intake
-                if (!follower.isBusy()){
-                    robot.intake.setPower(1);
-                    robot.belt.setVelocity(2000);
-                    follower.followPath(path6);
-                    setPathState(6);
-
-                }
-                break;
-            case 6:
-                if (!follower.isBusy()){
-                    follower.followPath(path7);
-                    setPathState(7);
-                }
-                break;
-            case 7:
-                if (!follower.isBusy()){
-                    follower.followPath(path8);
-                    setPathState(8);
-                }
-                break;
-            case 8:
-                if (!follower.isBusy()){
-                    follower.followPath(path9);
-                    setPathState(9);
-                }
-                break;
-            case 9:
-                if (!follower.isBusy()){
                     stop();
                 }
                 break;
+//                if (!follower.isBusy()){
+//                    follower.followPath(path4);
+//                    setPathState(4);
+//
+//                }
+//                break;
+//            case 4:
+//                robot.intake.setPower(0);
+//                robot.belt.setVelocity(0);
+//                //to shoot
+//                if (!follower.isBusy()){
+//                    shoot3(1360, .2);
+//                    follower.followPath(path5);
+//                    setPathState(5);
+//                }
+//                break;
+//            case 5:
+//                //prepare intake
+//                if (!follower.isBusy()){
+//                    robot.intake.setPower(1);
+//                    robot.belt.setVelocity(2000);
+//                    follower.followPath(path6);
+//                    setPathState(6);
+//
+//                }
+//                break;
+//            case 6:
+//                if (!follower.isBusy()){
+//                    follower.followPath(path7);
+//                    setPathState(7);
+//                }
+//                break;
+//            case 7:
+//                if (!follower.isBusy()){
+//                    follower.followPath(path8);
+//                    setPathState(8);
+//                }
+//                break;
+//            case 8:
+//                if (!follower.isBusy()){
+//                    follower.followPath(path9);
+//                    setPathState(9);
+//                }
+//                break;
+//            case 9:
+//                if (!follower.isBusy()){
+//                    stop();
+//                }
+//                break;
 
 //                if (!follower.isBusy()){
 //                    follower.followPath(path7);
