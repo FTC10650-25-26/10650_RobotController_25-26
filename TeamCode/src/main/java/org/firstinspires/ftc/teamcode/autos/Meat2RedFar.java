@@ -43,7 +43,7 @@ public class Meat2RedFar extends RadioactivePedroAuto {
         follower.setPose(startingPose);
 
         Pose pose1 = new Pose(10,16,inRads(-20));//shoot
-        Pose pose2 = new Pose(25,16,inRads(0));//shoot
+        Pose pose2 = new Pose(25,16,inRads(90));//shoot
 
 
 
@@ -155,6 +155,7 @@ public class Meat2RedFar extends RadioactivePedroAuto {
                 //to final intake pos
                 if (!follower.isBusy()){
                     stop();
+                    robot.belt.setVelocity(0);
                 }
                 break;
 //                if (!follower.isBusy()){
@@ -224,29 +225,37 @@ public class Meat2RedFar extends RadioactivePedroAuto {
     public void shoot3(double velocity, double servoPos){
         isFullSpeed = false;
         time.reset();
+        int timesRun = 0;
         double incrementalVel = 0;
 
-        while(time.seconds()<3){
+        while(time.seconds()<2){
             robot.shooterServo.setPosition(servoPos);
 
             if (incrementalVel< velocity){
                 incrementalVel +=300;
                 if (incrementalVel>velocity||incrementalVel==velocity){
                     incrementalVel = velocity;
-                    if (robot.wheel1.getVelocity()==velocity){
-                        isFullSpeed = true;
-                    }
+                    isFullSpeed = true;
                 }
             }
+            telemetry.addData("wheel curent vel", robot.wheel1.getVelocity());
+
+            telemetry.addData("isFullSpeed", isFullSpeed);
+            telemetry.update();
             robot.wheel1.setVelocity(incrementalVel);
             robot.wheel2.setVelocity(incrementalVel);
-            if (isFullSpeed){
-                robot.belt.setVelocity(2000);
-            }
+
         }
-        while(time.seconds()<3.5){
+        while(time.seconds()<5){
+            robot.belt.setVelocity(2000);
+            robot.wheel1.setVelocity(velocity);
+            robot.wheel2.setVelocity(velocity);
+
+        }
+        while (time.seconds()<6){
             robot.pusherServo.setPosition(1);
         }
+
         robot.pusherServo.setPosition(0);
         robot.wheel1.setVelocity(0);
         robot.wheel2.setVelocity(0);

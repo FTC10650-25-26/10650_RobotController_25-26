@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.autos;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.utils.RadioactiveAuto;
 
+@Disabled
 @Autonomous(name = "Test Auto2")
 public class TestAuto2 extends RadioactiveAuto {
 

@@ -15,12 +15,13 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 //import org.firstinspires.ftc.teamcode.pedroPathing.FConstants;
 //import org.firstinspires.ftc.teamcode.pedroPathing.LConstants;
 
-
+@Disabled
 @Autonomous (name = "Meat2RedTest")
 public class Meat2RedTest extends RadioactivePedroAuto {
     private Path path1,path2, path3, path4, path5, path6, path7, path8, path9;

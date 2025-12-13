@@ -21,8 +21,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //import org.firstinspires.ftc.teamcode.pedroPathing.LConstants;
 
 
-@Autonomous (name = "Meat2RedMediun")
-public class Meat2RedMedium extends RadioactivePedroAuto {
+@Autonomous (name = "Meat2BlueGoalTrySpike")
+public class Meat2BlueGoalTrySpike extends RadioactivePedroAuto {
     private Path path1,path2, path3, path4, path5, path6, path7, path8, path9;
 
     public ElapsedTime time = new ElapsedTime();
@@ -42,11 +42,21 @@ public class Meat2RedMedium extends RadioactivePedroAuto {
         startingPose = new Pose(0, 0, inRads(0));
         follower.setPose(startingPose);
 
-        Pose pose1 = new Pose(-34,-78.75,inRads(-38.45));//shoot
-        Pose pose2 = new Pose(-14.25,-4,inRads(90));//prepare   //y=51
-        //Pose pose3 =  new Pose(9.25,-50,inRads(90));//final intake
+        Pose pose1 = new Pose(28.25,-50.25,inRads(49));//shoot
+        //Pose pose2 = new Pose(31,-2,inRads(107));//shoot
+
+        Pose pose2 = new Pose(9.25,-49.25,inRads(-95));//prepare   //y=51
+        Pose pose3 =  new Pose(-7.25,-49.25,inRads(-95));//final intake
+
+        Pose pose4 = new Pose(28.5, -50.25, inRads(49));//shoot
+
+
+//        Pose pose2 = new Pose(-10.25,-50,inRads(90));//prepare   //y=51
+//        Pose pose3 =  new Pose(9.25,-50,inRads(90));//final intake
 //
 //        Pose pose4 = new Pose(-24.25, -50.5, inRads(-45));//shoot  //x = 55-> -22,
+
+
 //        Pose pose5 = new Pose(-10.25, -72.5, inRads(90));//prepare
 //        Pose pose6 = new Pose(9.25, -72.5, inRads(90));//final intake
 //
@@ -79,14 +89,14 @@ public class Meat2RedMedium extends RadioactivePedroAuto {
 //                .setLinearConstra`
 //        )
 
-//        path3 = new Path(new BezierLine(pose2, pose3));
-//        path3.setLinearHeadingInterpolation(pose2.getHeading(), pose3.getHeading());
-//        path3.setVelocityConstraint(.0000000000001);
+        path3 = new Path(new BezierLine(pose2, pose3));
+        path3.setLinearHeadingInterpolation(pose2.getHeading(), pose3.getHeading());
+        path3.setVelocityConstraint(.0000000000001);
         //path3.setVelocityConstraint();
 
-//        path4 = new Path(new BezierLine(pose3, pose4));
-//        path4.setLinearHeadingInterpolation(pose3.getHeading(), pose4.getHeading());
-//
+        path4 = new Path(new BezierLine(pose3, pose4));
+        path4.setLinearHeadingInterpolation(pose3.getHeading(), pose4.getHeading());
+
 //        path5 = new Path(new BezierLine(pose4, pose5));
 //        path5.setLinearHeadingInterpolation(pose4.getHeading(), pose5.getHeading());
 //
@@ -123,7 +133,7 @@ public class Meat2RedMedium extends RadioactivePedroAuto {
             case 1:
                 //going shoot
                 if (!follower.isBusy()){
-                    shoot3(1540, .1312);//.192
+                    shoot3(1360, .3);//.192
                     follower.followPath(path2);
                     setPathState(2);
                     robot.intake.setPower(1);
@@ -136,34 +146,35 @@ public class Meat2RedMedium extends RadioactivePedroAuto {
             case 2:
                 robot.wheel2.setVelocity(0);
                 robot.wheel1.setVelocity(0);
+                robot.intake.setPower(1);
+                //prepare intake
                 if (!follower.isBusy()){
-                    //
-                    robot.belt.setVelocity(0);
+                    robot.belt.setVelocity(2000);
+                    follower.followPath(path3);
+                    setPathState(3);
+                }
 
-                    stop();
+                break;
+            case 3:
+                //to final intake pos
+
+                if (!follower.isBusy()){
+                    intakePause();
+                    follower.followPath(path4);
+                    setPathState(4);
+
                 }
                 break;
-                //prepare intake
-//                if (!follower.isBusy()){
-//
-//                    robot.belt.setVelocity(2000);
-//                    follower.followPath(path3);
-//                    setPathState(3);
-//                }
-//
-//                break;
-//            case 3:
-//                //to final intake pos
-//                if (!follower.isBusy()){
-//                    follower.followPath(path4);
-//                    setPathState(4);
-//
-//                }
-//                break;
-//            case 4:
-//                robot.intake.setPower(0);
-//                robot.belt.setVelocity(0);
-//                //to shoot
+            case 4:
+                robot.intake.setPower(0);
+                robot.belt.setVelocity(0);
+                if (!follower.isBusy()){
+                    stop();
+                    robot.belt.setVelocity(0);
+
+                }
+                break;
+                //to shoot
 //                if (!follower.isBusy()){
 //                    shoot3(1360, .2);
 //                    follower.followPath(path5);
@@ -242,19 +253,27 @@ public class Meat2RedMedium extends RadioactivePedroAuto {
             robot.wheel2.setVelocity(incrementalVel);
 
         }
-        while(time.seconds()<5){
+        while(time.seconds()<3.5){
             robot.belt.setVelocity(2000);
             robot.wheel1.setVelocity(velocity);
             robot.wheel2.setVelocity(velocity);
 
         }
-        while (time.seconds()<6){
+        while (time.seconds()<5.5){
             robot.pusherServo.setPosition(1);
         }
 
         robot.pusherServo.setPosition(0);
         robot.wheel1.setVelocity(0);
         robot.wheel2.setVelocity(0);
+    }
+
+    public void intakePause(){
+        time.reset();
+        while (time.seconds()<5){
+            robot.belt.setVelocity(2000);
+            robot.intake.setPower(1);
+        }
     }
 
 }

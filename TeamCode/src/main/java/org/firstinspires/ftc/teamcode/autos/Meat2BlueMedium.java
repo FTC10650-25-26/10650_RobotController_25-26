@@ -21,8 +21,8 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 //import org.firstinspires.ftc.teamcode.pedroPathing.LConstants;
 
 
-@Autonomous (name = "Meat2RedMediun")
-public class Meat2RedMedium extends RadioactivePedroAuto {
+@Autonomous (name = "Meat2BlueMediun")
+public class Meat2BlueMedium extends RadioactivePedroAuto {
     private Path path1,path2, path3, path4, path5, path6, path7, path8, path9;
 
     public ElapsedTime time = new ElapsedTime();
@@ -42,8 +42,8 @@ public class Meat2RedMedium extends RadioactivePedroAuto {
         startingPose = new Pose(0, 0, inRads(0));
         follower.setPose(startingPose);
 
-        Pose pose1 = new Pose(-34,-78.75,inRads(-38.45));//shoot
-        Pose pose2 = new Pose(-14.25,-4,inRads(90));//prepare   //y=51
+        Pose pose1 = new Pose(34,-78.75,inRads(38.45));//shoot
+        Pose pose2 = new Pose(14.25,-4,inRads(90));//prepare   //y=51
         //Pose pose3 =  new Pose(9.25,-50,inRads(90));//final intake
 //
 //        Pose pose4 = new Pose(-24.25, -50.5, inRads(-45));//shoot  //x = 55-> -22,

@@ -42,8 +42,8 @@ public class Meat2RedGoalAndPArk extends RadioactivePedroAuto {
         startingPose = new Pose(0, 0, inRads(0));
         follower.setPose(startingPose);
 
-        Pose pose1 = new Pose(-24.25,-50.5,inRads(-49));//shoot
-        Pose pose2 = new Pose(-27,0,inRads(0));//shoot
+        Pose pose1 = new Pose(-28.25,-50.25,inRads(-49));//shoot
+        Pose pose2 = new Pose(2,-24,inRads(90));//shoot
 
 
 //        Pose pose2 = new Pose(-10.25,-50,inRads(90));//prepare   //y=51
@@ -126,7 +126,7 @@ public class Meat2RedGoalAndPArk extends RadioactivePedroAuto {
             case 1:
                 //going shoot
                 if (!follower.isBusy()){
-                    shoot3(1360, .3);//.192
+                    shoot3(1340, .4);//.192
                     follower.followPath(path2);
                     setPathState(2);
                     robot.intake.setPower(1);
@@ -151,6 +151,7 @@ public class Meat2RedGoalAndPArk extends RadioactivePedroAuto {
                 //to final intake pos
                 if (!follower.isBusy()){
                     stop();
+
                 }
                 break;
 //                if (!follower.isBusy()){
@@ -220,33 +221,44 @@ public class Meat2RedGoalAndPArk extends RadioactivePedroAuto {
     public void shoot3(double velocity, double servoPos){
         isFullSpeed = false;
         time.reset();
+        int timesRun = 0;
         double incrementalVel = 0;
 
-        while(time.seconds()<3){
+        while(time.seconds()<2){
             robot.shooterServo.setPosition(servoPos);
 
             if (incrementalVel< velocity){
                 incrementalVel +=300;
                 if (incrementalVel>velocity||incrementalVel==velocity){
                     incrementalVel = velocity;
-                    if (robot.wheel1.getVelocity()==velocity){
-                        isFullSpeed = true;
-                    }
+                    isFullSpeed = true;
                 }
             }
+            telemetry.addData("wheel curent vel", robot.wheel1.getVelocity());
+
+            telemetry.addData("isFullSpeed", isFullSpeed);
+            telemetry.update();
             robot.wheel1.setVelocity(incrementalVel);
             robot.wheel2.setVelocity(incrementalVel);
-            if (isFullSpeed){
-                robot.belt.setVelocity(2000);
-            }
+
         }
-        while(time.seconds()<3.5){
-            robot.pusherServo.setPosition(1);
+        while(time.seconds()<5){
+            robot.belt.setVelocity(2000);
+            robot.wheel1.setVelocity(velocity);
+            robot.wheel2.setVelocity(velocity);
+
         }
         robot.pusherServo.setPosition(0);
+        while (time.seconds()<10){
+            robot.pusherServo.setPosition(0);
+            robot.belt.setVelocity(2000);
+        }
+
+        //robot.pusherServo.setPosition(1);
         robot.wheel1.setVelocity(0);
         robot.wheel2.setVelocity(0);
     }
+
 
 }
 

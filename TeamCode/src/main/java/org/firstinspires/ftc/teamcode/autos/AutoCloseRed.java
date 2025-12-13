@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.autos;
 
 import com.pedropathing.follower.Follower;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -9,6 +10,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+@Disabled
 @Autonomous(name = "Auto close red", preselectTeleOp = "Meet1Tele")
 public class AutoCloseRed extends LinearOpMode {
     public ElapsedTime time = new ElapsedTime();
