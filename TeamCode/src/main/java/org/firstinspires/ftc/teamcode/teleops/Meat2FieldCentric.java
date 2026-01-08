@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleops;
 
+import com.pedropathing.geometry.Pose;
+import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
@@ -8,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.utils.MyChemicalRobot;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
 
@@ -108,6 +111,7 @@ public class Meat2FieldCentric extends ToxicTele {
     double launchAngle;
 
     double degrees;
+    double redAlignAngle = 0;
 
 
 
@@ -132,6 +136,8 @@ public class Meat2FieldCentric extends ToxicTele {
         robot.pinpoint.resetPosAndIMU();
         robot.pinpoint.recalibrateIMU();
         robot.imu.resetYaw();
+
+        robot.limelight.pipelineSwitch(1);
 
     }
 
@@ -158,12 +164,33 @@ public class Meat2FieldCentric extends ToxicTele {
 //        robot.wheel1.setVelocityPIDFCoefficients(p,i,0.187, f);
 //        robot.wheel2.setVelocityPIDFCoefficients(p2, i2, 0.187, f2);
 //
+        robot.loopLimelightPoseData(false);
+        Pose weightedPose  = robot.getLLPoseWeightedAvg(3);
+        if (weightedPose.getX()==-Integer.MAX_VALUE){
+            //ll hasnt found anything
+            telemetry.addData("LL hasn't found anything :(", 1);
+        } else{
+            robot.pinpoint.setPosX(weightedPose.getX(), DistanceUnit.INCH);
+            robot.pinpoint.setPosY(weightedPose.getY(), DistanceUnit.INCH);
+            telemetry.addData("LL HAS found smth :)", 1);
 
 
+        }
         xPos = robot.pinpoint.getPosX(DistanceUnit.INCH);
         yPos = robot.pinpoint.getPosY(DistanceUnit.INCH);
         zPos = robot.pinpoint.getHeading(AngleUnit.RADIANS);
         robot.pinpoint.update();
+
+        telemetry.addData("wighted x", weightedPose.getX());
+        telemetry.addData("wighted y", weightedPose.getY());
+        telemetry.addLine();
+        telemetry.addData("pinpoint status", robot.pinpoint.getDeviceStatus());
+        telemetry.addData("x", xPos);
+        telemetry.addData("y", yPos);
+
+
+
+
 //
 //        if (gamepad1.triangle){
 //            shootAngle = Math.atan((yPos/xPos));
@@ -202,7 +229,7 @@ public class Meat2FieldCentric extends ToxicTele {
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(z), 1);
-            leftFrontPower = (rotY + rotX + z)/denominator ;
+            leftFrontPower = (rotY + rotX + z)/denominator;
             leftRearPower = (rotY - rotX + z)/denominator;
             rightFrontPower = (rotY - rotX - z)/denominator;
             rightRearPower = (rotY + rotX - z)/denominator;
@@ -252,13 +279,12 @@ public class Meat2FieldCentric extends ToxicTele {
 //            }
 
 //
-//            if (gamepad1.dpad_down){
-//                align = true;
-//            }
-//            if (align){
-//                //robot.findTagTele(MyChemicalRobot.Color.RED
-//                //);
-//            }
+            if (gamepad1.dpad_down){
+                align = true;
+            }
+            if (align){
+                robot.findTagTele(MyChemicalRobot.Color.RED);
+            }
 
         }
 
@@ -456,9 +482,7 @@ public class Meat2FieldCentric extends ToxicTele {
 
         telemetry.addLine();
 
-        telemetry.addData("pinpoint status", robot.pinpoint.getDeviceStatus());
-        telemetry.addData("x", xPos);
-        telemetry.addData("y", yPos);
+
         telemetry.addData("theta", zPos);
         telemetry.addLine();
 
