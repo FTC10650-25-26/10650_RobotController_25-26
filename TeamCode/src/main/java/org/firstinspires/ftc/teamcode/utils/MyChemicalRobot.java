@@ -249,9 +249,6 @@ public class MyChemicalRobot {
 
         }
 
-
-
-
         if (useLLTelem) {
             telemetry.update();
         }

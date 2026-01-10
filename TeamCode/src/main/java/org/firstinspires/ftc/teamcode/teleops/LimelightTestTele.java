@@ -5,6 +5,7 @@ import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose3D;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
@@ -16,7 +17,7 @@ public class LimelightTestTele extends ToxicTele {
     //Color color = RED;
     @Override
     public void initialize() {
-        robot.limelight.pipelineSwitch(0); // Switch to pipeline number 0
+        robot.limelight.pipelineSwitch(1); // Switch to pipeline number 0
 
 
     }
@@ -38,14 +39,19 @@ public class LimelightTestTele extends ToxicTele {
 
 
         // First, tell Limelight which way your robot is facing
-        double robotYaw = robot.imu.getRobotYawPitchRollAngles().getYaw();
+        double robotYaw = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         robot.limelight.updateRobotOrientation(robotYaw);
         if (result != null && result.isValid()) {
             Pose3D botpose_mt2 = result.getBotpose_MT2();
+            Pose3D botpose_mt1 =  result.getBotpose();
             if (botpose_mt2 != null) {
                 double x = botpose_mt2.getPosition().x;
                 double y = botpose_mt2.getPosition().y;
+                double x1 = botpose_mt1.getPosition().x;
+                double y1 = botpose_mt1.getPosition().y;
                 telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
+                telemetry.addData("MT1 Location:", "(" + x1 + ", " + y1 + ")");
+
             }
         }
         telemetry.update();

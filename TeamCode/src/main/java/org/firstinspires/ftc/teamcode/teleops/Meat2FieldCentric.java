@@ -113,6 +113,8 @@ public class Meat2FieldCentric extends ToxicTele {
     double degrees;
     double redAlignAngle = 0;
 
+    Pose weightedPose;
+
 
 
     public void calcLaunchVel(){
@@ -165,7 +167,7 @@ public class Meat2FieldCentric extends ToxicTele {
 //        robot.wheel2.setVelocityPIDFCoefficients(p2, i2, 0.187, f2);
 //
         robot.loopLimelightPoseData(false);
-        Pose weightedPose  = robot.getLLPoseWeightedAvg(3);
+        weightedPose  = robot.getLLPoseWeightedAvg(2);
         if (weightedPose.getX()==-Integer.MAX_VALUE){
             //ll hasnt found anything
             telemetry.addData("LL hasn't found anything :(", 1);
@@ -183,6 +185,8 @@ public class Meat2FieldCentric extends ToxicTele {
 
         telemetry.addData("wighted x", weightedPose.getX());
         telemetry.addData("wighted y", weightedPose.getY());
+        telemetry.addData("unweighted pose", robot.getLLPoseSimpleAvg(0) );
+        telemetry.addData("status", robot.limelight.getStatus());
         telemetry.addLine();
         telemetry.addData("pinpoint status", robot.pinpoint.getDeviceStatus());
         telemetry.addData("x", xPos);
