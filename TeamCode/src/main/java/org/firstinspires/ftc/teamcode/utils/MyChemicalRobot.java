@@ -509,8 +509,8 @@ public class MyChemicalRobot {
     public double initTurnSign(double angle, Color color) {
         double sign = 1;
         if (color == Color.RED) {
-            if (pinpoint.getHeading(AngleUnit.RADIANS) > getAlignAngle(color)
-                    || pinpoint.getHeading(AngleUnit.RADIANS) < -Math.PI / 2) {
+            if (pinpoint.getHeading(AngleUnit.RADIANS) < getAlignAngle(color)
+                    || pinpoint.getHeading(AngleUnit.RADIANS) < 3*Math.PI / 2) {
 
                 //turn left
                 sign= -1;
@@ -523,7 +523,7 @@ public class MyChemicalRobot {
             }
         } else if (color == Color.BLUE) {
             if (pinpoint.getHeading(AngleUnit.RADIANS) < getAlignAngle(color)
-                    || (pinpoint.getHeading(AngleUnit.RADIANS) > Math.PI / 2)) {
+                    && (pinpoint.getHeading(AngleUnit.RADIANS) < Math.PI / 2)) {
 //                        &&pinpoint.getHeading(AngleUnit.RADIANS)<Math.PI)){
 
                 //turn right
