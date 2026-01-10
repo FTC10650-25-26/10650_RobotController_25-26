@@ -63,6 +63,8 @@ public class MyChemicalRobot {
     WebcamName webcamName;
     int cameraMonitorViewId = 2131230820;
 
+    public boolean found = true;
+
     double currentLLPoseX = 0;
     double currentLLPoseY = 0;
 
@@ -234,12 +236,12 @@ public class MyChemicalRobot {
 
         limelight.updateRobotOrientation(pinpointYaw);
         if (result != null && result.isValid()) {
-            Pose3D botpose_mt2 = result.getBotpose_MT2();
+            Pose3D botpose_mt1 = result.getBotpose();
 
-            if (botpose_mt2 != null) {
+            if (botpose_mt1 != null) {
 
-                x = botpose_mt2.getPosition().x;
-                y = botpose_mt2.getPosition().y;
+                x = botpose_mt1.getPosition().x;
+                y = botpose_mt1.getPosition().y;
 
 
                 if (useLLTelem) {
@@ -356,6 +358,10 @@ public class MyChemicalRobot {
 
     public void findTagTele(Color color){
         double heading = pinpoint.getHeading(AngleUnit.DEGREES);
+        if (found==true){
+            isOverridingMotorControl = false;
+            return;
+        }
 
         LLResult latestResult = limelight.getLatestResult();
         if(latestResult.isValid()){
@@ -366,6 +372,7 @@ public class MyChemicalRobot {
 //            leftRear.setVelocity(0);
 //            rightRear.setVelocity(0);
             return;
+
         }
 
         isOverridingMotorControl = true;
@@ -375,16 +382,17 @@ public class MyChemicalRobot {
         }else if (color==Color.BLUE){
             limelight.pipelineSwitch(0);
         }
-        double magnitude = 400;
+        double magnitude = 600;
+
 
         int sign = 1;
         // TODO: Add offset for the starting heading of the auto. The "0" that this function is comparing itself to should be offset based on where the robot was rotated starting-wise.
         if(findTagStartingHeading < -Math.PI) {//STARTING_HEADING_RELATIVE_TO_OPPOSITE_GOAL_WALL > 0) {
             sign = -1;
         }
-        if (findTagStartingHeading<-Math.PI && findTagStartingHeading>-(3*(Math.PI/2))){
-            magnitude = 800;
-        }
+//        if (findTagStartingHeading<-Math.PI && findTagStartingHeading>-(3*(Math.PI/2))){
+//            magnitude = 800;
+//        }
         leftFront.setVelocity(-magnitude*sign);
         rightFront.setVelocity(magnitude*sign);
         leftRear.setVelocity(-magnitude*sign);
@@ -399,22 +407,22 @@ public class MyChemicalRobot {
         // 1. Find the position of the April Tag in the camera space
 
         double tx = result.getTx();
+        telemetry.addData("TXXXXXX", tx);
 
         // 2. Calculate the horizontal offset from the center
         double offset = tx;
 
-        // 3. Estimate velocity needed based on distance from center
+        // 3. Find sign (left or right)
+        double sign = -tx/Math.abs(tx);
 
-        double velocity = tx*10+10;
+        // 4. Estimate velocity needed based on distance from center
+        double velocity = Math.abs(tx)*15+ (sign*10);
         if (Math.abs(tx)<7){
 
             velocity=0;
             isOverridingMotorControl=false;
+            found= true;
         }
-
-        // 4. Find sign (left or right)
-
-        double sign =Math.copySign(1, tx);
 
         // 5. Apply motor velocities
 
@@ -427,6 +435,7 @@ public class MyChemicalRobot {
         telemetry.addData("tx", tx);
         telemetry.addData("sign", sign);
         telemetry.addData("velocity", velocity);
+        telemetry.update();
 
 
     }

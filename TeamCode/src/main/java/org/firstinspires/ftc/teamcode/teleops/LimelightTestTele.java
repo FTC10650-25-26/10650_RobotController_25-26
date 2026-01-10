@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.teleops;
 
+import android.view.accessibility.AccessibilityNodeInfo;
+
 import com.qualcomm.hardware.limelightvision.LLResult;
 import com.qualcomm.hardware.limelightvision.LLResultTypes;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
@@ -39,7 +41,9 @@ public class LimelightTestTele extends ToxicTele {
 
 
         // First, tell Limelight which way your robot is facing
-        double robotYaw = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+        double robotYaw = -robot.pinpoint.getHeading(AngleUnit.DEGREES);
+
+//        double robotYaw = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
         robot.limelight.updateRobotOrientation(robotYaw);
         if (result != null && result.isValid()) {
             Pose3D botpose_mt2 = result.getBotpose_MT2();
@@ -49,9 +53,11 @@ public class LimelightTestTele extends ToxicTele {
                 double y = botpose_mt2.getPosition().y;
                 double x1 = botpose_mt1.getPosition().x;
                 double y1 = botpose_mt1.getPosition().y;
+                double z1 = botpose_mt1.getOrientation().getYaw();
                 telemetry.addData("MT2 Location:", "(" + x + ", " + y + ")");
                 telemetry.addData("MT1 Location:", "(" + x1 + ", " + y1 + ")");
-
+                telemetry.addData("mt1Yaw", z1);
+                telemetry.addData("robotYaw", robotYaw);
             }
         }
         telemetry.update();

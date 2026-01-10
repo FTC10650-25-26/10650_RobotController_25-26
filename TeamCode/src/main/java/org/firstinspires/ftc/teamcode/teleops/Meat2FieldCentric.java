@@ -55,7 +55,6 @@ public class Meat2FieldCentric extends ToxicTele {
     final double MINELEV = 0;
     PIDFCoefficients pidCoefficients1;
     PIDFCoefficients pidCoefficients2;
-    boolean align = false;
 
 
     Boolean beltOn = false;
@@ -193,6 +192,9 @@ public class Meat2FieldCentric extends ToxicTele {
         telemetry.addData("y", yPos);
 
 
+        telemetry.addData("TXXXX", robot.tx);
+
+
 
 
 //
@@ -284,9 +286,10 @@ public class Meat2FieldCentric extends ToxicTele {
 
 //
             if (gamepad1.dpad_down){
-                align = true;
+                robot.found = false;
+                robot.findTagStartingHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             }
-            if (align){
+            if (!robot.found){
                 robot.findTagTele(MyChemicalRobot.Color.RED);
             }
 
