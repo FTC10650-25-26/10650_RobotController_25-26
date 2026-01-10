@@ -511,8 +511,35 @@ public class Meat2FieldCentric extends ToxicTele {
 
         telemetry.addData("pid default", robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
         telemetry.addData("pid defaul2t", robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        double blueAlignAngle = 0;
+        double add = 1;
+        boolean stopTurn = false;
+        telemetry.addData("difference abs", Math.abs(blueAlignAngle-zPos));
+        telemetry.addData("add", add);
+        telemetry.addData("drive vel", leftFrontPower);
+        telemetry.addData("stopTurn", stopTurn);
 
 
+
+
+        blueAlignAngle = robot.getAlignAngle(MyChemicalRobot.Color.BLUE);
+        telemetry.addData("alignAngle", blueAlignAngle);
+
+
+
+        if (gamepad1.triangleWasPressed()){
+            stopTurn = false;
+        }
+
+        if (!stopTurn){ //if align pressed
+            if(Math.abs(blueAlignAngle-zPos)<=.5){
+                double difference = blueAlignAngle-zPos;
+                add = (robot.initTurnSign(blueAlignAngle, MyChemicalRobot.Color.BLUE)*Math.log(difference)*10)+80;
+            } else{
+                stopTurn = true;
+                add = 0;
+            }
+        }
 
 
         telemetry.update();

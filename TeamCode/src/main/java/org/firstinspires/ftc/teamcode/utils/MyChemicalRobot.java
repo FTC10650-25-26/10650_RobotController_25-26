@@ -59,6 +59,8 @@ public class MyChemicalRobot {
 
     public Servo shooterServo;
 
+    public Servo LED;
+
     public OpenCvCamera camera;
     WebcamName webcamName;
     int cameraMonitorViewId = 2131230820;
@@ -156,6 +158,9 @@ public class MyChemicalRobot {
                 pusherServo = hardwareMap.get(Servo.class, "pusherServo");
                 pusherServo.setDirection(Servo.Direction.FORWARD);
                 pusherServo.scaleRange(0.0917, 0.3065);
+
+                LED = hardwareMap.get(Servo.class, "LED");
+                pusherServo.setDirection(Servo.Direction.FORWARD);
 
 
                 shooterServo = hardwareMap.get(Servo.class, "shooterServo");
@@ -498,22 +503,76 @@ public class MyChemicalRobot {
 //
 //    }
 
-    public double getAlignAngle(Color color){
+//    public double getAlignAngle(Color color){
+//        pinpoint.update();
+//        double xPos = pinpoint.getPosX(DistanceUnit.INCH);
+//        double yPos = pinpoint.getPosY(DistanceUnit.INCH);
+//        double angle = pinpoint.getHeading(AngleUnit.RADIANS);
+//        pinpoint.update();
+//        double alignAngle = 0;
+//
+//        if (color==Color.RED){
+//            alignAngle = Math.atan((144-xPos)/(144-yPos));
+//        }else if (color==Color.BLUE){
+//            alignAngle = -Math.atan(xPos/(144-yPos));
+//        }
+//
+//        return alignAngle;
+//    }
+
+
+    public double getAlignAngle(Color color) {
         pinpoint.update();
         double xPos = pinpoint.getPosX(DistanceUnit.INCH);
         double yPos = pinpoint.getPosY(DistanceUnit.INCH);
-        double angle = pinpoint.getHeading(AngleUnit.RADIANS);
+        double angle = pinpoint.getPosition().getHeading(AngleUnit.RADIANS);
         pinpoint.update();
         double alignAngle = 0;
 
-        if (color==Color.RED){
-            alignAngle = Math.atan((144-xPos)/(144-yPos));
-        }else if (color==Color.BLUE){
-            alignAngle = -Math.atan(xPos/(144-yPos));
+        if (color == Color.RED) {
+            alignAngle = Math.atan((144 - xPos) / (144 - yPos));
+        } else if (color == Color.BLUE) {
+            alignAngle = -Math.atan(xPos / (144 - yPos));
         }
 
         return alignAngle;
     }
+
+    public double initTurnSign(double angle, Color color) {
+        double sign = 1;
+        if (color == Color.RED) {
+            if (pinpoint.getHeading(AngleUnit.RADIANS) < getAlignAngle(color)
+                    || pinpoint.getHeading(AngleUnit.RADIANS) < 3*Math.PI / 2) {
+
+                //turn left
+                sign= -1;
+
+            } else {
+
+                //turn right
+                sign= 1;
+
+            }
+        } else if (color == Color.BLUE) {
+            if (pinpoint.getHeading(AngleUnit.RADIANS) < getAlignAngle(color)
+                    && (pinpoint.getHeading(AngleUnit.RADIANS) < Math.PI / 2)) {
+//                        &&pinpoint.getHeading(AngleUnit.RADIANS)<Math.PI)){
+
+                //turn right
+                sign= 1;
+
+            } else {
+
+                //turn left
+                sign= -1;
+
+            }
+
+        }
+        return sign;
+    }
+
+
 
 }
 
