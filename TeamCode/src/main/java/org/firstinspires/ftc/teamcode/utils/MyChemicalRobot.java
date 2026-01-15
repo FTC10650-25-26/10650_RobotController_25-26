@@ -84,7 +84,7 @@ public class MyChemicalRobot {
     public double tx = 0;
     public double ty = 0;
 
-    double turnAngle = 0;
+    public int turnSignAlign;
 
     //double re
 
@@ -159,9 +159,9 @@ public class MyChemicalRobot {
                 pusherServo.setDirection(Servo.Direction.FORWARD);
                 pusherServo.scaleRange(0.0917, 0.3065);
 
-                LED = hardwareMap.get(Servo.class, "LED");
-                pusherServo.setDirection(Servo.Direction.FORWARD);
-
+//                LED = hardwareMap.get(Servo.class, "LED");
+//                pusherServo.setDirection(Servo.Direction.FORWARD);
+//
 
                 shooterServo = hardwareMap.get(Servo.class, "shooterServo");
                 shooterServo.setDirection(Servo.Direction.REVERSE);
@@ -362,9 +362,9 @@ public class MyChemicalRobot {
     }
 
     public void findTagTele(Color color){
-        double heading = pinpoint.getHeading(AngleUnit.DEGREES);
+       // double heading = pinpoint.getHeading(AngleUnit.DEGREES);
         if (found==true){
-            isOverridingMotorControl = false;
+            //isOverridingMotorControl = false;
             return;
         }
 
@@ -379,29 +379,30 @@ public class MyChemicalRobot {
             return;
 
         }
+        //isOverridingMotorControl = true;
 
-        isOverridingMotorControl = true;
+//        if (color== Color.RED) {
+//            limelight.pipelineSwitch(1);
+//        }else if (color==Color.BLUE){
+//            limelight.pipelineSwitch(0);
+//        }
+        double error = Math.abs(-pinpoint.getHeading(AngleUnit.RADIANS)-Math.PI);
 
-        if (color== Color.RED) {
-            limelight.pipelineSwitch(1);
-        }else if (color==Color.BLUE){
-            limelight.pipelineSwitch(0);
-        }
-        double magnitude = 600;
+        double magnitude = 100* error+40;
 
 
-        int sign = 1;
+        //double sign = 1;
         // TODO: Add offset for the starting heading of the auto. The "0" that this function is comparing itself to should be offset based on where the robot was rotated starting-wise.
-        if(findTagStartingHeading < -Math.PI) {//STARTING_HEADING_RELATIVE_TO_OPPOSITE_GOAL_WALL > 0) {
-            sign = -1;
-        }
+//        if(findTagStartingHeading < -Math.PI) {//STARTING_HEADING_RELATIVE_TO_OPPOSITE_GOAL_WALL > 0) {
+//            sign = -1;
+//        }
 //        if (findTagStartingHeading<-Math.PI && findTagStartingHeading>-(3*(Math.PI/2))){
 //            magnitude = 800;
 //        }
-        leftFront.setVelocity(-magnitude*sign);
-        rightFront.setVelocity(magnitude*sign);
-        leftRear.setVelocity(-magnitude*sign);
-        rightRear.setVelocity(magnitude*sign);
+        leftFront.setVelocity(-magnitude*turnSignAlign);
+        rightFront.setVelocity(magnitude*turnSignAlign);
+        leftRear.setVelocity(-magnitude*turnSignAlign);
+        rightRear.setVelocity(magnitude*turnSignAlign);
 
 
     }
@@ -538,37 +539,21 @@ public class MyChemicalRobot {
         return alignAngle;
     }
 
-    public double initTurnSign(double angle, Color color) {
-        double sign = 1;
-        if (color == Color.RED) {
-            if (pinpoint.getHeading(AngleUnit.RADIANS) < getAlignAngle(color)
-                    || pinpoint.getHeading(AngleUnit.RADIANS) < 3*Math.PI / 2) {
+    public int initTurnSign(double heading) {
+        int sign;
+
+            if (heading <= Math.PI){
 
                 //turn left
-                sign= -1;
-
-            } else {
-
-                //turn right
-                sign= 1;
-
-            }
-        } else if (color == Color.BLUE) {
-            if (pinpoint.getHeading(AngleUnit.RADIANS) < getAlignAngle(color)
-                    && (pinpoint.getHeading(AngleUnit.RADIANS) < Math.PI / 2)) {
-//                        &&pinpoint.getHeading(AngleUnit.RADIANS)<Math.PI)){
-
-                //turn right
                 sign= 1;
 
             } else {
 
-                //turn left
+                //turn right
                 sign= -1;
 
             }
 
-        }
         return sign;
     }
 

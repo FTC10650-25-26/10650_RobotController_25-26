@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.utils.Color;
 import org.firstinspires.ftc.teamcode.utils.MyChemicalRobot;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
@@ -55,6 +56,7 @@ public class Meat2FieldCentric extends ToxicTele {
     final double MINELEV = 0;
     PIDFCoefficients pidCoefficients1;
     PIDFCoefficients pidCoefficients2;
+    boolean align = false;
 
 
     Boolean beltOn = false;
@@ -110,9 +112,10 @@ public class Meat2FieldCentric extends ToxicTele {
     double launchAngle;
 
     double degrees;
-    double redAlignAngle = 0;
+    double blueAlignAngle = 0;
 
-    Pose weightedPose;
+    boolean stopTurn = false;
+    double add = 0;
 
 
 
@@ -137,6 +140,9 @@ public class Meat2FieldCentric extends ToxicTele {
         robot.pinpoint.resetPosAndIMU();
         robot.pinpoint.recalibrateIMU();
         robot.imu.resetYaw();
+        telemetry.addData("pitch servo pos", robot.shooterServo.getPosition());
+        telemetry.addData("push servo pos", robot.pusherServo.getPosition());
+        telemetry.update();
 
         robot.limelight.pipelineSwitch(1);
 
@@ -164,39 +170,69 @@ public class Meat2FieldCentric extends ToxicTele {
 
 //        robot.wheel1.setVelocityPIDFCoefficients(p,i,0.187, f);
 //        robot.wheel2.setVelocityPIDFCoefficients(p2, i2, 0.187, f2);
+////
+
+
+//        important code down here v
+//        robot.loopLimelightPoseData(false);
+//        Pose weightedPose  = robot.getLLPoseWeightedAvg(3);
+//        if (weightedPose.getX()==-Integer.MAX_VALUE){
+//            //ll hasnt found anything
+//            telemetry.addData("LL hasn't found anything :(", 1);
+//        } else{
+//            robot.pinpoint.setPosX(weightedPose.getX(), DistanceUnit.INCH);
+//            robot.pinpoint.setPosY(weightedPose.getY(), DistanceUnit.INCH);
+//            telemetry.addData("LL HAS found smth :)", 1);
 //
-        robot.loopLimelightPoseData(false);
-        weightedPose  = robot.getLLPoseWeightedAvg(2);
-        if (weightedPose.getX()==-Integer.MAX_VALUE){
-            //ll hasnt found anything
-            telemetry.addData("LL hasn't found anything :(", 1);
-        } else{
-            robot.pinpoint.setPosX(weightedPose.getX(), DistanceUnit.INCH);
-            robot.pinpoint.setPosY(weightedPose.getY(), DistanceUnit.INCH);
-            telemetry.addData("LL HAS found smth :)", 1);
-
-
-        }
+//
+//        }
         xPos = robot.pinpoint.getPosX(DistanceUnit.INCH);
         yPos = robot.pinpoint.getPosY(DistanceUnit.INCH);
         zPos = robot.pinpoint.getHeading(AngleUnit.RADIANS);
         robot.pinpoint.update();
 
-        telemetry.addData("wighted x", weightedPose.getX());
-        telemetry.addData("wighted y", weightedPose.getY());
-        telemetry.addData("unweighted pose", robot.getLLPoseSimpleAvg(0) );
-        telemetry.addData("status", robot.limelight.getStatus());
+//        telemetry.addData("wighted x", weightedPose.getX());
+//        telemetry.addData("wighted y", weightedPose.getY());
         telemetry.addLine();
         telemetry.addData("pinpoint status", robot.pinpoint.getDeviceStatus());
         telemetry.addData("x", xPos);
         telemetry.addData("y", yPos);
+        telemetry.addData("z", zPos);
+
+        telemetry.addLine();
+        telemetry.addData("difference abs", Math.abs(blueAlignAngle-zPos));
+        telemetry.addData("add", add);
+        telemetry.addData("drive vel", leftFrontPower);
+        telemetry.addData("stopTurn", stopTurn);
 
 
-        telemetry.addData("TXXXX", robot.tx);
+
+
+       // blueAlignAngle = robot.getAlignAngle(MyChemicalRobot.Color.BLUE);
+        //telemetry.addData("alignAngle", blueAlignAngle);
+
+
+
+//        if (gamepad1.triangleWasPressed()){
+//            stopTurn = false;
+//        }
 
 
 
 
+
+//        if (!stopTurn){ //if align pressed
+//            if(Math.abs(blueAlignAngle-zPos)<=.5){
+//                double difference = blueAlignAngle-zPos;
+//                add = (robot.initTurnSign(blueAlignAngle, MyChemicalRobot.Color.BLUE)*Math.log(difference)*10)+80;
+//            } else{
+//                stopTurn = true;
+//                add = 0;
+//            }
+//        }
+//        if (stopTurn){
+//            add = 0;
+//        }
 //
 //        if (gamepad1.triangle){
 //            shootAngle = Math.atan((yPos/xPos));
@@ -227,19 +263,31 @@ public class Meat2FieldCentric extends ToxicTele {
             double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
             double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
 
-            rotY = rotY ;//* 1.2;  // Counteract imperfect strafing
-
+            rotY = rotY;//* 1.2;  // Counteract imperfect strafing
 
 
             // Denominator is the largest motor power (absolute value) or 1
             // This ensures all the powers maintain the same ratio,
             // but only if at least one is out of the range [-1, 1]
             double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(z), 1);
-            leftFrontPower = (rotY + rotX + z)/denominator;
-            leftRearPower = (rotY - rotX + z)/denominator;
+//            leftFrontPower = (rotY + rotX + z) / denominator;
+//            leftRearPower = (rotY - rotX + z) / denominator;
+//            rightFrontPower = (rotY - rotX - z) / denominator;
+//            rightRearPower = (rotY + rotX - z) / denominator;
+
+            {
+            leftFrontPower = (rotY + rotX + z)/denominator+add;
+            leftRearPower = (rotY - rotX + z)/denominator+add;
             rightFrontPower = (rotY - rotX - z)/denominator;
             rightRearPower = (rotY + rotX - z)/denominator;
+            }
 
+
+            if (gamepad1.left_trigger > 0) {
+                robot.intake.setPower(1.0);
+            } else {
+                robot.intake.setPower(0.0);
+            }
 
 //            frontLeftMotor.setPower(frontLeftPower);
 //            backLeftMotor.setPower(backLeftPower);
@@ -265,10 +313,24 @@ public class Meat2FieldCentric extends ToxicTele {
 //            if (rightRearPower > 1) {
 //                rightRearPower = 1;
 //            }
-            robot.leftFront.setPower(leftFrontPower);
-            robot.leftRear.setPower(leftRearPower);
-            robot.rightRear.setPower(rightRearPower);
-            robot.rightFront.setPower(rightFrontPower);
+
+            if (gamepad1.dpad_down){
+                robot.found = false;
+                robot.turnSignAlign = robot.initTurnSign(-robot.pinpoint.getHeading(AngleUnit.RADIANS));
+                robot.findTagStartingHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            }
+            if (!robot.found){
+                robot.findTagTele(MyChemicalRobot.Color.RED);
+            } else{
+                robot.leftFront.setPower(leftFrontPower);
+                robot.leftRear.setPower(leftRearPower);
+                robot.rightRear.setPower(rightRearPower);
+                robot.rightFront.setPower(rightFrontPower);
+
+            }
+
+
+
 
             if (gamepad1.optionsWasPressed()){
                 robot.pinpoint.resetPosAndIMU();
@@ -285,24 +347,19 @@ public class Meat2FieldCentric extends ToxicTele {
 //            }
 
 //
-            if (gamepad1.dpad_down){
-                robot.found = false;
-                robot.findTagStartingHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            }
-            if (!robot.found){
-                robot.findTagTele(MyChemicalRobot.Color.RED);
-            }
+//            if (gamepad1.dpad_down){
+//                align = true;
+//            }
+//            if (align){
+//                robot.findTagTele(MyChemicalRobot.Color.RED);
+//            }
 
         }
 
         //lobangang controls
         {
             //intake
-            if (gamepad2.left_trigger > 0) {
-                robot.intake.setPower(1.0);
-            } else {
-                robot.intake.setPower(0.0);
-            }
+
 
             //belt
 
@@ -331,16 +388,16 @@ public class Meat2FieldCentric extends ToxicTele {
 
 
             //servo
-            if (gamepad1.triangle) {
-//            if (robot.shooterServo.getPosition()<MAXELEV){
-                robot.shooterServo.setPosition(robot.shooterServo.getPosition() + 0.01);
+//            if (gamepad1.triangle) {
+////            if (robot.shooterServo.getPosition()<MAXELEV){
+//                robot.shooterServo.setPosition(robot.shooterServo.getPosition() + 0.01);
+////            }
 //            }
-            }
-            if (gamepad1.square) {
-//            if (robot.shooterServo.getPosition()<MAXELEV){
-                robot.shooterServo.setPosition(robot.shooterServo.getPosition() - 0.01);
+//            if (gamepad1.square) {
+////            if (robot.shooterServo.getPosition()<MAXELEV){
+//                robot.shooterServo.setPosition(robot.shooterServo.getPosition() - 0.01);
+////            }
 //            }
-            }
             if (gamepad2.cross) {
 //            if (robot.shooterServo.getPosition()>MINELEV){
                 robot.pusherServo.setPosition(0);
@@ -511,35 +568,8 @@ public class Meat2FieldCentric extends ToxicTele {
 
         telemetry.addData("pid default", robot.wheel1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
         telemetry.addData("pid defaul2t", robot.wheel2.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
-        double blueAlignAngle = 0;
-        double add = 1;
-        boolean stopTurn = false;
-        telemetry.addData("difference abs", Math.abs(blueAlignAngle-zPos));
-        telemetry.addData("add", add);
-        telemetry.addData("drive vel", leftFrontPower);
-        telemetry.addData("stopTurn", stopTurn);
 
 
-
-
-        blueAlignAngle = robot.getAlignAngle(MyChemicalRobot.Color.BLUE);
-        telemetry.addData("alignAngle", blueAlignAngle);
-
-
-
-        if (gamepad1.triangleWasPressed()){
-            stopTurn = false;
-        }
-
-        if (!stopTurn){ //if align pressed
-            if(Math.abs(blueAlignAngle-zPos)<=.5){
-                double difference = blueAlignAngle-zPos;
-                add = (robot.initTurnSign(blueAlignAngle, MyChemicalRobot.Color.BLUE)*Math.log(difference)*10)+80;
-            } else{
-                stopTurn = true;
-                add = 0;
-            }
-        }
 
 
         telemetry.update();
