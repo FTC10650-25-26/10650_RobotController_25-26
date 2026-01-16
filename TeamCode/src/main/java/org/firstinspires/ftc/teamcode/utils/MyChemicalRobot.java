@@ -85,6 +85,7 @@ public class MyChemicalRobot {
     public double ty = 0;
 
     public int turnSignAlign;
+    public double txTele = 0;
 
     //double re
 
@@ -381,14 +382,17 @@ public class MyChemicalRobot {
         }
         //isOverridingMotorControl = true;
 
-//        if (color== Color.RED) {
-//            limelight.pipelineSwitch(1);
-//        }else if (color==Color.BLUE){
-//            limelight.pipelineSwitch(0);
-//        }
+        if (color== Color.RED) {
+            limelight.pipelineSwitch(1);
+        }else if (color==Color.BLUE){
+            limelight.pipelineSwitch(0);
+        }
+        //double error = Math.abs(-pinpoint.getHeading(AngleUnit.RADIANS)-Math.PI);
+       // double error = Math.PI-Math.abs(-pinpoint.getHeading(AngleUnit.RADIANS)-Math.PI);
         double error = Math.abs(-pinpoint.getHeading(AngleUnit.RADIANS)-Math.PI);
 
-        double magnitude = 100* error+40;
+
+        double magnitude = (290* error)+150;
 
 
         //double sign = 1;
@@ -422,12 +426,16 @@ public class MyChemicalRobot {
         double sign = -tx/Math.abs(tx);
 
         // 4. Estimate velocity needed based on distance from center
-        double velocity = Math.abs(tx)*15+ (sign*10);
-        if (Math.abs(tx)<7){
+        double velocity = Math.abs(tx)*12+10;
+        if (Math.abs(tx)<2.5){
 
             velocity=0;
             isOverridingMotorControl=false;
             found= true;
+
+            telemetry.addData("tx < 2 ???", tx);
+            telemetry.update();
+
         }
 
         // 5. Apply motor velocities
@@ -542,7 +550,7 @@ public class MyChemicalRobot {
     public int initTurnSign(double heading) {
         int sign;
 
-            if (heading <= Math.PI){
+            if (heading >= 3.14){
 
                 //turn left
                 sign= 1;

@@ -14,6 +14,8 @@ import org.firstinspires.ftc.teamcode.utils.Color;
 import org.firstinspires.ftc.teamcode.utils.MyChemicalRobot;
 import org.firstinspires.ftc.teamcode.utils.ToxicTele;
 
+import java.util.Objects;
+
 
 @TeleOp(name = "Meat2FieldCentric")
 public class Meat2FieldCentric extends ToxicTele {
@@ -117,6 +119,9 @@ public class Meat2FieldCentric extends ToxicTele {
     boolean stopTurn = false;
     double add = 0;
 
+    double tx=0;
+    String autoAlignDirection;
+
 
 
     public void calcLaunchVel(){
@@ -186,6 +191,20 @@ public class Meat2FieldCentric extends ToxicTele {
 //
 //
 //        }
+
+        LLResult result = robot.limelight.getLatestResult();
+        if (result != null && result.isValid()) {
+            tx = result.getTx(); // How far left or right the target is (degrees)
+        } else{
+            tx = Integer.MAX_VALUE;
+        }
+        telemetry.addData("tx: ", tx);
+        telemetry.addData("delta", (tx*Math.PI/180)-robot.pinpoint.getHeading(AngleUnit.RADIANS));
+        telemetry.addLine();
+
+        telemetry.addLine();
+
+
         xPos = robot.pinpoint.getPosX(DistanceUnit.INCH);
         yPos = robot.pinpoint.getPosY(DistanceUnit.INCH);
         zPos = robot.pinpoint.getHeading(AngleUnit.RADIANS);
@@ -314,14 +333,27 @@ public class Meat2FieldCentric extends ToxicTele {
 //                rightRearPower = 1;
 //            }
 
-            if (gamepad1.dpad_down){
+            if (gamepad1.dpad_right) {//red
                 robot.found = false;
+                autoAlignDirection = "right";
+                robot.turnSignAlign = robot.initTurnSign(-robot.pinpoint.getHeading(AngleUnit.RADIANS));
+                robot.findTagStartingHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+            } else if (gamepad1.dpad_left){//blue
+                robot.found = false;
+                autoAlignDirection = "left";
                 robot.turnSignAlign = robot.initTurnSign(-robot.pinpoint.getHeading(AngleUnit.RADIANS));
                 robot.findTagStartingHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
             }
             if (!robot.found){
-                robot.findTagTele(MyChemicalRobot.Color.RED);
+                if (Objects.equals(autoAlignDirection, "right")){
+                    robot.findTagTele(MyChemicalRobot.Color.RED);
+
+                } else{
+                    robot.findTagTele(MyChemicalRobot.Color.BLUE);
+
+                }
             } else{
+
                 robot.leftFront.setPower(leftFrontPower);
                 robot.leftRear.setPower(leftRearPower);
                 robot.rightRear.setPower(rightRearPower);
@@ -456,9 +488,17 @@ public class Meat2FieldCentric extends ToxicTele {
 
             if (gamepad2.dpad_up){
                 incrementalSpeedUp = true;
+                vel = 1740;
+                robot.shooterServo.setPosition(0);
+            }
+            if (gamepad2.dpad_right) {
+                incrementalSpeedUp = true;
                 vel = 1640;
                 robot.shooterServo.setPosition(0);
             }
+
+
+
             if (gamepad2.dpad_left){
                 incrementalSpeedUp = true;
                 vel = 1540;
@@ -468,7 +508,8 @@ public class Meat2FieldCentric extends ToxicTele {
             }
             if (gamepad2.dpad_down){
                 incrementalSpeedUp = true;
-                vel = 1260;
+                vel = 1740;
+
                 robot.shooterServo.setPosition(0.522);
 
             }
@@ -494,17 +535,17 @@ public class Meat2FieldCentric extends ToxicTele {
             currentVoltage = hardwareMap.voltageSensor.iterator().next().getVoltage();
             adjustedVel = wheelVel * (nominalVoltage / currentVoltage);
             prevVel = adjustedVel;
-
-            if (Math.abs(wheelVel - robot.wheel1.getVelocity()) >= 5 && Math.abs(wheelVel - robot.wheel1.getVelocity())<40 && wheelVel!= 0) {
-                double errorScaled = Math.abs(adjustedVel - robot.wheel1.getVelocity());
-
-                wheel1Vel = adjustedVel + Math.copySign(10, wheelVel - robot.wheel1.getVelocity());//Math.copySign(errorScaled, wheelVel - robot.wheel1.getVelocity());
-            }
-            if (Math.abs(wheelVel - robot.wheel2.getVelocity()) >= 5 && Math.abs(wheelVel - robot.wheel2.getVelocity())<40 && wheelVel!= 0) {
-                double errorScaled = Math.abs(adjustedVel - robot.wheel1.getVelocity())*1;
-
-                wheel2Vel = adjustedVel +(Math.copySign(10, wheelVel - robot.wheel2.getVelocity()));//(Math.copySign(errorScaled, wheelVel - robot.wheel2.getVelocity()));
-            }
+//
+//            if (Math.abs(wheelVel - robot.wheel1.getVelocity()) >= 5 && Math.abs(wheelVel - robot.wheel1.getVelocity())<40 && wheelVel!= 0) {
+//                double errorScaled = Math.abs(adjustedVel - robot.wheel1.getVelocity());
+//
+//                wheel1Vel = adjustedVel + Math.copySign(10, wheelVel - robot.wheel1.getVelocity());//Math.copySign(errorScaled, wheelVel - robot.wheel1.getVelocity());
+//            }
+//            if (Math.abs(wheelVel - robot.wheel2.getVelocity()) >= 5 && Math.abs(wheelVel - robot.wheel2.getVelocity())<40 && wheelVel!= 0) {
+//                double errorScaled = Math.abs(adjustedVel - robot.wheel1.getVelocity())*1;
+//
+//                wheel2Vel = adjustedVel +(Math.copySign(10, wheelVel - robot.wheel2.getVelocity()));//(Math.copySign(errorScaled, wheelVel - robot.wheel2.getVelocity()));
+//            }
 //            if (Math.abs(robot.wheel1.getVelocity() - robot.wheel2.getVelocity()) > 60 && Math.abs(wheelVel - robot.wheel2.getVelocity())>100) {
 //                if (robot.wheel1.getVelocity()>robot.wheel2.getVelocity()){
 //                    wheel1Vel = robot.wheel2.getVelocity();
@@ -515,11 +556,12 @@ public class Meat2FieldCentric extends ToxicTele {
 //            }
 
             //if ()
+            wheel2Vel = Math.max(0,wheelVel-290);
 
-            robot.wheel1.setVelocity(wheel1Vel);
+            robot.wheel1.setVelocity(wheelVel);
             robot.wheel2.setVelocity(wheel2Vel);
             wheel1Vel = wheelVel;
-            wheel2Vel = wheelVel;
+            wheel2Vel = Math.max(0,wheelVel-290);
 
 
         }
@@ -583,7 +625,10 @@ public class Meat2FieldCentric extends ToxicTele {
             if (wheelVel>velocity){
                 wheelVel= velocity;
             }
-        } else {
+        } else if (wheelVel>velocity){
+            wheelVel= velocity;
+            wheel2Vel = velocity;
+        }else {
             incrementalSpeedUp = false;
             gamepad2.rumble(250);
             //triggerWasNotOn=true;
