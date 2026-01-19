@@ -14,6 +14,7 @@ package org.firstinspires.ftc.teamcode.autos;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.Path;
+import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -28,11 +29,32 @@ public class Meat2BlueGoalTrySpike extends RadioactivePedroAuto {
     public ElapsedTime time = new ElapsedTime();
     Boolean isFullSpeed = false;
 
+    int targetShooterSpeed = 0;
+
+    final double SERVO_POS = 0.47;
+
+
+    boolean isBeltMoving = false;
+
 
 
 
     @Override
     public void buildPaths(){
+
+        robot.shooterServo.setPosition(SERVO_POS);
+//
+//        startingPose = new Pose(0, 0, inRads(0));
+//        follower.setPose(startingPose);
+//
+//        Pose pose1 = new Pose(28.25,-50.25,inRads(49));//shoot
+//        //Pose pose2 = new Pose(31,-2,inRads(107));//shoot
+//
+//        Pose pose2 = new Pose(9.25,-49.25,inRads(-95));//prepare   //y=51
+//        Pose pose3 =  new Pose(-7.25,-49.25,inRads(-95));//final intake
+//
+//        Pose pose4 = new Pose(28.5, -50.25, inRads(49));//shoot
+//
 
 
 
@@ -42,21 +64,24 @@ public class Meat2BlueGoalTrySpike extends RadioactivePedroAuto {
         startingPose = new Pose(0, 0, inRads(0));
         follower.setPose(startingPose);
 
-        Pose pose1 = new Pose(28.25,-50.25,inRads(49));//shoot
+        Pose pose1 = new Pose(28.25,-50.25,inRads(50));//shoot
         //Pose pose2 = new Pose(31,-2,inRads(107));//shoot
 
-        Pose pose2 = new Pose(9.25,-49.25,inRads(-95));//prepare   //y=51
-        Pose pose3 =  new Pose(-7.25,-49.25,inRads(-95));//final intake
-
-        Pose pose4 = new Pose(28.5, -50.25, inRads(49));//shoot
 
 
-//        Pose pose2 = new Pose(-10.25,-50,inRads(90));//prepare   //y=51
+
+
+
+        Pose pose2 = new Pose(28.25, -50, inRads(-90));//prep
+        Pose pose3 = new Pose(-12.5, -50, inRads(-90));//fully grabbed
+        Pose pose4 = new Pose(28.25,-50.25,inRads(50));//shoot
+
+        Pose pose5 = new Pose(-2,-39,inRads(-90));//park   //y=51
+
+
 //        Pose pose3 =  new Pose(9.25,-50,inRads(90));//final intake
 //
 //        Pose pose4 = new Pose(-24.25, -50.5, inRads(-45));//shoot  //x = 55-> -22,
-
-
 //        Pose pose5 = new Pose(-10.25, -72.5, inRads(90));//prepare
 //        Pose pose6 = new Pose(9.25, -72.5, inRads(90));//final intake
 //
@@ -78,24 +103,34 @@ public class Meat2BlueGoalTrySpike extends RadioactivePedroAuto {
 
 
 
-        path1 = new Path(new BezierLine(startingPose, pose1));
+        path1 = new Path(new BezierLine(startingPose, pose1));//to shoot
         path1.setLinearHeadingInterpolation(startingPose.getHeading(), pose1.getHeading());
+        //path1.setTimeoutConstraint(100);
 
-        path2 = new Path(new BezierLine(pose1, pose2));
+        path2 = new Path(new BezierLine(pose1, pose2));//to prep
         path2.setLinearHeadingInterpolation(pose1.getHeading(), pose2.getHeading());
+       // path2.setTimeoutConstraint(100);
 
 
 //        Path slowPath = follower.pathBuilder(
 //                .setLinearConstra`
 //        )
 
-        path3 = new Path(new BezierLine(pose2, pose3));
-        path3.setLinearHeadingInterpolation(pose2.getHeading(), pose3.getHeading());
-        path3.setVelocityConstraint(.0000000000001);
-        //path3.setVelocityConstraint();
+        path3 = new Path(new BezierLine(pose2, pose3));//to finish
+        path3.setConstantHeadingInterpolation(pose2.getHeading());
 
-        path4 = new Path(new BezierLine(pose3, pose4));
+//        path3.setVelocityConstraint(.0000000000001);
+//        //path3.setVelocityConstraint();
+//
+        path4 = new Path(new BezierLine(pose3, pose4));//to shoot
         path4.setLinearHeadingInterpolation(pose3.getHeading(), pose4.getHeading());
+
+
+
+        PathChain pathChain = follower.pathBuilder()
+                .addPath(new BezierLine(pose2, pose3))
+                .setConstantHeadingInterpolation(pose2.getHeading())
+                .build();
 
 //        path5 = new Path(new BezierLine(pose4, pose5));
 //        path5.setLinearHeadingInterpolation(pose4.getHeading(), pose5.getHeading());
@@ -132,49 +167,93 @@ public class Meat2BlueGoalTrySpike extends RadioactivePedroAuto {
 
             case 1:
                 //going shoot
-                if (!follower.isBusy()){
-                    shoot3(1360, .3);//.192
-                    follower.followPath(path2);
-                    setPathState(2);
-                    robot.intake.setPower(1);
+                adaptShooterSpeed(1320, 120);
+                if(follower.isBusy()){
+                    time.reset();
 
-                    //follower.wait(10);
+                }
+
+                if (!follower.isBusy()){
+                    //shoot3(1280, .47);//.192
+                    robot.intake.setPower(1.0);
+                    startBelt();
+                    if(time.seconds()>3){
+                        robot.pusherServo.setPosition(0);
+
+                    }if(time.seconds()>4){
+                        follower.followPath(path2);
+                        setPathState(2);
+                    }
+                  //follower.wait(10);
                 }
                 break;
 
 
             case 2:
-                robot.wheel2.setVelocity(0);
-                robot.wheel1.setVelocity(0);
-                robot.intake.setPower(1);
                 //prepare intake
-                if (!follower.isBusy()){
-                    robot.belt.setVelocity(2000);
-                    follower.followPath(path3);
-                    setPathState(3);
-                }
+                adaptShooterSpeed(1320, 120);
 
+                if (!follower.isBusy()){
+                    robot.pusherServo.setPosition(1);
+
+                    //robot.intake.setPower(1.0);
+                    follower.followPath(new PathChain(path3), 0.19, true);
+                    setPathState(3);
+                    robot.wheel2.setVelocity(0);
+                    robot.wheel1.setVelocity(0);
+                    robot.pusherServo.setPosition(1);
+                    robot.intake.setPower(1.0);
+                    stopShooter();
+
+
+                }
                 break;
             case 3:
                 //to final intake pos
-
                 if (!follower.isBusy()){
-                    intakePause();
                     follower.followPath(path4);
                     setPathState(4);
+                    stopBelt();
 
                 }
                 break;
-            case 4:
-                robot.intake.setPower(0);
-                robot.belt.setVelocity(0);
+            case 4: //park
+                adaptShooterSpeed(1320, 120);
+                if(follower.isBusy()){
+                    time.reset();
+
+                }
+
                 if (!follower.isBusy()){
+                    //shoot3(1280, .47);//.192
+                    robot.intake.setPower(1.0);
+                    startBelt();
+                    if(time.seconds()>3){
+                        robot.pusherServo.setPosition(0);
+
+                    }if(time.seconds()>4){
+                        follower.followPath(path2);
+                        setPathState(2);
+                    }
+                    //follower.wait(10);
+                }
+                break;
+            case 5://park
+                adaptShooterSpeed(1320, 120);
+                if (!follower.isBusy()){
+                    stopShooter();
+                    stopBelt();
                     stop();
                     robot.belt.setVelocity(0);
-
+                    robot.intake.setPower(0.0);
                 }
                 break;
-                //to shoot
+//                }
+//                break;
+//            case 4:
+//                robot.intake.setPower(0);
+//                robot.belt.setVelocity(0);
+//                //to shoot
 //                if (!follower.isBusy()){
 //                    shoot3(1360, .2);
 //                    follower.followPath(path5);
@@ -229,18 +308,53 @@ public class Meat2BlueGoalTrySpike extends RadioactivePedroAuto {
         }
     }
 
+    public void stopShooter() {
+        adaptShooterSpeed(0);
+    }
+
+    public void adaptShooterSpeed(int speed) {
+        adaptShooterSpeed(speed, 300);
+    }
+
+    public void adaptShooterSpeed(int speed, int accel) {
+        targetShooterSpeed += accel;
+
+        if(targetShooterSpeed >= speed) {
+            targetShooterSpeed = speed;
+            if (isBeltMoving){
+                robot.belt.setVelocity(2500);
+            }
+        }
+
+        robot.wheel1.setVelocity(targetShooterSpeed);
+        robot.wheel2.setVelocity(targetShooterSpeed);
+
+
+
+    }
+
+    public void startBelt(){
+        isBeltMoving = true;
+    }
+    public void stopBelt(){
+
+        isBeltMoving = false;
+        robot.belt.setVelocity(0);
+    }
+
+
     public void shoot3(double velocity, double servoPos){
         isFullSpeed = false;
         time.reset();
         int timesRun = 0;
         double incrementalVel = 0;
 
-        while(time.seconds()<2){
+        while(time.seconds()<4){
             robot.shooterServo.setPosition(servoPos);
 
             if (incrementalVel< velocity){
                 incrementalVel +=300;
-                if (incrementalVel>velocity||incrementalVel==velocity){
+                if (incrementalVel>=velocity){
                     incrementalVel = velocity;
                     isFullSpeed = true;
                 }
@@ -249,31 +363,39 @@ public class Meat2BlueGoalTrySpike extends RadioactivePedroAuto {
 
             telemetry.addData("isFullSpeed", isFullSpeed);
             telemetry.update();
-            robot.wheel1.setVelocity(incrementalVel);
-            robot.wheel2.setVelocity(incrementalVel);
+            robot.wheel1.setVelocity(Math.max(0,incrementalVel-80));
+            robot.wheel2.setVelocity(Math.max(0,incrementalVel-180));
 
         }
-        while(time.seconds()<3.5){
+
+        while(time.seconds()<6){
+            robot.wheel1.setVelocity(velocity-80);
+            robot.wheel2.setVelocity(velocity-180);
             robot.belt.setVelocity(2000);
-            robot.wheel1.setVelocity(velocity);
-            robot.wheel2.setVelocity(velocity);
-
         }
-        while (time.seconds()<5.5){
-            robot.pusherServo.setPosition(1);
-        }
-
+//        while(time.seconds()<5){
+//            robot.wheel1.setVelocity(velocity);
+//            robot.wheel2.setVelocity(velocity);
+//            robot.belt.setVelocity(2000);
+//        }
+//        while(time.seconds()<6){
+//            robot.wheel1.setVelocity(velocity-80);
+//            robot.wheel2.setVelocity(velocity-180);
+//
+//            robot.belt.setVelocity(2000);
+//            robot.wheel1.setVelocity(velocity-80);
+//            robot.wheel2.setVelocity(velocity-180);
+//
+//        }
         robot.pusherServo.setPosition(0);
+        while (time.seconds()<10){
+            robot.pusherServo.setPosition(0);
+            robot.belt.setVelocity(2500);
+        }
+
+        //robot.pusherServo.setPosition(1);
         robot.wheel1.setVelocity(0);
         robot.wheel2.setVelocity(0);
-    }
-
-    public void intakePause(){
-        time.reset();
-        while (time.seconds()<5){
-            robot.belt.setVelocity(2000);
-            robot.intake.setPower(1);
-        }
     }
 
 }

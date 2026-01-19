@@ -97,6 +97,7 @@ public class Meat2RedFullPath extends RadioactivePedroAuto {
         path7 = new Path(new BezierLine(pose6, pose7));
         path7.setLinearHeadingInterpolation(pose6.getHeading(), pose7.getHeading());
 
+
         path8 = new Path(new BezierLine(pose7, pose8));
         path8.setLinearHeadingInterpolation(pose7.getHeading(), pose8.getHeading());
 

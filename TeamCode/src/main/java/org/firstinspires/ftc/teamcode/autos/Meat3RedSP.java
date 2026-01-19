@@ -42,8 +42,8 @@ public class Meat3RedSP extends RadioactivePedroAuto {
         startingPose = new Pose(0, 0, inRads(0));
         follower.setPose(startingPose);
 
-        Pose pose1 = new Pose(24,15,inRads(13));//shoot
-        Pose pose2 = new Pose(14.25,-4,inRads(90));//prepare   //y=51
+        Pose pose1 = new Pose(24,15,inRads(20));//shoot
+        Pose pose2 = new Pose(24,30,inRads(180));//prepare   //y=51
         //Pose pose3 =  new Pose(9.25,-50,inRads(90));//final intake
 //
 //        Pose pose4 = new Pose(-24.25, -50.5, inRads(-45));//shoot  //x = 55-> -22,
@@ -123,7 +123,7 @@ public class Meat3RedSP extends RadioactivePedroAuto {
             case 1:
                 //going shoot
                 if (!follower.isBusy()){
-                    shoot3(1540, .1312);//.192
+                    shoot3(1750, 0.349);//.192
                     follower.followPath(path2);
                     setPathState(2);
                     robot.intake.setPower(1);
@@ -143,6 +143,7 @@ public class Meat3RedSP extends RadioactivePedroAuto {
                     stop();
                 }
                 break;
+
                 //prepare intake
 //                if (!follower.isBusy()){
 //
@@ -243,7 +244,7 @@ public class Meat3RedSP extends RadioactivePedroAuto {
 
         }
         while(time.seconds()<5){
-            robot.belt.setVelocity(2000);
+            robot.belt.setVelocity(2500);
             robot.wheel1.setVelocity(velocity);
             robot.wheel2.setVelocity(velocity);
 

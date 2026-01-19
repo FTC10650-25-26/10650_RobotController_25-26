@@ -149,7 +149,7 @@ public class Meat2FieldCentric extends ToxicTele {
         telemetry.addData("push servo pos", robot.pusherServo.getPosition());
         telemetry.update();
 
-        robot.limelight.pipelineSwitch(1);
+//        robot.limelight.pipelineSwitch(1);
 
     }
 
@@ -192,17 +192,17 @@ public class Meat2FieldCentric extends ToxicTele {
 //
 //        }
 
-        LLResult result = robot.limelight.getLatestResult();
-        if (result != null && result.isValid()) {
-            tx = result.getTx(); // How far left or right the target is (degrees)
-        } else{
-            tx = Integer.MAX_VALUE;
-        }
-        telemetry.addData("tx: ", tx);
-        telemetry.addData("delta", (tx*Math.PI/180)-robot.pinpoint.getHeading(AngleUnit.RADIANS));
-        telemetry.addLine();
-
-        telemetry.addLine();
+//        LLResult result = robot.limelight.getLatestResult();
+//        if (result != null && result.isValid()) {
+//            tx = result.getTx(); // How far left or right the target is (degrees)
+//        } else{
+//            tx = Integer.MAX_VALUE;
+//        }
+//        telemetry.addData("tx: ", tx);
+//        telemetry.addData("delta", (tx*Math.PI/180)-robot.pinpoint.getHeading(AngleUnit.RADIANS));
+//        telemetry.addLine();
+//
+//        telemetry.addLine();
 
 
         xPos = robot.pinpoint.getPosX(DistanceUnit.INCH);
@@ -219,7 +219,7 @@ public class Meat2FieldCentric extends ToxicTele {
         telemetry.addData("z", zPos);
 
         telemetry.addLine();
-        telemetry.addData("difference abs", Math.abs(blueAlignAngle-zPos));
+        //telemetry.addData("difference abs", Math.abs(blueAlignAngle-zPos));
         telemetry.addData("add", add);
         telemetry.addData("drive vel", leftFrontPower);
         telemetry.addData("stopTurn", stopTurn);
@@ -333,33 +333,33 @@ public class Meat2FieldCentric extends ToxicTele {
 //                rightRearPower = 1;
 //            }
 
-            if (gamepad1.dpad_right) {//red
-                robot.found = false;
-                autoAlignDirection = "right";
-                robot.turnSignAlign = robot.initTurnSign(-robot.pinpoint.getHeading(AngleUnit.RADIANS));
-                robot.findTagStartingHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            } else if (gamepad1.dpad_left){//blue
-                robot.found = false;
-                autoAlignDirection = "left";
-                robot.turnSignAlign = robot.initTurnSign(-robot.pinpoint.getHeading(AngleUnit.RADIANS));
-                robot.findTagStartingHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-            }
-            if (!robot.found){
-                if (Objects.equals(autoAlignDirection, "right")){
-                    robot.findTagTele(MyChemicalRobot.Color.RED);
-
-                } else{
-                    robot.findTagTele(MyChemicalRobot.Color.BLUE);
-
-                }
-            } else{
+//            if (gamepad1.dpad_right) {//red
+//                robot.found = false;
+//                autoAlignDirection = "right";
+//                robot.turnSignAlign = robot.initTurnSign(-robot.pinpoint.getHeading(AngleUnit.RADIANS));
+//                robot.findTagStartingHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+//            } else if (gamepad1.dpad_left){//blue
+//                robot.found = false;
+//                autoAlignDirection = "left";
+//                robot.turnSignAlign = robot.initTurnSign(-robot.pinpoint.getHeading(AngleUnit.RADIANS));
+//                robot.findTagStartingHeading = robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+//            }
+//            if (!robot.found){
+//                if (Objects.equals(autoAlignDirection, "right")){
+//                    robot.findTagTele(MyChemicalRobot.Color.RED);
+//
+//                } else{
+//                    robot.findTagTele(MyChemicalRobot.Color.BLUE);
+//
+//                }
+//            } else{
 
                 robot.leftFront.setPower(leftFrontPower);
                 robot.leftRear.setPower(leftRearPower);
                 robot.rightRear.setPower(rightRearPower);
                 robot.rightFront.setPower(rightFrontPower);
 
-            }
+            //}
 
 
 
@@ -439,7 +439,11 @@ public class Meat2FieldCentric extends ToxicTele {
                 robot.pusherServo.setPosition(1);
             }
 
-
+//            if (gamepad2.right_stick_x>0.5){
+//                robot.shooterServo.setPosition(robot.shooterServo.getPosition()+0.01);
+//            } else if(gamepad2.right_stick_x<0.5){
+//                robot.shooterServo.setPosition(robot.shooterServo.getPosition()-0.01);
+//            }
             //start/stop flywheels
 
 
@@ -470,8 +474,8 @@ public class Meat2FieldCentric extends ToxicTele {
 
             //+|- flywheel speed
             if (gamepad2.right_bumper) {
-                if (wheelVel < 1200) {
-                    wheelVel += 20;
+                if (wheelVel < 2000) {
+                    wheelVel += 10;
                     monitor = true;
 //                } else if (wheelVel < 2000) {/// <- this number is the max shooting speed
 //                    wheelVel += 20;
@@ -480,21 +484,23 @@ public class Meat2FieldCentric extends ToxicTele {
 
             } else if (gamepad2.left_bumper) {//shoot
                 if (wheelVel >= 20) {///
-                    wheelVel = wheelVel - 20;
+                    wheelVel = wheelVel - 10;
                 }
             }
+
+
 
            // if
 
             if (gamepad2.dpad_up){
                 incrementalSpeedUp = true;
-                vel = 1740;
-                robot.shooterServo.setPosition(0);
+                vel = 1320;
+                robot.shooterServo.setPosition(0.4);
             }
             if (gamepad2.dpad_right) {
                 incrementalSpeedUp = true;
-                vel = 1640;
-                robot.shooterServo.setPosition(0);
+                vel = 1540;
+                robot.shooterServo.setPosition(0.55);
             }
 
 
@@ -508,9 +514,9 @@ public class Meat2FieldCentric extends ToxicTele {
             }
             if (gamepad2.dpad_down){
                 incrementalSpeedUp = true;
-                vel = 1740;
+                vel = 1745;
 
-                robot.shooterServo.setPosition(0.522);
+                robot.shooterServo.setPosition(0.539);
 
             }
 
@@ -556,12 +562,12 @@ public class Meat2FieldCentric extends ToxicTele {
 //            }
 
             //if ()
-            wheel2Vel = Math.max(0,wheelVel-290);
+            wheel2Vel = Math.max(0,wheelVel-100);
 
             robot.wheel1.setVelocity(wheelVel);
             robot.wheel2.setVelocity(wheel2Vel);
             wheel1Vel = wheelVel;
-            wheel2Vel = Math.max(0,wheelVel-290);
+            wheel2Vel = Math.max(0,wheelVel-100);
 
 
         }

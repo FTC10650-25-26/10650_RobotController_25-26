@@ -33,6 +33,18 @@ public class Meat2BlueGoalAndPArk extends RadioactivePedroAuto {
 
     @Override
     public void buildPaths(){
+//
+//        startingPose = new Pose(0, 0, inRads(0));
+//        follower.setPose(startingPose);
+//
+//        Pose pose1 = new Pose(28.25,-50.25,inRads(49));//shoot
+//        //Pose pose2 = new Pose(31,-2,inRads(107));//shoot
+//
+//        Pose pose2 = new Pose(9.25,-49.25,inRads(-95));//prepare   //y=51
+//        Pose pose3 =  new Pose(-7.25,-49.25,inRads(-95));//final intake
+//
+//        Pose pose4 = new Pose(28.5, -50.25, inRads(49));//shoot
+//
 
 
 
@@ -46,7 +58,8 @@ public class Meat2BlueGoalAndPArk extends RadioactivePedroAuto {
         //Pose pose2 = new Pose(31,-2,inRads(107));//shoot
 
 
-        Pose pose2 = new Pose(-2,-24,inRads(109));//prepare   //y=51
+        Pose pose2 = new Pose(-2,-39,inRads(-90));//prepare   //y=51
+        //Pose pose3 = new Pose()
 //        Pose pose3 =  new Pose(9.25,-50,inRads(90));//final intake
 //
 //        Pose pose4 = new Pose(-24.25, -50.5, inRads(-45));//shoot  //x = 55-> -22,
@@ -126,7 +139,7 @@ public class Meat2BlueGoalAndPArk extends RadioactivePedroAuto {
             case 1:
                 //going shoot
                 if (!follower.isBusy()){
-                    shoot3(1340, .4);//.192
+                    shoot3(1320, .4);//.192
                     follower.followPath(path2);
                     setPathState(2);
                     robot.intake.setPower(1);
@@ -141,20 +154,13 @@ public class Meat2BlueGoalAndPArk extends RadioactivePedroAuto {
                 robot.wheel1.setVelocity(0);
                 //prepare intake
                 if (!follower.isBusy()){
-                    robot.belt.setVelocity(2000);
-                    follower.followPath(path3);
-                    setPathState(3);
-                }
-
-                break;
-            case 3:
-                //to final intake pos
-                if (!follower.isBusy()){
                     stop();
                     robot.belt.setVelocity(0);
 
                 }
                 break;
+                //to final intake pos
+
 //                if (!follower.isBusy()){
 //                    follower.followPath(path4);
 //                    setPathState(4);
@@ -225,7 +231,7 @@ public class Meat2BlueGoalAndPArk extends RadioactivePedroAuto {
         int timesRun = 0;
         double incrementalVel = 0;
 
-        while(time.seconds()<2){
+        while(time.seconds()<3){
             robot.shooterServo.setPosition(servoPos);
 
             if (incrementalVel< velocity){
@@ -243,10 +249,18 @@ public class Meat2BlueGoalAndPArk extends RadioactivePedroAuto {
             robot.wheel2.setVelocity(incrementalVel);
 
         }
-        while(time.seconds()<5){
-            robot.belt.setVelocity(2000);
+        while(time.seconds()<4){
             robot.wheel1.setVelocity(velocity);
             robot.wheel2.setVelocity(velocity);
+            robot.belt.setVelocity(2000);
+        }
+        while(time.seconds()<6){
+            robot.wheel1.setVelocity(velocity-80);
+            robot.wheel2.setVelocity(velocity-80);
+
+            robot.belt.setVelocity(2000);
+            robot.wheel1.setVelocity(velocity-80);
+            robot.wheel2.setVelocity(velocity-80);
 
         }
         robot.pusherServo.setPosition(0);
