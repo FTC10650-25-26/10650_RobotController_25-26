@@ -562,25 +562,28 @@ public class Meat2FieldCentric extends ToxicTele {
 //            }
 
             //if ()
-            wheel2Vel = Math.max(0,wheelVel-100);
+            //wheel2Vel = Math.max(0,wheelVel-100);
 
             robot.wheel1.setVelocity(wheelVel);
             robot.wheel2.setVelocity(wheel2Vel);
             wheel1Vel = wheelVel;
-            wheel2Vel = Math.max(0,wheelVel-100);
+            wheel2Vel = wheelVel;
+            //wheel2Vel = Math.max(0,wheelVel-100);
 
 
         }
 
 
+        telemetry.addData("differemce", Math.abs(robot.wheel1.getVelocity() - robot.wheel2.getVelocity()));
 
 
         telemetry.addData("wheel vel", wheelVel);
-        telemetry.addData("adjusted vel", adjustedVel);
+       // telemetry.addData("adjusted vel", adjustedVel);
         telemetry.addLine();
         telemetry.addData("actual wheel 1", robot.wheel1.getVelocity());
         telemetry.addData("actual wheel 2", robot.wheel2.getVelocity());
-        telemetry.addData("differemce", Math.abs(robot.wheel1.getVelocity() - robot.wheel2.getVelocity()));
+
+        telemetry.addData("voltage",  hardwareMap.voltageSensor.iterator().next().getVoltage());
 
 
 
